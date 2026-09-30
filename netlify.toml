@@ -1,0 +1,7 @@
+# Deploy di pectus.percorsoalpha.com su Netlify.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
