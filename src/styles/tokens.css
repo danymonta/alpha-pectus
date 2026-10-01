@@ -84,29 +84,32 @@
   --paper-line-strong: #857B6E;
   --paper-text: #171412;
   --paper-muted: #5E564D;
-  --amber-ink: #8C4F06;
-  --amber-tint: #FBEBD0;
+  --amber-ink: #780000;          /* rosso brand come testo su carta (10,2:1) */
+  --amber-tint: #F6E4E1;
   /* Golden */
-  --gold-bg: #1A120B;
-  --gold-surface: #261B11;
-  --gold-line: #3D2D1E;
-  --gold-line-strong: #84694C;
-  --gold-text: #F7EFE4;
-  --gold-muted: #BCAB97;
-  --gold-glow: radial-gradient(60% 40% at 80% 0%, rgb(242 169 59 / .16), transparent 70%);
+  --gold-bg: #170A0A;
+  --gold-surface: #241212;
+  --gold-line: #3D2120;
+  --gold-line-strong: #8A5F5B;
+  --gold-text: #F7EEEC;
+  --gold-muted: #C4ABA7;
+  --gold-glow: radial-gradient(60% 40% at 80% 0%, rgb(120 0 0 / .45), transparent 70%);
   /* Accenti */
-  --amber: #F2A93B;            /* solo riempimento del bottone DM, segmento corrente del reel, focus su scuro */
-  --amber-hover: #F6BD62;
-  --verdict-dark: #EE6A55;
-  --verdict-paper: #AE3526;
+  --brand: #780000;              /* colore del brand: riempimento della CTA */
+  --brand-hover: #8F0A0A;
+  --brand-edge: rgb(229 85 74 / .55); /* bordo della CTA su fondo scuro, dove il #780000 da solo si perde */
+  --amber: #E5554A;              /* rosso chiaro: accento come testo su scuro, segmento corrente del reel, focus (5,3:1) */
+  --amber-hover: #EC6A5E;
+  --verdict-dark: #F07E72;
+  --verdict-paper: #780000;
   --success-dark: #7FCB98;
   --success-paper: #2C7447;
   --steel-dark: #9DA8B4;
   --steel-paper: #4A5562;
   --print-border: #E9E1D5;
-  --phase-1: #FBE6C4;
-  --phase-2: #F7CD86;
-  --phase-3: #F2A93B;
+  --phase-1: #F3D9D6;
+  --phase-2: #E8B3AD;
+  --phase-3: #D9776E;
   /* Testo inchiostro sopra l'ambra (bottone DM, 9.7:1) */
   --ink: #0E0D0C;
   /* Velature */

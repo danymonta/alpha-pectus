@@ -7,31 +7,30 @@
 export const SITE_URL = 'https://pectus.percorsoalpha.com';
 export const SITE_NAME = 'Percorso Alpha Pectus';
 
-// Conversione: un solo link, una sola parola, una sola etichetta (spec G.1, D26).
-// Se un giorno il DM diventa un link di prenotazione, si cambia solo DM_URL.
-export const DM_URL = 'https://ig.me/m/_danymonta';
-export const KEYWORD = 'PETTO';
-export const CTA_LABEL = 'Scrivimi PETTO su Instagram';
+// Conversione: candidatura con form, come le pagine "apply" dei coach di riferimento.
+// Ogni CTA porta a /candidatura/?cta=<punto>. Le risposte vanno via mail (Resend) e nel foglio Google dei lead.
+export const CANDIDATURA_URL = '/candidatura/';
+export const GRAZIE_URL = '/grazie/';
+export const CTA_LABEL = 'Candidati al percorso';
+// Sigla dei punti della pagina da cui parte la candidatura (finisce nella colonna "CTA" del foglio).
 export const REF_PREFIX = 'pe_';
+// Le vecchie costanti del DM restano solo per la parola chiave citata nelle FAQ e nel reel.
+export const KEYWORD = 'PETTO';
+export const DM_URL = 'https://ig.me/m/_danymonta';
 
-// Frasi anti attrito (spec G.2). Tutte vanno rese con data-nosnippet.
+// Frasi anti attrito sotto le CTA. Tutte vanno rese con data-nosnippet.
 export const FRIZIONE = {
-  short: 'Scrivi PETTO e invia. Ti rispondiamo io o il mio team. Chiedere è gratis e non ti impegna.',
-  full: 'Si apre la chat con @_danymonta. Scrivi PETTO e invia. Ti rispondiamo io o il mio team con qualche domanda sul tuo caso e, se ha senso, ci sentiamo in una chiamata. Chiedere non costa niente e non ti impegna.',
-  fallback: 'Non si apre la chat? Cerca @_danymonta su Instagram e tocca Messaggio.',
-  // Barra sticky compatta.
-  micro: 'Scrivi PETTO e invia. Gratis, senza impegno.',
-  // Suggerimento nei browser in-app, dopo aver copiato la parola chiave.
-  copiato: 'PETTO è già copiato: incollalo e invia.',
+  short: 'Due minuti di domande. Se vediamo che possiamo aiutarti, ti ricontatto per fissare una chiamata con me.',
+  full: 'Bastano due minuti. Se vediamo che possiamo aiutarti, ti ricontattiamo per fissare una chiamata con me. Gratis e senza impegno.',
+  fallback: 'Niente foto, niente pagamenti: solo le tue risposte.',
+  micro: 'Due minuti. Gratis, senza impegno.',
 };
 
-// Pannello desktop con QR (spec G.1).
-// Etichette accessibili delle barre fisse e del pannello QR (src/components/StickyCta.astro).
+// Etichette accessibili della barra fissa (src/components/StickyCta.astro).
 export const ARIA_STICKY = {
-  barra: 'Scrivimi su Instagram',
+  barra: 'Candidati al percorso',
   chiudi: 'Chiudi',
 };
-export const QR_TESTO = 'Inquadra con il telefono: si apre la chat con me su Instagram.';
 
 // Date in formato ISO. SITE_UPDATED va aggiornata a ogni modifica di contenuto.
 export const SITE_PUBLISHED = '2026-10-01';
@@ -45,11 +44,11 @@ export const STATS = {
   dataStatTesto: 'settembre 2026',
   pesoPrima: 63,
   pesoDopo: 83,
-  annoFotoPrima: 2016,
-  annoInizio: 2018,
+  annoFotoPrima: 2021,
+  annoInizio: 2021,
   etaInizio: 18,
   annoRichieste: 2022,
-  annoAiuto: 2023,
+  annoAiuto: 2024,
   sessioniSettimana: 3,
   minutiSessione: 45,
   costoAttrezzatura: 45,
@@ -88,7 +87,7 @@ export const SEO = {
   title: 'Pectus excavatum senza operazione: la mia storia | Dany Monta',
   titleFallback: 'Pectus excavatum senza operazione: la mia storia e il metodo',
   description:
-    "Sono nato con il pectus excavatum e ho detto no all'operazione. Lo sterno non si è spostato, ma oggi il mio petto scavato si vede molto meno. Ecco come.",
+    "Sono nato con il pectus excavatum e ho detto no all'operazione. Oggi il mio petto scavato si vede molto meno: ecco cosa ho fatto, da casa, senza palestra.",
   author: 'Dany Montagnolo',
   themeColor: '#0E0D0C',
   ogTitle: "Ti hanno detto che era troppo tardi. Per l'allenamento non lo è.",

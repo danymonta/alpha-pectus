@@ -17,7 +17,7 @@ export const CONFERME = {
   peso63a83: true,
   // Etichetta "Oggi · 83 kg" e riquadro "83 kg oggi": il peso attuale è ancora 83 kg.
   pesoOggi83: true,
-  // Inizio nel 2018, a 18 anni, in camera, con il fratello.
+  // Inizio nel 2021, in camera, con il fratello.
   inizio2018: true,
   // Tra 30 e 40 uomini con il pectus seguiti in 12 mesi, più della metà dei clienti.
   clientiPectus: true,

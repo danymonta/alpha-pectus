@@ -28,7 +28,7 @@ const cosa = process.argv[2] ?? 'tutto';
 
 // Colori dei token (src/styles/tokens.css): qui servono come valori, perché i file escono fuori dalla pagina.
 const NOTTE = '#0E0D0C';
-const AMBRA = '#F2A93B';
+const AMBRA = '#E5554A';
 const BONE = '#F3EEE6';
 const MUTED = '#A89F94';
 
@@ -111,7 +111,7 @@ async function og() {
 @font-face { font-family: "Newsreader"; src: url("${font('newsreader-latin-italic-inst.woff2')}") format("woff2"); font-weight: 400 500; font-style: italic; }
 * { margin: 0; box-sizing: border-box; }
 html, body { width: 1200px; height: 630px; }
-body { position: relative; overflow: hidden; background: radial-gradient(60% 55% at 88% 0%, rgb(242 169 59 / .17), transparent 70%), ${NOTTE};
+body { position: relative; overflow: hidden; background: radial-gradient(60% 55% at 88% 0%, rgb(120 0 0 / .5), transparent 70%), ${NOTTE};
   color: ${BONE}; font-family: "Archivo", sans-serif; -webkit-font-smoothing: antialiased; }
 .grana { position: absolute; inset: 0; opacity: .07; mix-blend-mode: overlay;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E") 0 0 / 160px; }

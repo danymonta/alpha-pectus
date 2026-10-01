@@ -40,13 +40,6 @@ import { perChi as p } from '../data/pagina';
       </ul>
     </div>
 
-    <aside class="perchi__chir" aria-labelledby={`${p.id}-chirurgo`}>
-      <Icon name="heart-lungs" size={32} class="perchi__ico" />
-      <div class="flow" style="--flow:var(--space-3)">
-        <h3 id={`${p.id}-chirurgo`}>{p.chirurgo.h3}</h3>
-        <p>{p.chirurgo.testo}</p>
-      </div>
-    </aside>
 
     <p class="perchi__aut t-lead">{p.autorita}</p>
     <CtaDm placement={p.cta.placement} leadIn={p.cta.leadIn} class="perchi__cta" />
@@ -61,12 +54,9 @@ import { perChi as p } from '../data/pagina';
   .perchi__si { flex: none; margin-top: .15em; color: var(--success); }
   .perchi__punto { flex: none; width: 8px; height: 8px; margin: .6em 8px 0; border-radius: 50%; background: var(--steel); }
   .perchi__col--no h3 { color: var(--muted); }
-  .perchi__chir { display: flex; gap: var(--space-4); padding: var(--space-5); border: 1px solid var(--steel); border-radius: var(--r-2); background: var(--surface); }
-  .perchi__ico { flex: none; color: var(--steel); }
   .perchi__aut { max-width: 34ch; font-weight: 650; text-wrap: balance; }
   @media (min-width: 1024px) {
     .perchi { grid-template-columns: 1fr 1fr; column-gap: var(--space-8); }
-    .perchi__head, .perchi__chir, .perchi__aut, .perchi__cta { grid-column: 1 / -1; }
-    .perchi__chir { max-width: 50rem; padding: var(--space-6); gap: var(--space-5); }
+    .perchi__head, .perchi__aut, .perchi__cta { grid-column: 1 / -1; }
   }
 </style>

@@ -9,7 +9,7 @@ import Curva from './Curva.astro';
 import Lockup from './Lockup.astro';
 import Icon, { type IconName } from './Icon.astro';
 import { footer as ft, fontiPubblicate, confronto } from '../data/pagina';
-import { SOCIAL, AZIENDA, PIXEL_ID, PERCORSO_ALPHA_URL } from '../data/site.mjs';
+import { SOCIAL, AZIENDA, PIXEL_ID } from '../data/site.mjs';
 import { dataIt } from '../lib/testo';
 
 interface Props {
@@ -110,19 +110,11 @@ const legale = [
           <p>
             {ft.bylinePrima} <time datetime={ft.data}>{dataIt(ft.data)}</time>.
           </p>
-          <ul role="list" class="caps footer__valori footer__riga">
-            {ft.valori.map((v) => <li>{v}</li>)}
-          </ul>
         </>
       )}
       <ul role="list" class="footer__legale footer__riga">
         {legale.map((x) => <li>{x}</li>)}
         <li><a href={L.privacyHref}>{L.privacy}</a></li>
-        {!compatto && (
-          <li>
-            <a href={PERCORSO_ALPHA_URL} target="_blank" rel="noopener" data-evt="outbound" data-evt-dest="pa">{L.sitoPA}</a>
-          </li>
-        )}
         {PIXEL_ID && (
           <li><button type="button" class="footer__pref" data-consenso-apri>{ft.preferenzeCookie}</button></li>
         )}
@@ -178,11 +170,9 @@ const legale = [
   .footer__su { transform: rotate(180deg); }
   .footer__base { display: grid; gap: var(--space-3); padding-top: var(--space-6); border-top: 1px solid var(--line); font-size: var(--fs-small); line-height: 1.5; color: var(--muted); }
   .footer__disc { max-width: var(--measure); }
-  .footer__valori { margin-block: var(--space-3); }
   /* Righe con separatori: il punto sta prima di ogni voce dopo la prima, quindi nessuna riga finisce con un punto. */
   .footer__riga { display: flex; flex-wrap: wrap; align-items: center; column-gap: var(--space-2); }
   .footer__riga li + li::before { content: "·"; margin-right: var(--space-2); }
-  .footer__valori { row-gap: var(--space-1); }
   .footer__legale a, .footer__pref { display: inline-flex; align-items: center; min-height: var(--tap); color: var(--text); text-decoration: underline; text-decoration-color: var(--line-strong); }
 
   @media (min-width: 768px) {

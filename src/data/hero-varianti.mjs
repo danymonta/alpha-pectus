@@ -14,35 +14,35 @@ export const VARIANTI = {
     uso: '/ (organico, bio, ricerca)',
     h1: 'I medici mi dicevano: operazione o nuoto.',
     turn: 'Io non ho fatto nessuna delle due.',
-    sub: "Sono nato con il petto scavato. Mi sono arrangiato: a casa, senza palestra. Lo sterno è rimasto dov'è, e non ti dirò il contrario. È cambiato tutto quello che c'è intorno.",
+    sub: 'Sono nato con il petto scavato. Mi sono arrangiato, a casa. Oggi il petto non è più la prima cosa che si nota di me, e qui ti mostro come ho fatto.',
     skipLabel: SKIP_STANDARD,
   },
   postura: {
     uso: '/v/postura/, reel sulla postura in sponsorizzazione',
     h1: 'I medici mi dicevano: operazione o nuoto.',
     turn: 'Io non ho fatto nessuna delle due.',
-    sub: "Sono nato con il petto scavato. Nel video ti ho parlato della postura: da sola non basta, e lo sterno resta dov'è. Qui trovi il resto: il petto, il respiro, l'addome. E la mia storia.",
+    sub: "Sono nato con il petto scavato. Nel video ti ho mostrato la postura. Qui trovi gli altri tre pilastri, e la mia storia.",
     skipLabel: 'Conosci già la mia storia? Vai agli esercizi del video.',
   },
   storia: {
     uso: '/v/storia/, reel della storia',
     h1: 'Sono nato con un buco nel petto.',
     turn: 'A quattro anni volevano operarmi.',
-    sub: "Ho detto no. Mi sono allenato a casa, senza palestra. Il mio petto scavato oggi si vede molto meno, e lo sterno è rimasto dov'è. Questa è la mia storia, e il metodo.",
+    sub: 'Ho detto no e mi sono allenato a casa. Oggi il mio petto scavato si vede molto meno. Questa è la mia storia, e il metodo.',
     skipLabel: SKIP_STANDARD,
   },
   tardi: {
     uso: '/v/tardi/, futuro reel "troppo tardi"',
     h1: 'Ti hanno detto che era troppo tardi.',
     turn: "Per l'allenamento non lo è.",
-    sub: 'Sono nato con il petto scavato. Lo sterno non si sposta, e non ti dirò il contrario. Cambia tutto il resto: come gli altri vedono il tuo petto, e quel pensiero che non si spegne.',
+    sub: 'Sono nato con il petto scavato. Con l\'allenamento giusto cambia come gli altri vedono il tuo petto, e quel pensiero fisso inizia a spegnersi.',
     skipLabel: SKIP_STANDARD,
   },
   spalle: {
     uso: '/v/spalle/, reel "di spalle"',
     h1: 'Nei video mi mostro sempre di spalle.',
     turn: 'Ecco perché.',
-    sub: "Sono nato con il petto scavato. A quattro anni i medici dicevano: operazione. Ho detto no. Lo sterno è rimasto dov'è. Qui c'è la risposta, e il metodo che uso oggi.",
+    sub: "Sono nato con il petto scavato. A quattro anni i medici dicevano: operazione. Ho detto no. Qui c'è la risposta, e il metodo.",
     skipLabel: SKIP_STANDARD,
     storiaH2: 'Mi chiedete perché nei video mi mostro sempre di spalle.',
   },
@@ -76,7 +76,6 @@ export function validaVarianti(controlloCopy) {
     if (!chiave.test(v.h1) && !chiave.test(v.turn) && !chiave.test(primaFrase(v.sub))) {
       errori.push(`${slug}: né l'H1 né la prima frase del sub contengono "petto scavato" o "buco nel petto"`);
     }
-    if (!/sterno/i.test(v.sub)) errori.push(`${slug}: il sub non contiene "sterno"`);
     if (v.storiaH2 && v.storiaH2.length > 60) errori.push(`${slug}: storiaH2 supera 60 caratteri`);
     if (controlloCopy) {
       for (const campo of ['h1', 'turn', 'sub', 'skipLabel', 'storiaH2']) {

@@ -1,5 +1,9 @@
 {
   "version": 1,
-  "include": ["/", "/pa/api/event"],
+  "include": [
+    "/",
+    "/pa/api/event",
+    "/api/*"
+  ],
   "exclude": []
 }

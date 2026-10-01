@@ -4,9 +4,10 @@ La guida operativa della pagina, in ordine:
 
 1. Metti online la pagina su Cloudflare Pages (gratis, 10 minuti).
 2. Collega il sottodominio `pectus.percorsoalpha.com`.
-3. Carica le foto.
-4. Conferma i punti aperti (sezione 7).
-5. Solo dopo, boosta il reel (sezione 5).
+3. Attiva le candidature: mail con Resend e foglio Google dei lead (sezione 10).
+4. Carica le foto.
+5. Conferma i punti aperti (sezione 7).
+6. Solo dopo, boosta il reel (sezione 5).
 
 ---
 
@@ -113,8 +114,8 @@ Per sostituire una foto, carica un file con lo stesso nome.
 | Nome file | Cosa | Formato |
 |---|---|---|
 | `hero-reel.jpg` | Fermo immagine dal girato del reel boostato: stessa stanza, stessa maglietta, mentre indichi in alto. Senza sottotitoli | verticale 4:5, almeno 1080 x 1350 |
-| `pectus-dany-2016-fronte.jpg` | La foto del petto del 2016, file originale, colori naturali | 4:5, va bene l'originale |
-| `pectus-dany-oggi-fronte.jpg` | Oggi, di fronte, stessa posa, distanza e luce del 2016 | 4:5, almeno 2000 x 2500 |
+| `pectus-dany-2021-fronte.jpg` | Il tuo petto nel 2021, quando hai iniziato ad allenarti. File originale, colori naturali | 4:5, va bene l'originale |
+| `pectus-dany-oggi-fronte.jpg` | Oggi, di fronte, stessa posa, distanza e luce del 2021 | 4:5, almeno 2000 x 2500 |
 | `esercizio-1-poster.jpg` | Esercizio 1 a metà ripetizione (aperture a braccia tese), in maglietta | 4:5, almeno 1080 x 1350 |
 | `esercizio-2-poster.jpg` | Esercizio 2 a metà ripetizione (elastico legato, gomito al fianco) | 4:5, almeno 1080 x 1350 |
 | `esercizio-3-poster.jpg` | Esercizio 3 fermo in cima, braccia tese | 4:5, almeno 1080 x 1350 |
@@ -125,17 +126,17 @@ Le tre foto degli esercizi puoi prenderle come fermo immagine dal girato del ree
 
 | Nome file | Cosa |
 |---|---|
-| `pectus-dany-2019-fronte.jpg` | 2019, dopo un anno di allenamento, stessa posa del 2016 |
+| `pectus-dany-2022-fronte.jpg` | 2022, dopo un anno di allenamento, stessa posa del 2021 |
 | `pectus-dany-oggi-tre-quarti.jpg` | Oggi, tre quarti sinistro |
-| `pectus-dany-2016-tre-quarti.jpg` | Solo se esiste davvero. Mai ricostruita |
-| `pectus-dany-anno-2018.jpg`, `pectus-dany-anno-2019.jpg`, ... | Una foto del petto per anno, stesso taglio. Con almeno tre compare la cronologia "Anno per anno" |
+| `pectus-dany-2021-tre-quarti.jpg` | Solo se esiste davvero. Mai ricostruita |
+| `pectus-dany-anno-2021.jpg`, `pectus-dany-anno-2022.jpg`, ... | Una foto del petto per anno, stesso taglio. Con almeno tre compare la cronologia "Anno per anno" |
 | `pectus-postura-spalle-chiuse.jpg` e `pectus-postura-spalle-aperte.jpg` | Stessa foto a pochi secondi di distanza: spalle chiuse in avanti, poi spalle aperte. Serve alla "prova dello specchio" |
 | `storia-01-nascita.jpg` | Foto da neonato |
 | `storia-02-quattro-anni.jpg` | Foto verso i quattro anni, oppure un documento medico di allora con i dati personali coperti |
 | `storia-03-scuola.jpg` | Foto in età scolare, senza altri bambini nell'inquadratura |
 | `storia-04-magliette.jpg` | Da ragazzo, in maglietta larga |
 | `storia-08-diciotto-anni.jpg` | Verso i diciotto anni, oppure la proposta di intervento con i dati coperti |
-| `storia-09-camera-2018.jpg` | I primi allenamenti in camera con tuo fratello, solo se esiste |
+| `storia-09-camera-2021.jpg` | I primi allenamenti in camera con tuo fratello, solo se esiste |
 | `storia-11-oggi.jpg` | Tu oggi, naturale, anche con tuo fratello. Niente pose da palcoscenico |
 | `storia-12-viaggio.jpg` | Una foto del viaggio, rivolto verso la fotocamera |
 | `attrezzatura.jpg` | Anelli, elastico e sbarra fotografati dall'alto sul pavimento della tua stanza, luce del giorno, quadrata |
@@ -150,7 +151,7 @@ Il confronto convince solo se è onesto e comparabile. Per ogni foto nuova, tua 
 - telefono su treppiede all'altezza dello sterno, a circa due metri e mezzo, obiettivo 2x, foto verticale;
 - dalla testa ai fianchi, piedi alla larghezza dei fianchi, braccia rilassate, nessuna contrazione, prima dell'allenamento;
 - sempre tre angoli: fronte, tre quarti sinistro, profilo sinistro;
-- per le foto di oggi da confrontare con il 2016, tieni aperta accanto la foto del 2016 e copia distanza, altezza e angolo.
+- per le foto di oggi da confrontare con il 2021, tieni aperta accanto la foto del 2021 e copia distanza, altezza e angolo.
 
 Niente filtri, niente ritocchi sul corpo (solo ritaglio e raddrizzamento), niente foto da internet o generate con l'AI. Ogni prima e dopo sulla pagina è datato.
 
@@ -168,7 +169,7 @@ I tre esercizi possono mostrare una clip in loop al posto della foto. È il punt
 
 ### Il tuo caso
 
-Il blocco "Il mio caso, prima e dopo" si attiva con `pectus-dany-2016-fronte.jpg` e `pectus-dany-oggi-fronte.jpg`: compare il confronto con il cursore da trascinare. Con la foto del 2019 si aggiunge "Dopo un anno", con le foto tre quarti la vista laterale. Senza foto restano la scheda del caso, i numeri e il riquadro di onestà.
+Il blocco "Il mio caso, prima e dopo" si attiva con `pectus-dany-2021-fronte.jpg` e `pectus-dany-oggi-fronte.jpg`: compare il confronto con il cursore da trascinare. Con la foto del 2022 si aggiunge "Dopo un anno", con le foto tre quarti la vista laterale. Senza foto restano la scheda del caso, i numeri e il riquadro di onestà.
 
 ### Aggiungere un cliente
 
@@ -189,23 +190,16 @@ Usa sempre la versione `/v/postura/`, mai la home. In Gestione inserzioni:
 - **URL del sito web:** `https://pectus.percorsoalpha.com/v/postura/`
 - **Parametri URL:** `utm_source={{site_source_name}}&utm_medium=paid&utm_campaign=reel-postura&utm_content=boost-01`
 
-`{{site_source_name}}` lo riempie Meta da solo. La pagina lo traduce e lo passa nel link del DM: così sai quali messaggi PETTO arrivano dall'inserzione. Per un nuovo test cambia solo `utm_content` (`boost-02`, `boost-03`). Per altri reel esistono già `/v/storia/`, `/v/tardi/` e `/v/spalle/`.
+`{{site_source_name}}` lo riempie Meta da solo. La pagina lo passa al form: nella colonna "Sorgente" del foglio vedi quali candidature arrivano dall'inserzione. Per un nuovo test cambia solo `utm_content` (`boost-02`, `boost-03`). Per altri reel esistono già `/v/storia/`, `/v/tardi/` e `/v/spalle/`.
 
 ### Checklist di lancio
 
 Ogni punto deve essere vero. Se uno manca, non boostare.
 
 1. **Foto indispensabili e clip caricate** (sezione 3).
-2. **Dati aziendali inseriti** (ragione sociale, P.IVA, email): servono per il footer e per l'informativa privacy. Mandameli e li inserisco io.
-3. **Automazione DM attiva.** Con ManyChat (o lo strumento che usi): parola chiave `PETTO` in qualsiasi punto del messaggio, maiuscole o minuscole. Prima risposta consigliata:
-
-   > Ciao, sono Dany. Grazie per avermi scritto dopo il video sulla postura.
-   > Per capire il tuo caso mi servono tre cose: quanti anni hai, se ti sei mai allenato e cosa ti hanno detto i medici sul tuo petto.
-   > Scrivile qui, con calma. Non serve mandare foto.
-   > Ti rispondiamo io o il mio team il prima possibile.
-
-   Se ManyChat lo permette, aggiungi anche un trigger "Ref URL" per i ref che iniziano con `pe_` e salva il ref in un campo personalizzato: ti dice da quale punto della pagina è arrivato il messaggio.
-4. **Prova su telefoni veri, dentro l'app di Instagram**, un iPhone e un Android. Apri la pagina dal link dell'inserzione e tocca "Scrivimi PETTO su Instagram" in tre punti: in alto, nella barra fissa in basso e nell'offerta. Deve aprirsi la chat con @_danymonta, con PETTO già copiato da incollare. Se un tocco non funziona, mandami cosa succede.
+2. **Dati aziendali inseriti** (ragione sociale, P.IVA, email): servono per il footer e per l'informativa privacy, che ora copre anche i dati della candidatura. Mandameli e li inserisco io.
+3. **Candidature attive** (sezione 10): fai una candidatura di prova dal telefono e controlla che arrivino la mail di conferma, la notifica a te e la riga nel foglio.
+4. **Prova su telefoni veri, dentro l'app di Instagram**, un iPhone e un Android: apri la pagina dal link dell'inserzione, tocca "Candidati al percorso" e completa il form fino alla pagina di ringraziamento.
 5. **Pubblico 18+** nell'inserzione.
 
 ### Regole Meta per il testo del reel
@@ -216,7 +210,7 @@ Meta vieta i testi che attribuiscono una condizione fisica a chi guarda. "Hai il
 - Niente promesse di risultato ("sparisce", "risolto in 30 giorni").
 - Il prima e dopo nel reel va bene se è il tuo, reale e datato.
 
-La misura che conta è il **costo per DM**: spesa divisa per i messaggi PETTO arrivati dall'inserzione.
+La misura che conta è il **costo per candidatura**: spesa divisa per le candidature arrivate dall'inserzione (colonna "Sorgente" con `ig-ad`). Poi guarda quante sono Fit Alto.
 
 ---
 
@@ -227,7 +221,8 @@ Tutti i testi stanno in `src/data/`:
 - `hero-varianti.mjs`: il titolo in apertura per ogni versione (`base`, `postura`, `storia`, `tardi`, `spalle`).
 - `pagina.ts`: tutti gli altri testi, sezione per sezione.
 - `casi.ts`: il tuo caso e i clienti.
-- `site.mjs`: link Instagram, parola chiave PETTO, dati aziendali, numeri, date di aggiornamento.
+- `site.mjs`: etichetta e frasi della CTA, link social, dati aziendali, numeri, date di aggiornamento.
+- `candidatura.mjs`: le domande del form e i punteggi del Fit.
 - `conferme.mjs`: gli interruttori dei punti da confermare (sezione 7).
 
 Ogni pubblicazione passa un controllo automatico: trattini lunghi, emoji, accenti mancanti o parole come "curare" e "guarire" bloccano la pubblicazione, e online resta la versione precedente.
@@ -241,15 +236,14 @@ Quando cambi un contenuto, aggiorna anche `SITE_UPDATED` in `site.mjs`: la data 
 ### Prima di tutto: cosa racconta la pagina di te
 
 La storia sulla pagina segue il tuo brief, anche nelle parti più personali. Rileggila e dimmi se va bene così su una pagina pubblica:
-- il capitolo 2014-2016: la morte del tuo unico amico, la separazione dei tuoi genitori, la fine della relazione;
-- il 2017, raccontato con una sola riga: "Il punto più basso", senza altri dettagli;
+- il capitolo sugli anni più duri: la morte del tuo unico amico, la separazione dei tuoi genitori, la fine della relazione;
+- il punto più basso, raccontato con una sola riga, senza altri dettagli;
 - "Negli anni, quattro medici diversi. Sempre la stessa risposta";
 - che non hai mai fatto né l'operazione né il nuoto (lo dice anche il reel);
-- la frase finale "Io ho aspettato fino a diciotto anni prima di trovare una seconda strada".
 
 ### Numeri
 
-Confermami che sono esatti: 63 kg nel 2016, 83 kg oggi, tra 30 e 40 uomini con il pectus seguiti negli ultimi 12 mesi, più della metà dei clienti attuali con il pectus, attrezzatura 20 + 5 + 20 euro, elastico Decathlon sotto i 5 euro. Dimmi anche **in che anno sei arrivato a 83 kg**: con la data compare un'altra riga nella cronologia.
+Confermami che sono esatti: 63 kg nel 2021, 83 kg oggi, tra 30 e 40 uomini con il pectus seguiti negli ultimi 12 mesi, più della metà dei clienti attuali con il pectus, attrezzatura 20 + 5 + 20 euro, elastico Decathlon sotto i 5 euro. Dimmi anche **in che anno sei arrivato a 83 kg**: con la data compare un'altra riga nella cronologia.
 
 ### Punti oggi nascosti o in versione prudente
 
@@ -257,8 +251,6 @@ Ogni punto si accende in `src/data/conferme.mjs` (da `false` a `true`). Mandami 
 
 | Domanda | Interruttore |
 |---|---|
-| Dopo il DM parte una risposta automatica con le tre domande? | `automazioneTreDomande` |
-| Puoi garantire una risposta entro un giorno lavorativo, anche nel weekend? | `rispostaEntroUnGiorno` |
 | La chiamata conoscitiva è gratuita? Quanto dura? | `chiamataGratuita` |
 | I minuti di postura ogni giorno fanno parte del programma? (lo dice il reel) | `posturaQuotidianaNelProgramma` |
 | Esercizio 2: si fa un lato alla volta? | `eserciziPerLato` |
@@ -268,7 +260,6 @@ Ogni punto si accende in `src/data/conferme.mjs` (da `false` a `true`). Mandami 
 | Le foto del prima e dopo hanno davvero la stessa luce? Nessun ritocco? | `stessaLuce`, `nessunRitocco` |
 | Il percorso è solo per maggiorenni? | `politicaMinori18` |
 | Le foto dei clienti restano private e non si pubblicano senza consenso scritto? | `faqFotoPrivate` |
-| Che email possono usare quelli che non hanno Instagram? | `emailContatto` |
 | Ogni quanto ci sono i check con te o con il team? | `cadenzaCheck` |
 | Hai certificazioni da citare? | `certificazioni` |
 | Tuo fratello è cofondatore di Percorso Alpha? | `fratelloCofondatore` |
@@ -321,7 +312,7 @@ Nel primo deve esserci `strict-transport-security`, nel secondo `x-robots-tag: n
 
 ### Alternativa Netlify
 
-Il repository contiene anche `netlify.toml` ed è pronto per Netlify: importa il repo, Netlify legge la configurazione da solo, poi aggiungi `pectus.percorsoalpha.com` in **Domain management** e crea il CNAME verso `<nome-sito>.netlify.app`. Attenzione al limite di 300 crediti al mese del piano gratuito: con le ads serve almeno il piano a pagamento.
+Il repository contiene anche `netlify.toml` ed è pronto per Netlify: importa il repo, Netlify legge la configurazione da solo, poi aggiungi `pectus.percorsoalpha.com` in **Domain management** e crea il CNAME verso `<nome-sito>.netlify.app`. Attenzione al limite di 300 crediti al mese del piano gratuito: con le ads serve almeno il piano a pagamento. Il form di candidatura (`functions/api/candidatura.js`) è scritto per Cloudflare: su Netlify andrebbe adattato.
 
 ### Lavorare in locale
 
@@ -332,3 +323,64 @@ npm run build    # versione di produzione in dist/
 npm run check    # controllo dei testi
 npm run budget   # controllo dei pesi (HTML, CSS, JS, font)
 ```
+
+---
+
+## 10. Candidature: mail con Resend e foglio Google
+
+Ogni bottone della pagina porta a `/candidatura/`: quattro passi di domande (il caso, il punto di partenza, l'impegno, i contatti), con i consensi privacy. Quando qualcuno invia:
+
+1. riceve una mail di conferma firmata da te ("Ho ricevuto la tua candidatura");
+2. tu ricevi una mail con tutte le risposte e il **Fit** calcolato (Alto, Medio, Basso, oppure "Prima il medico" se ha segnalato sintomi);
+3. la candidatura finisce come nuova riga nel foglio [Lead Pectus - Candidature](https://docs.google.com/spreadsheets/d/1Zpa73C3lcsCF7Nh-s4YBt1SwzmyigS6TfS-9bv3KSXw/edit), con Stato "Nuovo".
+
+Il foglio è il tuo CRM: aggiorna la colonna **Stato** a mano (Nuovo, Contattato, Call fissata, Cliente, Non adatto) e usa **Note** per gli appunti. Rispondendo alla mail di notifica scrivi direttamente al candidato.
+
+### Passo A: il foglio Google (5 minuti)
+
+1. Apri il foglio [Lead Pectus - Candidature](https://docs.google.com/spreadsheets/d/1Zpa73C3lcsCF7Nh-s4YBt1SwzmyigS6TfS-9bv3KSXw/edit). Non cambiare i nomi delle colonne della prima riga: il collegamento li usa.
+2. Menu **Estensioni**, poi **Apps Script**.
+3. Cancella il codice che trovi e incolla tutto il contenuto del file [`docs/foglio-lead-apps-script.gs`](docs/foglio-lead-apps-script.gs).
+4. Nella riga `const TOKEN = 'PAROLA_SEGRETA';` sostituisci `PAROLA_SEGRETA` con una parola lunga e casuale, per esempio 30 lettere e numeri a caso. Tienila da parte.
+5. Salva, poi **Esegui il deployment**, **Nuovo deployment**, tipo **App web**:
+   - Esegui come: **Me**
+   - Chi ha accesso: **Chiunque**
+6. Autorizza l'accesso con il tuo account Google (è il tuo script, sul tuo foglio).
+7. Copia l'**URL dell'app web** (finisce con `/exec`).
+
+### Passo B: Resend (10 minuti più l'attesa dei DNS)
+
+Resend invia le mail. Il piano gratuito basta: 3.000 mail al mese.
+
+1. Crea un account su https://resend.com
+2. **Domains**, poi **Add Domain**: scrivi `percorsoalpha.com`, regione **Ireland (eu-west-1)**.
+3. Resend ti mostra tre record DNS (un MX e due TXT). Aggiungili su Netsons, nella gestione DNS di `percorsoalpha.com`, **copiando nome e valore esattamente** come li mostra Resend. Non toccano la tua posta attuale: sono su sottodomini dedicati.
+4. Consigliato, sempre su Netsons: un record TXT con nome `_dmarc` e valore `v=DMARC1; p=none;` (aiuta a non finire nello spam).
+5. Torna su Resend e clicca **Verify**. Quando il dominio è **Verified**, vai su **API Keys**, poi **Create API Key** con permesso **Sending access**. Copia la chiave (inizia con `re_`): la vedi una volta sola.
+
+### Passo C: le variabili su Cloudflare
+
+Nel progetto `pectus-percorsoalpha`: **Impostazioni**, **Variabili e segreti**, ambiente **Produzione**. Aggiungi:
+
+| Nome | Valore | Tipo |
+|---|---|---|
+| `RESEND_API_KEY` | la chiave di Resend (`re_...`) | Segreto |
+| `MAIL_FROM` | `Dany Monta <dany@percorsoalpha.com>` | Testo |
+| `MAIL_DANY` | la tua email dove ricevere le candidature | Testo |
+| `SHEETS_URL` | l'URL dell'app web del passo A (`.../exec`) | Testo |
+| `SHEETS_TOKEN` | la parola segreta del passo A | Segreto |
+
+Facoltativa: `MAIL_REPLY_TO`, se vuoi che le risposte dei candidati vadano a un indirizzo diverso da `MAIL_DANY`.
+
+Poi **Deployments**, sull'ultima pubblicazione **Riprova la distribuzione** ("Retry deployment"): le variabili valgono dalla pubblicazione successiva.
+
+### Passo D: prova
+
+Dal telefono apri `https://pectus.percorsoalpha.com/candidatura/`, compila con i tuoi dati e invia. Entro un minuto devi avere: la mail di conferma, la notifica con il Fit, la riga nel foglio. Poi cancella la riga di prova.
+
+Se dopo l'invio compare "Qualcosa non è andato a buon fine": nel progetto Cloudflare apri **Functions**, poi i log in tempo reale (**Real-time logs**), rifai l'invio e mandami l'errore che compare.
+
+### Come funziona il Fit
+
+Il Fit nasce dalle risposte su tempo (3 sessioni a settimana per 12 mesi), quando vuole iniziare e disponibilità a investire, più età e sintomi. Non decide al posto tuo: ti dice da chi iniziare a chiamare. Le domande e i punteggi sono in `src/data/candidatura.mjs`.
+

@@ -1,0 +1,86 @@
+---
+// Pagina dopo l'invio della candidatura (/grazie/). noindex, fuori dalla sitemap.
+// Qui il funnel è finito: i link a Instagram e YouTube sono ammessi.
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import Icon from '../../components/Icon.astro';
+import { SOCIAL } from '../../data/site.mjs';
+---
+
+<Base
+  title="Candidatura ricevuta | Percorso Alpha Pectus"
+  description="La tua candidatura al Percorso Alpha Pectus è arrivata."
+  path="/grazie/"
+  noindex
+  schema={false}
+>
+  <Header />
+  <main id="main" class="grazie mode-golden grain">
+    <div class="wrap grazie__in">
+      <p class="eyebrow">Candidatura ricevuta</p>
+      <h1 class="grazie__h1">Grazie. <span class="grazie__svolta">Adesso tocca a me.</span></h1>
+      <div class="grazie__testo">
+        <p>
+          Ho ricevuto le tue risposte. Ti ho mandato una mail di conferma: se non la trovi, controlla anche nella
+          cartella spam o promozioni.
+        </p>
+        <p>
+          Io e il mio team leggiamo ogni candidatura. Se vediamo che possiamo aiutarti, ti ricontattiamo al numero che
+          hai lasciato per fissare una chiamata direttamente con me.
+        </p>
+        <p>Nel frattempo, dove parlo del pectus ogni settimana:</p>
+      </div>
+      <div class="grazie__social">
+        <a class="grazie__link" href={SOCIAL.instagram.url} target="_blank" rel="me noopener" data-evt="outbound" data-evt-dest="ig">
+          <Icon name="instagram" size={24} />
+          <span><strong>Instagram</strong> {SOCIAL.instagram.handle}</span>
+          <Icon name="arrow-right" size={20} />
+        </a>
+        <a class="grazie__link" href={SOCIAL.youtube.url} target="_blank" rel="me noopener" data-evt="outbound" data-evt-dest="yt">
+          <Icon name="youtube" size={24} />
+          <span><strong>YouTube</strong> {SOCIAL.youtube.handle}</span>
+          <Icon name="arrow-right" size={20} />
+        </a>
+      </div>
+      <p class="grazie__firma">Dany</p>
+    </div>
+  </main>
+  <Footer compatto />
+</Base>
+
+<script>
+  window.paTrack?.('candidatura_inviata');
+</script>
+
+<style>
+  .grazie { min-height: 70svh; padding-block: var(--space-9); }
+  .grazie__in { display: grid; gap: var(--space-5); max-width: 44rem; }
+  .grazie__h1 {
+    font-family: var(--font-display);
+    font-stretch: 82%;
+    font-weight: 760;
+    font-size: var(--fs-hero);
+    line-height: var(--lh-hero);
+    letter-spacing: -0.025em;
+  }
+  .grazie__svolta { display: block; color: var(--accent-text); }
+  .grazie__testo { display: grid; gap: var(--space-4); font-size: var(--fs-lead); line-height: 1.5; color: var(--muted); }
+  .grazie__social { display: grid; gap: var(--space-3); }
+  .grazie__link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    min-height: 64px;
+    padding: 0 var(--space-5);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-2);
+    color: var(--text);
+    text-decoration: none;
+    transition: border-color var(--dur-1) var(--ease);
+  }
+  .grazie__link span { flex: 1; }
+  .grazie__link:hover { border-color: var(--amber); }
+  .grazie__firma { font-family: var(--font-voice); font-style: italic; font-size: 2rem; }
+  @media (min-width: 768px) { .grazie__social { grid-template-columns: 1fr 1fr; } }
+</style>

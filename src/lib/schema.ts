@@ -32,7 +32,6 @@ export function grafoJsonLd(): Record<string, unknown> {
     '@id': ORG,
     name: 'Percorso Alpha',
     url: PERCORSO_ALPHA_URL,
-    slogan: 'Non è solo fisico. È sicurezza personale.',
     founder: { '@id': ID.dany },
     areaServed: { '@type': 'Country', name: 'Italia' },
   };
@@ -51,7 +50,7 @@ export function grafoJsonLd(): Record<string, unknown> {
     url: U,
     jobTitle: 'Coach di allenamento a corpo libero per il pectus excavatum, fondatore di Percorso Alpha',
     description:
-      'Nato con il pectus excavatum e mai operato. Dal 2018 si allena a corpo libero a casa. Dal 2023 aiuta uomini con il petto scavato a renderlo meno visibile con Percorso Alpha.',
+      'Nato con il pectus excavatum e mai operato. Dal 2021 si allena a corpo libero a casa. Dal 2024 aiuta uomini con il petto scavato a renderlo meno visibile con Percorso Alpha.',
     worksFor: { '@id': ORG },
     knowsAbout: [{ '@id': ID.condizione }, 'Allenamento a corpo libero', 'Postura', 'Ricomposizione corporea'],
     sameAs: [SOCIAL.instagram.url, SOCIAL.youtube.url],
@@ -119,8 +118,8 @@ export function grafoJsonLd(): Record<string, unknown> {
         audience: pubblico,
         availableChannel: {
           '@type': 'ServiceChannel',
-          name: 'Messaggio diretto su Instagram con la parola PETTO',
-          serviceUrl: DM_URL,
+          name: 'Candidatura online con chiamata conoscitiva',
+          serviceUrl: `${U}candidatura/`,
           availableLanguage: 'it',
         },
         offers: {

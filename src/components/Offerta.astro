@@ -35,7 +35,7 @@ const inclusi = o.inclusi.filter(Boolean);
           </ul>
         )}
         <p class="offerta__ben">
-          {o.beneficio.testo} <strong>{o.beneficio.forte}</strong>
+          {o.beneficio.testo}{o.beneficio.forte && <> <strong>{o.beneficio.forte}</strong></>}
         </p>
       </div>
 
@@ -65,7 +65,7 @@ const inclusi = o.inclusi.filter(Boolean);
           ))}
         </ul>
         <p class="offerta__prezzo">{o.prezzo}</p>
-        <CtaDm placement={o.cta.placement} friction="full+fallback" />
+        <CtaDm placement={o.cta.placement} friction="none" />
       </div>
     </div>
   </div>

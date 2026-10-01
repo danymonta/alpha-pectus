@@ -1,25 +1,24 @@
 ---
-// CTA primaria (spec G.1, G.2, D26 a D28). L'unico elemento con riempimento ambra della pagina.
-// Etichetta fissa ovunque: "Scrivimi PETTO su Instagram". Link semplice, mai target="_blank".
-// href in HTML: DM_URL?ref=pe_<placement> (funziona senza JS); src/scripts/cta.js (piattaforma) aggiunge
-// _<src>_<variante>, copia PETTO negli appunti, invia dm_click e su desktop apre il pannello QR.
+// CTA primaria: porta al form di candidatura (/candidatura/?cta=<placement>).
+// L'unico elemento con riempimento rosso brand (#780000) della pagina. Etichetta fissa ovunque.
+// src/scripts/cta.js aggiunge al link la sorgente del traffico, la variante e gli UTM della visita.
 //
 // Uso:
 //   <CtaDm placement="metodo" leadIn="Ora sai cosa serve. Vuoi sapere da dove partiresti tu?" />   inline, frizione full
 //   <CtaDm placement="offerta" friction="full+fallback" />
 //   <CtaDm placement="hero" variant="link" leadIn="Vuoi parlarne subito?" friction="short" inline={false} />
-//   <CtaDm placement="sticky" size="sm" friction="short" inline={false} />
-import { DM_URL, KEYWORD, FRIZIONE, REF_PREFIX } from '../data/site.mjs';
+//   <CtaDm placement="sticky" size="sm" friction="micro" inline={false} />
+import { CANDIDATURA_URL, CTA_LABEL, FRIZIONE, REF_PREFIX } from '../data/site.mjs';
 import Icon from './Icon.astro';
 
 interface Props {
-  /** Diventa ref=pe_<placement>: hero, metodo, casi, perte, offerta, finale, sticky, header. */
+  /** Punto della pagina: hero, metodo, casi, perte, offerta, finale, sticky, header. */
   placement: string;
   /** Una riga sopra il bottone (l'unica parte che può cambiare). */
   leadIn?: string;
   /** micro: una riga sola (barra fissa mobile). */
   friction?: 'none' | 'micro' | 'short' | 'full' | 'full+fallback';
-  /** button: bottone ambra. link: link testuale dell'hero (testo bone, sottolineatura ambra). */
+  /** button: bottone rosso. link: link testuale dell'hero. */
   variant?: 'button' | 'link';
   size?: 'sm' | 'md' | 'lg';
   /** true = CTA inline (data-cta-inline: la barra fissa si nasconde quando è visibile). Default true per variant button. */
@@ -45,7 +44,7 @@ if (!/^[a-z0-9-]+$/.test(placement)) {
   throw new Error(`CtaDm: placement "${placement}" non valido (solo minuscole, cifre, trattino)`);
 }
 const ref = `${REF_PREFIX}${placement}`;
-const href = `${DM_URL}?ref=${ref}`;
+const href = `${CANDIDATURA_URL}?cta=${ref}`;
 const cid = Object.fromEntries(Object.entries(rest).filter(([k]) => k.startsWith('data-astro-cid')));
 ---
 
@@ -59,8 +58,8 @@ const cid = Object.fromEntries(Object.entries(rest).filter(([k]) => k.startsWith
     variant === 'link' ? (
       <p class="cta-dm__linkline">
         {leadIn && <span class="cta-dm__leadin">{leadIn} </span>}
-        <a class="link-dm" href={href} data-dm data-ref={ref} data-evt="dm_click" data-evt-cta={placement}>
-          Scrivimi {KEYWORD} su Instagram
+        <a class="link-dm" href={href} data-dm data-ref={ref} data-evt="cta_click" data-evt-cta={placement}>
+          {CTA_LABEL}
         </a>
       </p>
     ) : (
@@ -71,11 +70,11 @@ const cid = Object.fromEntries(Object.entries(rest).filter(([k]) => k.startsWith
           href={href}
           data-dm
           data-ref={ref}
-          data-evt="dm_click"
+          data-evt="cta_click"
           data-evt-cta={placement}
         >
-          <Icon name="instagram" class="btn-dm__glyph" size={20} />
-          <span>Scrivimi</span> <span class="btn-dm__chip">{KEYWORD}</span> <span>su Instagram</span>
+          <span>{CTA_LABEL}</span>
+          <Icon name="arrow-right" class="btn-dm__glyph" size={20} />
         </a>
       </>
     )

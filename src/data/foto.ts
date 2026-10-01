@@ -40,17 +40,17 @@ export const FOTO: SlotFoto[] = [
     dove: 'Hero',
   },
   {
-    slot: 'pectus-dany-2016-fronte', ratio: '4:5', min: '1080 x 1350 (va bene anche l\'originale)', priorita: 'P0',
-    alt: "Dany nel 2016, a torso nudo, vista frontale: l'avvallamento del pectus excavatum al centro del petto è profondo.",
+    slot: 'pectus-dany-2021-fronte', ratio: '4:5', min: '1080 x 1350 (va bene anche l\'originale)', priorita: 'P0',
+    alt: "Dany nel 2021, all'inizio dell'allenamento, a torso nudo, vista frontale: l'avvallamento del pectus excavatum al centro del petto è profondo.",
     focus: '50% 40%', busto: true,
-    regia: 'La foto del 2016, file originale. Colori naturali.',
+    regia: 'La foto del 2021, file originale. Colori naturali.',
     dove: 'Hero (riquadro), capitolo 6, comparatore, cronologia',
   },
   {
     slot: 'pectus-dany-oggi-fronte', ratio: '4:5', min: '2000 x 2500', priorita: 'P0',
-    alt: "Dany oggi, a torso nudo, stessa posa e stessa luce del 2016: il petto è più pieno e l'avvallamento si nota molto meno.",
+    alt: "Dany oggi, a torso nudo, stessa posa e stessa luce del 2021: il petto è più pieno e l'avvallamento si nota molto meno.",
     focus: '50% 40%', busto: true,
-    regia: 'Oggi, di fronte, con il protocollo di scatto, allineata alla foto del 2016.',
+    regia: 'Oggi, di fronte, con il protocollo di scatto, allineata alla foto del 2021.',
     dove: 'Comparatore',
   },
   {
@@ -77,10 +77,10 @@ export const FOTO: SlotFoto[] = [
 
   // ---- P1: entro due settimane ----
   {
-    slot: 'pectus-dany-2019-fronte', ratio: '4:5', min: '1440 sul lato lungo', priorita: 'P1',
-    alt: "Dany nel 2019, dopo un anno di allenamento a casa, stessa posa del 2016: l'avvallamento si vede molto meno.",
+    slot: 'pectus-dany-2022-fronte', ratio: '4:5', min: '1440 sul lato lungo', priorita: 'P1',
+    alt: "Dany nel 2022, dopo un anno di allenamento a casa, stessa posa del 2021: l'avvallamento si vede molto meno.",
     focus: '50% 40%', focusDesktop: '72% 35%', busto: true,
-    regia: 'Il 2019, stessa posa del 2016. Va bene anche 9:16, si ritaglia con il focus.',
+    regia: 'Il 2022, stessa posa del 2021. Va bene anche 9:16, si ritaglia con il focus.',
     dove: 'Capitolo 10, comparatore "Dopo un anno"',
   },
   {
@@ -91,8 +91,8 @@ export const FOTO: SlotFoto[] = [
     dove: 'Comparatore, scheda "Tre quarti"',
   },
   {
-    slot: 'pectus-dany-2016-tre-quarti', ratio: '4:5', min: 'come disponibile', priorita: 'P1',
-    alt: "Dany nel 2016, a torso nudo, vista di tre quarti: l'avvallamento al centro del petto è evidente.",
+    slot: 'pectus-dany-2021-tre-quarti', ratio: '4:5', min: 'come disponibile', priorita: 'P1',
+    alt: "Dany nel 2021, a torso nudo, vista di tre quarti: l'avvallamento al centro del petto è evidente.",
     focus: '50% 40%', busto: true,
     regia: 'Solo se esiste. Mai ricostruita.',
     dove: 'Comparatore, scheda "Tre quarti"',
@@ -154,8 +154,8 @@ export const FOTO: SlotFoto[] = [
     dove: 'Capitolo 8',
   },
   {
-    slot: 'storia-09-camera-2018', ratio: 'libero', min: '1080 sul lato lungo', priorita: 'P1',
-    alt: 'Dany e suo fratello si allenano a corpo libero in camera, nel 2018.',
+    slot: 'storia-09-camera-2021', ratio: 'libero', min: '1080 sul lato lungo', priorita: 'P1',
+    alt: 'Dany e suo fratello si allenano a corpo libero in camera, nel 2021.',
     focus: '50% 50%',
     regia: 'I primi allenamenti a casa, con il fratello se esiste. Se non esiste, niente foto.',
     dove: 'Capitolo 9',
@@ -198,8 +198,8 @@ export const FOTO: SlotFoto[] = [
 
   // ---- P2: utili, non urgenti ----
   {
-    slot: 'pectus-dany-2019-fronte-orizzontale', ratio: '16:9', min: '2400 x 1350', priorita: 'P2',
-    alt: "Dany nel 2019, dopo un anno di allenamento a casa, stessa posa del 2016: l'avvallamento si vede molto meno.",
+    slot: 'pectus-dany-2022-fronte-orizzontale', ratio: '16:9', min: '2400 x 1350', priorita: 'P2',
+    alt: "Dany nel 2022, dopo un anno di allenamento a casa, stessa posa del 2021: l'avvallamento si vede molto meno.",
     focus: '50% 40%', busto: true,
     regia: 'Ritaglio orizzontale facoltativo per il capitolo 10 su desktop.',
     dove: 'Capitolo 10 (desktop)',

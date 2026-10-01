@@ -1,0 +1,273 @@
+---
+// Candidatura al Percorso Alpha Pectus (/candidatura/). Destinazione di ogni CTA della landing.
+// Il form va in POST a /api/candidatura (functions/api/candidatura.js): mail di conferma a chi si candida,
+// notifica a Dany, riga nel foglio Google dei lead. Poi la Function rimanda a /grazie/.
+// Senza JS: tutte le domande in una pagina sola, un solo bottone di invio. Con JS: un passo alla volta.
+// Fuori dalla sitemap e noindex.
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import Icon from '../../components/Icon.astro';
+import { PASSI, CONSENSI } from '../../data/candidatura.mjs';
+
+const totale = PASSI.length;
+---
+
+<Base
+  title="Candidatura al Percorso Alpha Pectus | Dany Monta"
+  description="Candidati al Percorso Alpha Pectus: qualche domanda sul tuo caso. Se vediamo che possiamo aiutarti, ti ricontattiamo per una chiamata con Dany."
+  path="/candidatura/"
+  noindex
+  schema={false}
+>
+  <Header />
+  <main id="main" class="cand mode-golden grain">
+    <div class="wrap cand__in">
+      <header class="cand__head">
+        <p class="eyebrow">Percorso Alpha Pectus</p>
+        <h1 class="cand__h1">Candidati al percorso.</h1>
+        <p class="cand__lead">
+          Qualche domanda sul tuo caso, bastano due minuti. Io e il mio team leggiamo ogni candidatura. Se vediamo
+          che possiamo aiutarti, ti ricontattiamo per fissare una chiamata direttamente con me.
+        </p>
+        <ul class="cand__rass">
+          <li><Icon name="camera-off" size={20} /> Niente foto da mandare.</li>
+          <li><Icon name="eye-off" size={20} /> Le risposte le leggiamo solo io e il mio team.</li>
+          <li><Icon name="circle-check" size={20} /> Candidarsi è gratis e non ti impegna.</li>
+        </ul>
+      </header>
+
+      <form class="cand__form" method="post" action="/api/candidatura" data-cand novalidate>
+        <div class="cand__prog" data-prog hidden aria-hidden="true">
+          <span class="cand__prog-txt" data-prog-txt>Passo 1 di {totale}</span>
+          <span class="cand__bar"><span class="cand__bar-in" data-prog-bar></span></span>
+        </div>
+
+        {
+          PASSI.map((p, i) => (
+            <fieldset class="cand__passo" data-passo={i} id={`passo-${p.id}`}>
+              <legend class="cand__legend">
+                <span class="cand__num">{String(i + 1).padStart(2, '0')}</span> {p.titolo}
+              </legend>
+              <p class="cand__intro">{p.intro}</p>
+
+              {p.domande.map((d) =>
+                d.tipo === 'scelta' ? (
+                  <div class="cand__q" role="radiogroup" aria-labelledby={`q-${d.nome}`} data-q={d.nome}>
+                    <p class="cand__etich" id={`q-${d.nome}`}>{d.etichetta}</p>
+                    <div class="cand__opz">
+                      {d.opzioni.map((o, k) => (
+                        <label class="cand__op">
+                          <input type="radio" name={d.nome} value={o.valore} required={k === 0} />
+                          <span>{o.testo}</span>
+                        </label>
+                      ))}
+                    </div>
+                    {d.avvisi &&
+                      Object.entries(d.avvisi).map(([v, t]) => (
+                        <p class="cand__avviso" data-avviso={d.nome} data-se={v} hidden>{t}</p>
+                      ))}
+                    <p class="cand__err" data-err hidden>Scegli una risposta.</p>
+                  </div>
+                ) : d.tipo === 'testo' ? (
+                  <div class="cand__q" data-q={d.nome}>
+                    <label class="cand__etich" for={`f-${d.nome}`}>{d.etichetta}</label>
+                    <textarea id={`f-${d.nome}`} name={d.nome} rows="4" maxlength={d.max} placeholder={d.segnaposto} required />
+                    <p class="cand__err" data-err hidden>Scrivi almeno una riga.</p>
+                  </div>
+                ) : (
+                  <div class="cand__q" data-q={d.nome}>
+                    <label class="cand__etich" for={`f-${d.nome}`}>{d.etichetta}</label>
+                    <input
+                      id={`f-${d.nome}`}
+                      name={d.nome}
+                      type={d.input}
+                      autocomplete={d.autocomplete}
+                      maxlength={d.max}
+                      placeholder={d.segnaposto}
+                      required={!d.facoltativo}
+                    />
+                    <p class="cand__err" data-err hidden>
+                      {d.input === 'email' ? 'Scrivi un indirizzo email valido.' : 'Questo campo serve per ricontattarti.'}
+                    </p>
+                  </div>
+                ),
+              )}
+
+              {i === totale - 1 && (
+                <div class="cand__consensi">
+                  {CONSENSI.map((c) => (
+                    <div class="cand__q" data-q={c.nome}>
+                      <label class="cand__check">
+                        <input type="checkbox" name={c.nome} value="si" required />
+                        <span>
+                          {c.testo}
+                          {c.nome === 'privacy' && (
+                            <>
+                              {' '}<a href="/privacy/" target="_blank" rel="noopener">Leggi l'informativa</a>
+                            </>
+                          )}
+                        </span>
+                      </label>
+                      <p class="cand__err" data-err hidden>Serve il tuo consenso per inviare la candidatura.</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div class="cand__nav">
+                {i > 0 && (
+                  <button type="button" class="btn-outline cand__indietro" data-indietro hidden>
+                    Indietro
+                  </button>
+                )}
+                {i < totale - 1 ? (
+                  <button type="button" class="btn-dm cand__avanti" data-avanti hidden>
+                    <span>Avanti</span>
+                    <Icon name="arrow-right" class="btn-dm__glyph" size={20} />
+                  </button>
+                ) : (
+                  <button type="submit" class="btn-dm cand__invia" data-invia>
+                    <span>Invia la candidatura</span>
+                    <Icon name="arrow-right" class="btn-dm__glyph" size={20} />
+                  </button>
+                )}
+              </div>
+            </fieldset>
+          ))
+        }
+
+        <div class="cand__hp" aria-hidden="true">
+          <label>Lascia vuoto questo campo <input type="text" name="sito" tabindex="-1" autocomplete="off" /></label>
+        </div>
+        <input type="hidden" name="t" value="" data-t />
+        <input type="hidden" name="cta" value="" data-hidden="cta" />
+        <input type="hidden" name="src" value="" data-hidden="src" />
+        <input type="hidden" name="v" value="" data-hidden="v" />
+        <input type="hidden" name="utm_source" value="" data-hidden="utm_source" />
+        <input type="hidden" name="utm_medium" value="" data-hidden="utm_medium" />
+        <input type="hidden" name="utm_campaign" value="" data-hidden="utm_campaign" />
+        <input type="hidden" name="utm_content" value="" data-hidden="utm_content" />
+        <p class="cand__errore-invio" data-errore-invio hidden role="alert">
+          Qualcosa non è andato a buon fine e la candidatura non è partita. Riprova tra un minuto.
+        </p>
+      </form>
+    </div>
+  </main>
+  <Footer compatto />
+</Base>
+
+<script>
+  import '../../scripts/candidatura.js';
+</script>
+
+<style>
+  .cand { padding-block: var(--space-8) var(--space-9); }
+  .cand__in { display: grid; gap: var(--space-7); }
+  .cand__head { display: grid; gap: var(--space-4); max-width: 40rem; }
+  .cand__h1 {
+    font-family: var(--font-display);
+    font-stretch: 82%;
+    font-weight: 760;
+    font-size: var(--fs-h2);
+    line-height: var(--lh-h2);
+    letter-spacing: -0.02em;
+  }
+  .cand__lead { font-size: var(--fs-lead); line-height: 1.45; color: var(--muted); }
+  .cand__rass { display: grid; gap: var(--space-2); padding: 0; list-style: none; font-size: var(--fs-small); color: var(--muted); }
+  .cand__rass li { display: flex; align-items: center; gap: var(--space-3); }
+  .cand__rass :global(svg) { flex: none; color: var(--accent-text); }
+
+  .cand__form {
+    display: grid;
+    gap: var(--space-7);
+    padding: var(--space-5);
+    border: 1px solid var(--line);
+    border-radius: var(--r-3);
+    background: var(--surface);
+  }
+  :global(.js) .cand__form { gap: var(--space-5); }
+  .cand__prog { display: grid; gap: var(--space-2); font-size: var(--fs-micro); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .cand__bar { display: block; height: 3px; background: var(--line); border-radius: 2px; overflow: hidden; }
+  .cand__bar-in { display: block; height: 100%; width: 25%; background: var(--amber); transition: width var(--dur-2) var(--ease); }
+
+  .cand__passo { display: grid; gap: var(--space-5); margin: 0; padding: 0; border: 0; min-width: 0; }
+  .cand__legend {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    padding: 0;
+    font-family: var(--font-display);
+    font-stretch: 82%;
+    font-weight: 760;
+    font-size: var(--fs-h3);
+    line-height: var(--lh-h3);
+  }
+  .cand__num { color: var(--accent-text); font-stretch: 68%; font-weight: 820; }
+  .cand__intro { color: var(--muted); max-width: 52ch; }
+
+  .cand__q { display: grid; gap: var(--space-3); }
+  .cand__etich { font-weight: 650; line-height: 1.4; }
+  .cand__opz { display: grid; gap: var(--space-2); }
+  .cand__op {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: 52px;
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-2);
+    cursor: pointer;
+    line-height: 1.35;
+    transition: border-color var(--dur-1) var(--ease), background-color var(--dur-1) var(--ease);
+  }
+  .cand__op:hover { border-color: var(--text); }
+  .cand__op:has(input:checked) { border-color: var(--amber); background: rgb(120 0 0 / .35); }
+  .cand__op input, .cand__check input { flex: none; width: 20px; height: 20px; margin: 0; accent-color: var(--brand); }
+  .cand__op:has(input:focus-visible) { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+  .cand textarea, .cand input[type='text'], .cand input[type='email'], .cand input[type='tel'] {
+    width: 100%;
+    min-height: 52px;
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-2);
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+    font-size: 1rem;
+  }
+  .cand textarea { min-height: 120px; resize: vertical; line-height: 1.5; }
+  .cand textarea:focus, .cand input:focus { border-color: var(--amber); outline: none; }
+  .cand ::placeholder { color: var(--muted); opacity: .8; }
+
+  .cand__consensi { display: grid; gap: var(--space-3); padding-top: var(--space-2); border-top: 1px solid var(--line); }
+  .cand__check { display: flex; align-items: flex-start; gap: var(--space-3); font-size: var(--fs-small); line-height: 1.5; color: var(--muted); cursor: pointer; }
+  .cand__check input { margin-top: 2px; }
+  .cand__check a { color: var(--text); text-decoration: underline; text-underline-offset: .2em; }
+
+  .cand__avviso {
+    padding: var(--space-3) var(--space-4);
+    border-left: 2px solid var(--steel);
+    background: var(--bg);
+    font-size: var(--fs-small);
+    line-height: 1.5;
+  }
+  .cand__err, .cand__errore-invio { color: var(--verdict); font-size: var(--fs-small); font-weight: 650; }
+  .cand__q.is-err .cand__op, .cand__q.is-err input:not([type='radio']):not([type='checkbox']), .cand__q.is-err textarea { border-color: var(--verdict); }
+
+  .cand__nav { display: flex; flex-wrap: wrap; gap: var(--space-3); padding-top: var(--space-2); }
+  .cand__nav .btn-dm { flex: 1 1 auto; }
+  .cand__nav .btn-outline { flex: 0 0 auto; min-height: var(--btn-h); }
+
+  .cand__hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+  /* Con JS: un passo alla volta. */
+  :global(.js) .cand__passo:not(.is-on) { display: none; }
+
+  @media (min-width: 1024px) {
+    .cand__in { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: start; gap: var(--space-8); }
+    .cand__head { position: sticky; top: calc(var(--bar-desktop-h) + var(--space-6)); }
+    .cand__form { padding: var(--space-7); }
+  }
+</style>

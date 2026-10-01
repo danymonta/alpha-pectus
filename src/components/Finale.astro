@@ -35,11 +35,13 @@ const conFoto = hasFoto(f.foto) || import.meta.env.DEV;
       <p class="finale__chi t-small">
         {f.firmaSotto} · {f.aggiornatoPrima} <time datetime={f.data}>{dataIt(f.data)}</time>
       </p>
-      <p class="finale__brand caps">
-        <Icon name="curva" size={20} class="finale__curva" />
-        <span>{f.brandLine}</span>
-      </p>
-      <CtaDm placement={f.cta.placement} friction="full+fallback" size="lg" class="finale__cta" />
+      {f.brandLine && (
+        <p class="finale__brand caps">
+          <Icon name="curva" size={20} class="finale__curva" />
+          <span>{f.brandLine}</span>
+        </p>
+      )}
+      <CtaDm placement={f.cta.placement} friction="short" size="lg" class="finale__cta" />
     </div>
   </div>
 </Section>

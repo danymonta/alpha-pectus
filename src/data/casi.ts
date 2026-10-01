@@ -31,19 +31,18 @@ export const CASO_DANY = {
     ? [
         { etichetta: 'Caso', valore: 'Dany Montagnolo (Dany Monta)' },
         { etichetta: 'Condizione', valore: 'pectus excavatum dalla nascita, mai operato' },
-        { etichetta: 'Inizio', valore: '2018, a 18 anni, a casa' },
+        { etichetta: 'Inizio', valore: '2021, a casa' },
         { etichetta: 'Peso', valore: 'da 63 a 83 kg' },
         { etichetta: 'Allenamento', valore: 'a corpo libero, tre sessioni a settimana' },
         { etichetta: 'Primo cambiamento visibile', valore: 'entro il primo anno' },
-        { etichetta: 'Sterno', valore: 'non si è spostato' },
       ]
     : [],
   /** Slot foto del comparatore (C.11). Se manca un file, il blocco corrispondente si nasconde. */
   foto: {
-    fronte2016: 'pectus-dany-2016-fronte',
-    fronte2019: 'pectus-dany-2019-fronte',
+    fronte2016: 'pectus-dany-2021-fronte',
+    fronte2019: 'pectus-dany-2022-fronte',
     fronteOggi: 'pectus-dany-oggi-fronte',
-    treQuarti2016: 'pectus-dany-2016-tre-quarti',
+    treQuarti2016: 'pectus-dany-2021-tre-quarti',
     treQuartiOggi: 'pectus-dany-oggi-tre-quarti',
     profiloOggi: 'pectus-dany-oggi-profilo',
     /** Prefisso della serie "Anno per anno": pectus-dany-anno-YYYY */
@@ -54,9 +53,8 @@ export const CASO_DANY = {
    * kg: per l'alt della foto. Il blocco esce solo con almeno 3 foto datate.
    */
   cronologia: [
-    { anno: 2016 as number | null, etichetta: '2016 · 63 kg', testo: 'Il buco è la prima cosa che si vede.', kg: 63 as number | null },
-    { anno: 2018, etichetta: '2018', testo: 'Inizio in camera mia, a corpo libero, con mio fratello.', kg: null },
-    { anno: 2019, etichetta: '2019', testo: 'Dopo un anno il buco si vede molto meno.', kg: null },
+    { anno: 2021 as number | null, etichetta: '2021 · 63 kg', testo: 'Inizio in camera mia, a corpo libero, con mio fratello.', kg: 63 as number | null },
+    { anno: 2022, etichetta: '2022', testo: 'Dopo un anno il buco si vede molto meno.', kg: null as number | null },
     // Riga "anno · 83 kg": esce solo quando Dany conferma l'anno (conferme.anno83Kg e ANNO_83_KG).
     ...(C.anno83Kg && ANNO_83_KG
       ? [{ anno: ANNO_83_KG, etichetta: `${ANNO_83_KG} · 83 kg`, testo: '', kg: 83 }]

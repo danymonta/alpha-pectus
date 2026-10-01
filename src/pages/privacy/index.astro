@@ -25,8 +25,8 @@ const societaOk = Boolean(AZIENDA.ragioneSociale && AZIENDA.partitaIva);
 const emailOk = Boolean(AZIENDA.email);
 const host = HOSTING.nome;
 const descrizione = statistiche
-  ? 'Come pectus.percorsoalpha.com tratta i dati: statistiche senza cookie, nessun tracciamento pubblicitario senza consenso, i messaggi su Instagram, i dati sulla salute e i tuoi diritti.'
-  : 'Come pectus.percorsoalpha.com tratta i dati: nessun cookie di profilazione, nessun tracciamento pubblicitario senza consenso, i messaggi su Instagram, i dati sulla salute e i tuoi diritti.';
+  ? 'Come pectus.percorsoalpha.com tratta i dati: statistiche senza cookie, nessun tracciamento pubblicitario senza consenso, la candidatura, i dati sulla salute e i tuoi diritti.'
+  : 'Come pectus.percorsoalpha.com tratta i dati: nessun cookie di profilazione, nessun tracciamento pubblicitario senza consenso, la candidatura, i dati sulla salute e i tuoi diritti.';
 ---
 
 <Base
@@ -44,8 +44,8 @@ const descrizione = statistiche
           <h1 id="privacy-h1" class="privacy__h1">Informativa privacy</h1>
           <p class="t-lead">
             Questa pagina spiega quali dati tratta pectus.percorsoalpha.com, perché, per quanto tempo e quali diritti
-            hai. In breve: nessun cookie di profilazione, nessun dato sul tuo corpo raccolto dal sito, e i dati sulla
-            salute solo in chat, con il tuo consenso esplicito.
+            hai. In breve: nessun cookie di profilazione, e i dati della candidatura (compresi quelli sulla salute)
+            trattati solo con il tuo consenso esplicito e solo per valutare se il percorso fa per te.
           </p>
           {
             DEV && (
@@ -112,10 +112,8 @@ const descrizione = statistiche
             aprendo la pagina il tuo browser non contatta Google né altri servizi esterni.
           </p>
           <p>
-            <strong>Il link per scrivermi.</strong> Il bottone apre Instagram con un codice nel link (per esempio
-            pe_offerta_ig-bio) che dice da quale punto della pagina e da quale canale arrivi. Non contiene dati
-            personali. Quando lo tocchi, la parola PETTO viene copiata negli appunti del telefono, così puoi
-            incollarla in chat: il sito non legge i tuoi appunti.
+            <strong>I bottoni della pagina.</strong> Portano al form di candidatura con un codice nel link (per esempio
+            pe_offerta) che dice da quale punto della pagina e da quale canale arrivi. Non contiene dati personali.
           </p>
           {
             statistiche ? (
@@ -161,25 +159,31 @@ const descrizione = statistiche
           }
         </section>
 
-        <section class="privacy__blocco" aria-labelledby="instagram">
-          <h2 id="instagram" class="privacy__h2">Quando mi scrivi su Instagram</h2>
+        <section class="privacy__blocco" aria-labelledby="candidatura">
+          <h2 id="candidatura" class="privacy__h2">Quando invii la candidatura</h2>
           <p>
-            La conversazione avviene su Instagram, un servizio di Meta Platforms Ireland, che tratta i dati del tuo
-            account secondo la propria informativa.
+            Il form raccoglie nome, email, telefono, il tuo profilo Instagram se lo indichi, e le risposte sul tuo caso:
+            età, cosa ti hanno detto i medici, eventuali sintomi, allenamento, abitudini, obiettivi e disponibilità.
           </p>
           <p>
-            I messaggi li leggiamo io o il mio team, per risponderti, capire il tuo caso e, se ha senso, fissare una
-            chiamata. Le prime risposte possono partire da uno strumento di risposta automatica{DEV && <>{' '}(<span class="privacy__manca">da completare: nome dello strumento</span>)</>}, che agisce come responsabile
-            del trattamento.
+            Le risposte le leggiamo io e il mio team, per capire se possiamo aiutarti e, se sì, per ricontattarti e
+            fissare una chiamata. Non le usiamo per altro e non le cediamo a nessuno.
           </p>
           <p>
-            <strong>Dati sulla salute.</strong> Le informazioni sul tuo petto, sui sintomi e le foto sono dati
-            particolari (art. 9 del GDPR). Te le chiediamo solo in chat, solo dopo il tuo consenso esplicito, e solo
-            per valutare se il percorso fa per te. Per scrivermi non serve mandare foto.
+            Per gestirle usiamo due servizi che agiscono come responsabili del trattamento: Resend, che invia la mail di
+            conferma a te e la notifica a noi, e Google, sul cui servizio Fogli è salvato l'elenco delle candidature.
+            Entrambi possono trattare i dati anche fuori dall'Unione europea, con le garanzie previste dal GDPR
+            (clausole contrattuali standard).
+          </p>
+          <p>
+            <strong>Dati sulla salute.</strong> Le informazioni sul tuo petto e sui sintomi sono dati particolari (art. 9
+            del GDPR). Le trattiamo solo se dai il consenso esplicito nel form, e solo per valutare la candidatura. Per
+            candidarti non serve mandare foto.
           </p>
           <p class="privacy__base">
-            Base giuridica: le misure precontrattuali che chiedi tu scrivendomi (art. 6, par. 1, lett. b del GDPR) e,
-            per i dati sulla salute, il tuo consenso esplicito (art. 9, par. 2, lett. a del GDPR).
+            Base giuridica: le misure precontrattuali che chiedi tu candidandoti (art. 6, par. 1, lett. b del GDPR) e,
+            per i dati sulla salute, il tuo consenso esplicito (art. 9, par. 2, lett. a del GDPR), che puoi revocare in
+            qualsiasi momento.
           </p>
         </section>
 
@@ -188,8 +192,8 @@ const descrizione = statistiche
           <ul class="privacy__lista">
             {statistiche && <li>Statistiche: solo in forma aggregata, senza dati che ti identificano.</li>}
             <li>
-              Messaggi: per il tempo necessario a risponderti. Se inizi il percorso, per la sua durata e per gli
-              obblighi di legge, per esempio quelli fiscali.
+              Candidature: fino a 12 mesi dall'invio, poi le cancelliamo. Se inizi il percorso, per la sua durata e
+              per gli obblighi di legge, per esempio quelli fiscali.
             </li>
             <li>Dati sulla salute: li cancelliamo quando non servono più, o prima se ce lo chiedi.</li>
             {pixel && <li>Scelta sul pixel di Meta: 6 mesi, nel tuo browser.</li>}
