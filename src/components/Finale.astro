@@ -17,14 +17,17 @@ const conFoto = hasFoto(f.foto) || import.meta.env.DEV;
 ---
 
 <Section id={f.id} mode="golden" zone="bofu" labelledby={`${f.id}-h2`} data-sticky-hide class="finale">
-  <div class:list={['wrap finale__grid', { 'finale__grid--foto': conFoto }]}>
+  <div class:list={['wrap finale__grid', { 'finale__grid--foto': conFoto, 'finale__grid--testo': !conFoto }]}>
     {conFoto && (
       <Foto slot={f.foto} ratio="4:5" sizes="(min-width: 1280px) 480px, (min-width: 1024px) 38vw, 100vw" class="finale__foto" />
     )}
     <div class="finale__testo">
-      <p class="eyebrow">{f.eyebrow}</p>
-      <h2 id={`${f.id}-h2`}>{f.h2}</h2>
-      <p class="finale__lead">{f.lead}</p>
+      {/* Senza ritratto, da 1024px: testa e lead a sinistra (1 a 7), lettera e CTA a destra (8 a 12). */}
+      <div class="finale__testa">
+        <p class="eyebrow">{f.eyebrow}</p>
+        <h2 id={`${f.id}-h2`}>{f.h2}</h2>
+        <p class="finale__lead">{f.lead}</p>
+      </div>
       <div class="finale__lettera">
         {f.lettera.map((p) => <p>{p}</p>)}
       </div>
@@ -46,6 +49,7 @@ const conFoto = hasFoto(f.foto) || import.meta.env.DEV;
   .finale__grid { display: grid; gap: var(--space-7); }
   .finale__foto { max-width: 26rem; border-radius: var(--r-2); overflow: hidden; box-shadow: var(--shadow-print); }
   .finale__testo { display: grid; gap: var(--space-5); max-width: 40rem; }
+  .finale__testa { display: grid; gap: var(--space-5); }
   .finale__testo h2 { margin-top: calc(-1 * var(--space-2)); }
   .finale__lead { font-size: var(--fs-h3); font-weight: 600; line-height: 1.25; letter-spacing: -.01em; text-wrap: balance; }
   .finale__lettera { display: grid; gap: var(--space-4); padding-top: var(--space-5); border-top: 1px solid var(--line); }
@@ -58,5 +62,15 @@ const conFoto = hasFoto(f.foto) || import.meta.env.DEV;
     .finale__grid--foto { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--space-6); align-items: start; }
     .finale__foto { grid-column: 1 / 6; max-width: none; position: sticky; top: var(--space-9); }
     .finale__grid--foto .finale__testo { grid-column: 7 / -1; }
+    .finale__grid--testo .finale__testo { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--space-6); max-width: none; }
+    .finale__grid--testo .finale__testo > * { grid-column: 8 / -1; }
+    .finale__grid--testo .finale__testo > .finale__testa { grid-column: 1 / 8; grid-row: 1 / span 5; align-self: start; position: sticky; top: calc(var(--bar-desktop-h) + var(--space-7)); }
+    .finale__grid--testo h2 { font-size: var(--fs-hero); line-height: var(--lh-hero); }
+    .finale__grid--testo .finale__lettera { padding-top: 0; border-top: 0; }
+  }
+  /* Da 1024 a 1279px cinque colonne non bastano al bottone grande (440px, una riga): la lettera parte dalla 7. */
+  @media (min-width: 1024px) and (max-width: 1279.98px) {
+    .finale__grid--testo .finale__testo > * { grid-column: 7 / -1; }
+    .finale__grid--testo .finale__testo > .finale__testa { grid-column: 1 / 7; }
   }
 </style>

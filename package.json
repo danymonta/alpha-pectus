@@ -3,9 +3,12 @@
   "private": true,
   "type": "module",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/piattaforma.mjs",
     "preview": "astro preview",
     "check": "node scripts/check-copy.mjs",
     "budget": "node scripts/budget.mjs"

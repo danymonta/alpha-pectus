@@ -1,6 +1,7 @@
 // Misurazione senza cookie (spec G.4, contratto par. 8). Piattaforma. Caricato da Analytics.astro
 // solo se ANALYTICS.plausibleDomain è impostato (in sviluppo anche senza: gli eventi finiscono in console).
-// - window.paTrack(nome, props): un evento Plausible via sendBeacon all'endpoint proxy (netlify.toml).
+// - window.paTrack(nome, props): un evento Plausible via sendBeacon all'endpoint proxy:
+//   functions/pa/api/event.js (Cloudflare Pages) o netlify.toml (Netlify).
 //   Ogni evento e la pagina vista portano le proprietà src e variant.
 // - Un solo listener delegato: clic su [data-evt], proprietà da data-evt-<prop>; su <summary> solo in apertura.
 //   I link [data-dm] li misura cta.js (dm_click).

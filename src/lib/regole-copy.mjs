@@ -76,3 +76,17 @@ function trova(testo, regole) {
   }
   return out;
 }
+
+// Caratteri presenti nel font Archivo istanziato (src/assets/fonts/README.txt, comando pyftsubset).
+// Un carattere fuori lista uscirebbe nel font di sistema: lo segnala caratteriFuoriFont() (check-copy, testo HTML).
+// A capo e tabulazioni sono spazi bianchi, non glifi: ammessi.
+export const CARATTERI_FONT =
+  /[^\t\n\r -~ ©«°·»ÀÈÉÌÒÙàèéìíòóùú‘’“”…€]/gu;
+
+/** Caratteri fuori dal sottoinsieme del font (vedi CARATTERI_FONT), con il codice U+XXXX nel nome. */
+export function caratteriFuoriFont(testo) {
+  return trova(testo, [{ nome: 'carattere fuori dal font', re: CARATTERI_FONT }]).map((v) => ({
+    ...v,
+    nome: `carattere fuori dal font (U+${v.trovato.codePointAt(0).toString(16).toUpperCase().padStart(4, '0')})`,
+  }));
+}

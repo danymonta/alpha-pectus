@@ -1,8 +1,11 @@
 ---
 // Informativa privacy /privacy/ (spec H, G.4, G.5, G.8). Piattaforma. Indicizzabile, in italiano.
 // BOZZA IN ATTESA DI REVISIONE LEGALE (J.4 punto 6, J.5 punto 16). I dati aziendali vengono da AZIENDA
-// (src/data/site.mjs): finché sono vuoti la pagina mostra "da completare: ..." ben visibile, e
-// scripts/check-copy.mjs lo segnala come avviso (errore con LANCIO=1).
+// (src/data/site.mjs). In sviluppo (astro dev) i dati mancanti escono come "da completare: ..." ben
+// visibile, insieme all'avviso di revisione legale; in produzione la pagina usa frasi neutre al loro posto
+// e non mostra l'avviso. Il controllo di lancio legge AZIENDA direttamente.
+// Spazi: testo ed espressioni {…} restano sulla stessa riga, o con {' '} esplicito, altrimenti Astro
+// toglie lo spazio tra il testo e il dato.
 // Le parti su statistiche e pixel seguono la configurazione reale (ANALYTICS, PIXEL_ID).
 // Nessun link DM qui (G.1). Testo da spostare in un file dati quando il legale lo approva.
 import Base from '../../layouts/Base.astro';
@@ -10,18 +13,25 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import Consenso from '../../components/Consenso.astro';
 import Icon from '../../components/Icon.astro';
-import { AZIENDA, ANALYTICS, PIXEL_ID, SOCIAL, SITE_UPDATED } from '../../data/site.mjs';
+import { AZIENDA, ANALYTICS, PIXEL_ID, SOCIAL, SITE_UPDATED, HOSTING } from '../../data/site.mjs';
 import { pagina404, footer } from '../../data/pagina';
 import { dataIt } from '../../lib/testo';
 
 const statistiche = Boolean(ANALYTICS.plausibleDomain);
 const pixel = Boolean(PIXEL_ID);
 const ig = SOCIAL.instagram.handle;
+const DEV = import.meta.env.DEV;
+const societaOk = Boolean(AZIENDA.ragioneSociale && AZIENDA.partitaIva);
+const emailOk = Boolean(AZIENDA.email);
+const host = HOSTING.nome;
+const descrizione = statistiche
+  ? 'Come pectus.percorsoalpha.com tratta i dati: statistiche senza cookie, nessun tracciamento pubblicitario senza consenso, i messaggi su Instagram, i dati sulla salute e i tuoi diritti.'
+  : 'Come pectus.percorsoalpha.com tratta i dati: nessun cookie di profilazione, nessun tracciamento pubblicitario senza consenso, i messaggi su Instagram, i dati sulla salute e i tuoi diritti.';
 ---
 
 <Base
   title="Informativa privacy | Percorso Alpha Pectus"
-  description="Come pectus.percorsoalpha.com tratta i dati: statistiche senza cookie, nessun tracciamento pubblicitario senza consenso, i messaggi su Instagram, i dati sulla salute e i tuoi diritti."
+  description={descrizione}
   path="/privacy/"
   schema={false}
 >
@@ -37,19 +47,35 @@ const ig = SOCIAL.instagram.handle;
             hai. In breve: nessun cookie di profilazione, nessun dato sul tuo corpo raccolto dal sito, e i dati sulla
             salute solo in chat, con il tuo consenso esplicito.
           </p>
-          <p class="privacy__avviso" role="note">
-            Testo in attesa di revisione legale: può ancora cambiare. La data dell'ultimo aggiornamento è in fondo.
-          </p>
+          {
+            DEV && (
+              <p class="privacy__avviso" role="note">
+                Testo in attesa di revisione legale: può ancora cambiare. La data dell'ultimo aggiornamento è in fondo.
+              </p>
+            )
+          }
         </header>
 
         <section class="privacy__blocco" aria-labelledby="titolare">
           <h2 id="titolare" class="privacy__h2">Chi tratta i tuoi dati</h2>
           <p>
-            Il titolare del trattamento è Percorso Alpha,
-            {AZIENDA.ragioneSociale || <span class="privacy__manca">da completare: ragione sociale e sede</span>},
-            P.IVA {AZIENDA.partitaIva || <span class="privacy__manca">da completare: partita IVA</span>}.
-            Per qualsiasi domanda sui tuoi dati puoi scrivere a
-            {AZIENDA.email ? <a href={`mailto:${AZIENDA.email}`}>{AZIENDA.email}</a> : <span class="privacy__manca">da completare: email</span>}.
+            {
+              societaOk ? (
+                <>Il titolare del trattamento è Percorso Alpha, {AZIENDA.ragioneSociale}, P.IVA{' '}{AZIENDA.partitaIva}.</>
+              ) : DEV ? (
+                <>Il titolare del trattamento è Percorso Alpha,{' '}{AZIENDA.ragioneSociale || <span class="privacy__manca">da completare: ragione sociale e sede</span>}, P.IVA{' '}{AZIENDA.partitaIva || <span class="privacy__manca">da completare: partita IVA</span>}.</>
+              ) : (
+                <>Il titolare del trattamento è Percorso Alpha (dati societari in aggiornamento).</>
+              )
+            }{' '}{
+              emailOk ? (
+                <>Per qualsiasi domanda sui tuoi dati puoi scrivere a{' '}<a href={`mailto:${AZIENDA.email}`}>{AZIENDA.email}</a>.</>
+              ) : DEV ? (
+                <>Per qualsiasi domanda sui tuoi dati puoi scrivere a{' '}<span class="privacy__manca">da completare: email</span>.</>
+              ) : (
+                <>Per qualsiasi domanda sui tuoi dati puoi scrivermi su Instagram, a {ig}.</>
+              )
+            }
           </p>
         </section>
 
@@ -76,9 +102,10 @@ const ig = SOCIAL.instagram.handle;
             sintomi o su testi che scrivi.
           </p>
           <p>
-            <strong>Server.</strong> Il sito è ospitato da Netlify, che per consegnare le pagine tratta dati tecnici
+            <strong>Server.</strong> Il sito è ospitato da {host}, che per consegnare le pagine tratta dati tecnici
             come l'indirizzo IP e il tipo di browser nei registri del server, per il tempo necessario alla sicurezza
-            del servizio. Netlify agisce come responsabile del trattamento.
+            del servizio. {host} agisce come responsabile del trattamento e può trattare questi dati anche fuori
+            dall'Unione europea, con le garanzie previste dal GDPR.
           </p>
           <p>
             <strong>Nessuna richiesta a terzi.</strong> Caratteri, immagini e script arrivano dal nostro dominio:
@@ -90,10 +117,19 @@ const ig = SOCIAL.instagram.handle;
             personali. Quando lo tocchi, la parola PETTO viene copiata negli appunti del telefono, così puoi
             incollarla in chat: il sito non legge i tuoi appunti.
           </p>
-          <p class="privacy__base">
-            Base giuridica: il legittimo interesse a far funzionare il sito e a misurarne l'uso in forma aggregata
-            (art. 6, par. 1, lett. f del GDPR).
-          </p>
+          {
+            statistiche ? (
+              <p class="privacy__base">
+                Base giuridica: il legittimo interesse a far funzionare il sito e a misurarne l'uso in forma aggregata
+                (art. 6, par. 1, lett. f del GDPR).
+              </p>
+            ) : (
+              <p class="privacy__base">
+                Base giuridica: il legittimo interesse a far funzionare il sito in sicurezza (art. 6, par. 1, lett. f
+                del GDPR).
+              </p>
+            )
+          }
         </section>
 
         <section class="privacy__blocco" aria-labelledby="pixel">
@@ -133,8 +169,7 @@ const ig = SOCIAL.instagram.handle;
           </p>
           <p>
             I messaggi li leggiamo io o il mio team, per risponderti, capire il tuo caso e, se ha senso, fissare una
-            chiamata. Le prime risposte possono partire da uno strumento di risposta automatica
-            (<span class="privacy__manca">da completare: nome dello strumento</span>), che agisce come responsabile
+            chiamata. Le prime risposte possono partire da uno strumento di risposta automatica{DEV && <>{' '}(<span class="privacy__manca">da completare: nome dello strumento</span>)</>}, che agisce come responsabile
             del trattamento.
           </p>
           <p>
@@ -169,8 +204,15 @@ const ig = SOCIAL.instagram.handle;
             cambia la liceità di quanto fatto prima.
           </p>
           <p>
-            Scrivi a {AZIENDA.email ? <a href={`mailto:${AZIENDA.email}`}>{AZIENDA.email}</a> : <span class="privacy__manca">da completare: email</span>},
-            oppure in DM su Instagram a {ig}. Se pensi che i tuoi dati siano trattati in modo non corretto, puoi fare
+            {
+              emailOk ? (
+                <>Scrivi a{' '}<a href={`mailto:${AZIENDA.email}`}>{AZIENDA.email}</a>, oppure in DM su Instagram a {ig}.</>
+              ) : DEV ? (
+                <>Scrivi a{' '}<span class="privacy__manca">da completare: email</span>, oppure in DM su Instagram a {ig}.</>
+              ) : (
+                <>Scrivimi in DM su Instagram, a {ig}.</>
+              )
+            }{' '}Se pensi che i tuoi dati siano trattati in modo non corretto, puoi fare
             reclamo al Garante per la protezione dei dati personali (garanteprivacy.it).
           </p>
         </section>

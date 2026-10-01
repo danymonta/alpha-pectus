@@ -113,7 +113,7 @@
   --scrim-chip: rgb(14 13 12 / .7);               /* etichette su foto: "2016 · 63 kg" */
   --scrim-mobile: linear-gradient(to top, rgb(14 13 12 / .88) 0%, rgb(14 13 12 / .8) 35%, transparent 65%);
   --scrim-desktop: linear-gradient(to right, rgb(14 13 12 / .92) 0%, rgb(14 13 12 / .75) 35%, transparent 62%);
-  --sticky-bg: rgb(25 23 21 / .96);               /* night surface al 96% */
+  --sticky-bg: rgb(25 23 21);                     /* night surface piena: il testo della pagina non traspare sotto frizione e riga di aiuto */
   --header-bar-bg: rgb(25 23 21 / .88);           /* night surface all'88% */
   --progress-unseen: rgb(243 238 230 / .4);       /* bone al 40% */
 
@@ -168,9 +168,9 @@
   --tap-lg: 48px;       /* controlli del reel e toggle */
   --btn-h: 56px;        /* bottone DM */
   --btn-h-sm: 52px;     /* bottone DM nella barra fissa, bottone outline */
-  /* Spazio riservato in fondo pagina su mobile: bordo 1 + padding 12+12 + bottone 52 + gap 8 + frizione breve su due righe
-     (a 390px va a capo). La safe area la aggiunge .riserva-sticky. */
-  --sticky-h: calc(1px + 24px + 52px + 8px + 2 * 1.5 * 0.9375rem);
+  /* Altezza reale della barra fissa mobile: bordo 1 + padding 8 + bottone 52 + gap 3 + frizione micro su una riga
+     (1.2 x 0.9375rem) + padding 6 = 88px. La safe area la aggiungono .riserva-sticky e scroll-padding-bottom. */
+  --sticky-h: calc(1px + 8px + 52px + 3px + 1.2 * 0.9375rem + 6px);
   --bar-desktop-h: 72px; /* header e barra fissa desktop (C.1), bordo compreso */
 
   /* ---------------- Texture (B.5) ---------------- */

@@ -7,8 +7,9 @@
 import Section from './Section.astro';
 import Foto from './Foto.astro';
 import Esercizio from './Esercizio.astro';
+import Icon from './Icon.astro';
 import { hasFoto } from '../lib/foto';
-import { postura } from '../data/pagina';
+import { postura, CHIPS_ESERCIZIO } from '../data/pagina';
 
 const { specchio: sp, esercizi: es, svolta } = postura;
 const conFoto = hasFoto(sp.foto.chiuse) && hasFoto(sp.foto.aperte);
@@ -16,6 +17,9 @@ const stati = [
   { v: 'chiuse', label: sp.toggle.chiuse, slot: sp.foto.chiuse },
   { v: 'aperte', label: sp.toggle.aperte, slot: sp.foto.aperte },
 ] as const;
+// Le chip sono le stesse per i tre esercizi (CHIPS_ESERCIZIO nei dati): si rendono una volta sola.
+const chips = CHIPS_ESERCIZIO;
+const ICONE = ['calendar', 'band'] as const;
 ---
 
 <Section id={postura.id} mode="paper" zone="mofu" labelledby={`${postura.id}-h2`} data-evt-zone="postura">
@@ -26,11 +30,13 @@ const stati = [
       <p class="t-lead">{postura.intro}</p>
     </header>
 
-    <div id={sp.id} class:list={['postura__p', { postura__specchio: conFoto }]} style="--g:var(--space-5)">
-      <h3>{sp.h3}</h3>
+    {/* Prova dello specchio. Con le foto: controllo segmentato (due radio in una pillola), foto 4:5, payoff sempre
+        visibile, poi le istruzioni. Lo scambio delle foto è solo CSS (:has sul blocco). Senza foto: solo testo. */}
+    <div id={sp.id} class:list={['postura__blocco postura__specchio', { 'postura__specchio--foto': conFoto }]}>
+      <h3 class="postura__h3">{sp.h3}</h3>
       {
         conFoto && (
-          <fieldset class="postura__demo" data-specchio>
+          <fieldset class="postura__seg" data-specchio>
             <legend class="visually-hidden">{sp.toggle.ariaGruppo}</legend>
             {stati.map((s, i) => (
               <>
@@ -45,17 +51,20 @@ const stati = [
                 <label for={`specchio-${s.v}`} class="postura__l">{s.label}</label>
               </>
             ))}
-            <div class="postura__foto">
-              {stati.map((s) => (
-                <Foto slot={s.slot} ratio="4:5" sizes="(min-width: 1024px) 460px, (min-width: 768px) 460px, 60vw" widths={[360, 480, 720, 960]} />
-              ))}
-            </div>
-            <p class="postura__payoff t-small t-muted">{sp.payoff}</p>
           </fieldset>
         )
       }
+      {
+        conFoto && (
+          <div class="postura__foto">
+            {stati.map((s) => (
+              <Foto slot={s.slot} ratio="4:5" sizes="(min-width: 1024px) 460px, 100vw" widths={[360, 480, 720, 960]} />
+            ))}
+          </div>
+        )
+      }
+      <p class="t-lead postura__payoff">{sp.payoff}</p>
       <div class="postura__testo postura__p" style="--g:var(--space-4)">
-        {!conFoto && <p class="t-lead">{sp.payoff}</p>}
         <ol class="postura__p" style="--g:var(--space-3)" role="list">
           {sp.istruzioni.map((r) => <li class="postura__passo">{r}</li>)}
         </ol>
@@ -74,9 +83,22 @@ const stati = [
       </div>
     </div>
 
-    <div id={es.id} class="postura__p" style="--g:var(--space-5)" data-evt-zone="esercizi">
-      <h3>{es.h3}</h3>
+    <div id={es.id} class="postura__blocco postura__p" style="--g:var(--space-5)" data-evt-zone="esercizi">
+      <h3 class="postura__h3">{es.h3}</h3>
       <p class="t-lead postura__testa">{es.apertura}</p>
+      {/* Le due indicazioni valgono per tutti e tre gli esercizi: una volta sola, sotto l'apertura. */}
+      {
+        chips.length > 0 && (
+          <ul class="postura__chips" role="list">
+            {chips.map((c, i) => (
+              <li class="postura__chip t-small">
+                <Icon name={ICONE[i] ?? 'check'} size={18} />
+                {c}
+              </li>
+            ))}
+          </ul>
+        )
+      }
       <ol class="postura__lista" role="list">
         {
           es.lista.map((e) => (
@@ -118,53 +140,74 @@ const stati = [
   .postura__sum { list-style: none; cursor: pointer; }
   .postura__sum::-webkit-details-marker { display: none; }
 
-  /* Demo: foto a sinistra, i due radio in verticale a destra (mobile); da 768px il controllo va sotto la foto. */
-  .postura__demo {
-    display: grid;
-    grid-template: auto auto 1fr / 3fr 2fr;
-    gap: var(--space-3);
+  /* Sottoblocchi #specchio e #esercizi: filetto in alto e H3 più presente. */
+  .postura__blocco { padding-top: var(--space-6); border-top: 1px solid var(--line-strong); }
+  .postura__h3 { font-family: var(--font-display); font-size: clamp(1.5rem, 1.3rem + 1vw, 2rem); font-stretch: 82%; font-weight: 700; line-height: 1.15; }
+
+  /* Specchio: impilato su mobile (controllo, foto, payoff, istruzioni). */
+  .postura__specchio { display: grid; gap: var(--space-5); }
+  .postura__payoff { color: var(--text); max-width: 40rem; }
+  .postura__seg {
+    display: flex;
     min-width: 0;
+    margin: 0;
     padding: 0;
-    border: 0;
+    border: 1px solid var(--line-strong);
+    border-radius: 99px;
   }
-  .postura__foto { display: grid; grid-area: 1 / 1 / 4; align-self: start; border-radius: var(--r-2); overflow: hidden; }
-  .postura__foto > * { grid-area: 1 / 1; transition: opacity var(--dur-2) var(--ease); }
-  .postura__foto > :last-child, #specchio-aperte:checked ~ .postura__foto > :first-child { opacity: 0; }
-  #specchio-aperte:checked ~ .postura__foto > :last-child { opacity: 1; }
   .postura__l {
     display: flex;
+    flex: 1 1 0;
     align-items: center;
     justify-content: center;
     min-height: var(--tap-lg);
     padding: 0 var(--space-3);
-    border: 1px solid var(--line-strong);
-    border-radius: var(--r-btn);
+    border-radius: 99px;
     font-size: var(--fs-small);
     font-weight: 650;
     line-height: 1.2;
     text-align: center;
     cursor: pointer;
-    transition: background-color var(--dur-2) var(--ease);
+    transition: background-color var(--dur-2) var(--ease), color var(--dur-2) var(--ease);
   }
   :checked + .postura__l { background: var(--text); color: var(--bg); }
   :focus-visible + .postura__l { outline: 2px solid var(--focus); outline-offset: 3px; }
-  .postura__payoff { align-self: end; }
+  .postura__foto { display: grid; border-radius: var(--r-2); overflow: hidden; }
+  .postura__foto > * { grid-area: 1 / 1; transition: opacity var(--dur-2) var(--ease); }
+  .postura__foto > :last-child,
+  .postura__specchio:has(#specchio-aperte:checked) .postura__foto > :first-child { opacity: 0; }
+  .postura__specchio:has(#specchio-aperte:checked) .postura__foto > :last-child { opacity: 1; }
 
+  /* Esercizi: le chip una volta sola. */
+  .postura__chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .postura__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-3);
+    border: 1px solid var(--line-strong);
+    border-radius: 99px;
+  }
   .postura__lista, .postura__note { display: grid; gap: var(--space-7); }
+  .postura__lista { gap: var(--space-5); }
   .postura__note { gap: var(--space-4); }
   .postura__nota { padding: var(--space-5); background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-2); }
 
   @media (min-width: 768px) {
     .postura__w { --g: var(--space-9); }
-    .postura__demo { grid-template: auto auto / 1fr 1fr; max-width: 460px; }
-    .postura__foto { grid-area: 1 / 1 / 2 / 3; }
-    .postura__payoff { grid-column: 1 / 3; }
     .postura__note { grid-template-columns: 1fr 1fr; }
   }
   @media (min-width: 1024px) {
-    .postura__specchio { display: grid; grid-template-columns: 5fr 6fr; column-gap: var(--space-9); }
-    .postura__specchio > h3 { grid-column: 1 / 3; }
-    .postura__specchio > .postura__testo { align-self: center; }
+    /* Specchio: foto in 1 a 5; controllo, payoff e istruzioni in 7 a 12, allineati in alto.
+       Senza foto: payoff a sinistra, istruzioni a destra. */
+    .postura__specchio { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--space-6); row-gap: var(--space-5); align-items: start; }
+    .postura__specchio > * { grid-column: 7 / -1; }
+    .postura__specchio > .postura__h3 { grid-column: 1 / -1; }
+    .postura__specchio:not(.postura__specchio--foto) > .postura__payoff { grid-column: 1 / 6; }
+    .postura__specchio:not(.postura__specchio--foto) > .postura__testo { grid-row: 2; }
+    .postura__specchio--foto { grid-template-rows: auto auto auto auto 1fr; }
+    .postura__specchio--foto > .postura__foto { grid-column: 1 / 6; grid-row: 2 / 6; }
+    .postura__seg { max-width: 28rem; }
     .postura__lista { grid-template-columns: repeat(3, 1fr); gap: var(--space-6); }
   }
 </style>

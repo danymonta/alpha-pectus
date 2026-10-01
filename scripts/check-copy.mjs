@@ -1,4 +1,4 @@
-// Controllo automatico del copy sulle pagine generate (spec F.10, J.4 punto 8). Gira nella build Netlify
+// Controllo automatico del copy sulle pagine generate (spec F.10, J.4 punto 8). Gira nella build di deploy
 // (npm run build && npm run check): un problema ferma il deploy.
 // Scansiona:
 //   - il testo visibile delle pagine HTML;
@@ -8,19 +8,22 @@
 //   - i valori testuali del JSON-LD;
 //   - i file .txt (robots.txt, llms.txt), .xml e .webmanifest;
 //   - i bundle JS first-party in _astro/ (solo le regole marcate codice: trattini, emoji, parole vietate).
+//   - nel testo HTML (visibile, attributi, SVG, JSON-LD): ogni carattere deve esistere nel font Archivo istanziato.
 // Controlli di coerenza: robots.txt e llms.txt esistono, llms.txt riporta i numeri di STATS.
+// Clip degli esercizi mancanti in video/: avviso (non bloccante).
 // Regole condivise in src/lib/regole-copy.mjs.
 //
 // Uso:
 //   npm run check                              controlla dist/
 //   DIST=/tmp/mia-dist node scripts/check-copy.mjs
 //   node scripts/check-copy.mjs --dist=/tmp/mia-dist
-//   LANCIO=1 node scripts/check-copy.mjs       controllo di lancio: anche gli avvisi ("da completare") fermano
+//   LANCIO=1 node scripts/check-copy.mjs       controllo di lancio: anche gli avvisi ("da completare") fermano,
+//                                              e servono i dati aziendali (AZIENDA in src/data/site.mjs)
 import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
 import { join, resolve, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { violazioni, avvisi } from '../src/lib/regole-copy.mjs';
-import { STATS } from '../src/data/site.mjs';
+import { violazioni, avvisi, caratteriFuoriFont } from '../src/lib/regole-copy.mjs';
+import { STATS, AZIENDA } from '../src/data/site.mjs';
 
 const argDist = process.argv.find((a) => a.startsWith('--dist='))?.slice(7);
 const DIST = resolve(argDist ?? process.env.DIST ?? fileURLToPath(new URL('../dist/', import.meta.url)));
@@ -110,6 +113,7 @@ for (const f of files) {
   for (const b of blocchi) {
     for (const v of violazioni(b.testo, { soloTesto: b.soloTesto })) segnala(f, b.dove, v);
     for (const v of avvisi(b.testo)) segnala(f, b.dove, v, !LANCIO);
+    if (f.endsWith('.html')) for (const v of caratteriFuoriFont(b.testo)) segnala(f, b.dove, v);
   }
 }
 
@@ -133,6 +137,22 @@ if (existsSync(llms)) {
       console.log(`llms.txt [coerenza] non contiene "${atteso}" (src/data/site.mjs, STATS): aggiorna public/llms.txt`);
       errori++;
     }
+  }
+}
+
+// Clip degli esercizi (sezione postura): senza, la variante /v/postura/ non mostra i movimenti.
+const clipMancanti = [1, 2, 3].map((n) => `esercizio-${n}.mp4`).filter((n) => !existsSync(join(DIST, 'video', n)));
+if (clipMancanti.length) {
+  console.log(`AVVISO clip mancanti in public/video/: ${clipMancanti.join(', ')}. Non sponsorizzare /v/postura/ senza le clip.`);
+}
+
+// Controllo di lancio: dati aziendali obbligatori (privacy, JSON-LD). In produzione i segnaposto non si vedono più,
+// quindi il controllo si fa sui dati, non sul testo della pagina.
+if (LANCIO) {
+  const vuoti = ['ragioneSociale', 'partitaIva', 'email'].filter((k) => !String(AZIENDA[k] ?? '').trim());
+  if (vuoti.length) {
+    console.log(`LANCIO: dati aziendali mancanti in src/data/site.mjs (AZIENDA): ${vuoti.join(', ')}. Compilali prima di pubblicare.`);
+    errori++;
   }
 }
 

@@ -113,7 +113,7 @@ export function grafoJsonLd(): Record<string, unknown> {
         name: SITE_NAME,
         serviceType: 'Coaching online di allenamento a corpo libero per rendere il pectus excavatum meno visibile',
         description:
-          'Percorso di 12 mesi, a casa, senza palestra: tre sessioni a settimana da circa 45 minuti su quattro pilastri (postura, petto in tre zone, respiro, composizione corporea), con la tecnica controllata sui video del cliente. Non sostituisce la valutazione medica nei casi con sintomi a cuore o polmoni.',
+          'Percorso di 12 mesi, a casa, senza palestra: tre sessioni a settimana da circa 45 minuti su quattro pilastri (postura, petto in tre zone, respiro, composizione corporea), con la tecnica controllata sui video del cliente. Non sostituisce la valutazione medica nei casi con sintomi cardiaci o respiratori.',
         provider: { '@id': ORG },
         areaServed: { '@type': 'Country', name: 'Italia' },
         audience: pubblico,
@@ -135,7 +135,7 @@ export function grafoJsonLd(): Record<string, unknown> {
         '@id': ID.domande,
         url: ID.domande,
         inLanguage: 'it-IT',
-        isPartOf: { '@id': ID.website },
+        isPartOf: { '@id': ID.webpage },
         about: { '@id': ID.condizione },
         mainEntity: domande.map((d) => ({
           '@type': 'Question',

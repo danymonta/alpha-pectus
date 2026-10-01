@@ -1,6 +1,6 @@
-# Deploy di pectus.percorsoalpha.com su Netlify (spec J.3, D37, G.4).
-# Un solo file per redirect, rewrite, edge function e header. Le regole [[redirects]] valgono in ordine:
-# vince la prima che corrisponde.
+# Deploy alternativo su Netlify (spec J.3, D37, G.4). Host principale: Cloudflare Pages.
+# Header e link brevi stanno in public/_headers e public/_redirects, letti da entrambe le piattaforme:
+# non ripeterli qui. Qui restano solo le cose che esistono solo su Netlify.
 
 [build]
   # La build si ferma se il controllo del copy trova un problema (spec F.10, J.4 punto 8).
@@ -9,6 +9,10 @@
 
 [build.environment]
   NODE_VERSION = "22"
+
+# La cartella functions/ in radice è di Cloudflare Pages: Netlify non deve toccarla.
+[functions]
+  directory = "netlify/functions"
 
 # ---------------------------------------------------------------------------
 # 1. Dominio netlify.app verso il dominio vero (301).
@@ -23,66 +27,9 @@
 #   force = true
 
 # ---------------------------------------------------------------------------
-# 2. Link brevi per i post organici (302 con UTM, spec G.4). Le inserzioni a pagamento NON passano di qui:
-# puntano direttamente a /v/<variante>/?utm_source=instagram&utm_medium=paid&... (nessun redirect).
-# Token di sorgente che ne derivano (src/scripts/sorgente.js): ig-bio, ig-story, ig-dm, ig-dmauto,
-# yt-channel, yt-description.
-# Alla prima anteprima verifica che :splat venga sostituito anche dentro la query (curl -I /s/prova).
-# Se non succede, scrivi una regola per ogni slug.
+# 2. Analytics senza cookie: eventi Plausible (server UE) dal nostro dominio (rewrite 200).
+# Su Cloudflare Pages lo stesso percorso lo serve functions/pa/api/event.js.
 # ---------------------------------------------------------------------------
-[[redirects]]
-  from = "/ig"
-  to = "/?utm_source=instagram&utm_medium=bio&utm_campaign=pectus&utm_content=bio"
-  status = 302
-  force = true
-
-[[redirects]]
-  from = "/s/*"
-  to = "/?utm_source=instagram&utm_medium=story&utm_campaign=pectus&utm_content=:splat"
-  status = 302
-  force = true
-
-[[redirects]]
-  from = "/dm"
-  to = "/?utm_source=instagram&utm_medium=dm&utm_campaign=pectus&utm_content=manuale"
-  status = 302
-  force = true
-
-[[redirects]]
-  from = "/mc/*"
-  to = "/?utm_source=instagram&utm_medium=dm_auto&utm_campaign=pectus&utm_content=:splat"
-  status = 302
-  force = true
-
-[[redirects]]
-  from = "/yt"
-  to = "/?utm_source=youtube&utm_medium=channel&utm_campaign=pectus&utm_content=about"
-  status = 302
-  force = true
-
-[[redirects]]
-  from = "/yt/*"
-  to = "/?utm_source=youtube&utm_medium=description&utm_campaign=pectus&utm_content=:splat"
-  status = 302
-  force = true
-
-[[redirects]]
-  from = "/specchio"
-  to = "/?utm_source=instagram&utm_medium=story&utm_campaign=pectus&utm_content=specchio#specchio"
-  status = 302
-  force = true
-
-# ---------------------------------------------------------------------------
-# 3. Analytics senza cookie: Plausible (server UE) servito dal nostro dominio (rewrite 200).
-# Zero richieste a terze parti dal browser. Si attiva impostando ANALYTICS.plausibleDomain in src/data/site.mjs
-# (e aggiungendo il sito su plausible.io). Percorsi uguali a ANALYTICS.scriptPath e ANALYTICS.eventPath.
-# ---------------------------------------------------------------------------
-[[redirects]]
-  from = "/pa/js/script.js"
-  to = "https://plausible.io/js/script.js"
-  status = 200
-  force = true
-
 [[redirects]]
   from = "/pa/api/event"
   to = "https://plausible.io/api/event"
@@ -90,55 +37,9 @@
   force = true
 
 # ---------------------------------------------------------------------------
-# 4. Edge function: /?v=<variante> serve la pagina statica /v/<variante>/ (spec D3, J.2).
-# Solo sulla root. Variante sconosciuta o vuota: pagina base con 200.
-# Verifica alla prima anteprima:
-#   curl -s "https://<anteprima>/?v=storia&utm_source=instagram&fbclid=test" | grep -o '<h1[^>]*>.*</h1>'
-#   curl -s -o /dev/null -w "%{http_code}\n" "https://<anteprima>/?v=xyz"      (deve dare 200)
+# 3. Edge function: /?v=<variante> serve la pagina statica /v/<variante>/ (spec D3, J.2).
+# Su Cloudflare Pages lo fa functions/index.js.
 # ---------------------------------------------------------------------------
 [[edge_functions]]
   path = "/"
   function = "hero-variant"
-
-# ---------------------------------------------------------------------------
-# 5. Header.
-# ---------------------------------------------------------------------------
-[[headers]]
-  for = "/*"
-  [headers.values]
-    Strict-Transport-Security = "max-age=31536000"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
-
-# File con hash nel nome: non cambiano mai.
-[[headers]]
-  for = "/_astro/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-  for = "/_astro/noindex-*"
-  [headers.values]
-    X-Robots-Tag = "noindex"
-
-[[headers]]
-  for = "/llms.txt"
-  [headers.values]
-    Content-Type = "text/plain; charset=utf-8"
-
-[[headers]]
-  for = "/robots.txt"
-  [headers.values]
-    Content-Type = "text/plain; charset=utf-8"
-
-[[headers]]
-  for = "/manifest.webmanifest"
-  [headers.values]
-    Content-Type = "application/manifest+json; charset=utf-8"
-
-# Clip degli esercizi: nomi fissi, quindi cache di un giorno (non immutable).
-[[headers]]
-  for = "/video/*"
-  [headers.values]
-    Cache-Control = "public, max-age=86400"

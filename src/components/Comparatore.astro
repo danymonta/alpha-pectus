@@ -69,7 +69,7 @@ const larghezze = [360, 480, 720, 960, 1200];
     (viste.length > 1 || conAnno) && (
       <div class="comparatore__barra">
         {viste.length > 1 && (
-          <fieldset class="comparatore__seg">
+          <fieldset class="comparatore__schede">
             {legende && <legend class="visually-hidden">{legende.vista}</legend>}
             {viste.map((v, i) => (
               <>
@@ -180,8 +180,24 @@ const larghezze = [360, 480, 720, 960, 1200];
 
 <style>
   .comparatore { display: grid; gap: var(--space-4); }
-  .comparatore__barra { display: flex; flex-wrap: wrap; gap: var(--space-3); }
-  .comparatore__seg { display: flex; flex: 1 1 auto; min-width: 0; padding: 0; border: 0; }
+  .comparatore__barra { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-5); }
+  /* Vista (Fronte, Tre quarti): schede di testo, l'attiva sottolineata in amber-ink. */
+  .comparatore__schede { display: flex; gap: var(--space-5); min-width: 0; margin: 0; padding: 0; border: 0; border-bottom: 1px solid var(--line); }
+  .comparatore__schede label {
+    display: flex;
+    align-items: center;
+    min-height: var(--tap-lg);
+    margin-bottom: -1px;
+    border-bottom: 2px solid transparent;
+    color: var(--muted);
+    font-size: var(--fs-small);
+    font-weight: 650;
+    cursor: pointer;
+    transition: color var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease);
+  }
+  .comparatore__schede :checked + label { border-bottom-color: var(--accent-text); color: var(--text); }
+  /* Tempo (Dopo un anno, Oggi): controllo segmentato a pillola, 48px. */
+  .comparatore__seg { display: flex; flex: 1 1 auto; min-width: 0; margin: 0; padding: 0; border: 1px solid var(--line-strong); border-radius: 99px; }
   .comparatore__seg label, .comparatore__opz label {
     display: flex;
     flex: 1 1 auto;
@@ -189,15 +205,14 @@ const larghezze = [360, 480, 720, 960, 1200];
     justify-content: center;
     min-height: var(--tap-lg);
     padding: 0 var(--space-4);
-    border: 1px solid var(--line-strong);
     font-size: var(--fs-small);
     font-weight: 650;
     cursor: pointer;
     transition: background-color var(--dur-2) var(--ease);
   }
-  .comparatore__seg label:first-of-type { border-radius: var(--r-btn) 0 0 var(--r-btn); }
-  .comparatore__seg label:last-of-type { border-radius: 0 var(--r-btn) var(--r-btn) 0; margin-left: -1px; }
-  :checked + label { background: var(--text); color: var(--bg); }
+  .comparatore__seg label { border-radius: 99px; }
+  .comparatore__opz label { border: 1px solid var(--line-strong); }
+  .comparatore__seg :checked + label { background: var(--text); color: var(--bg); }
   :focus-visible + label { outline: 2px solid var(--focus); outline-offset: 3px; position: relative; }
   .comparatore:has([value='tre-quarti']:checked, [value='profilo']:checked) .comparatore__dopo { visibility: hidden; }
 

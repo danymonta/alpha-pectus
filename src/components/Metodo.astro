@@ -1,7 +1,6 @@
 ---
 // Il metodo #metodo (spec C.8). Proprietario: engineer "metodo".
-// Quattro pilastri: impilati su mobile, 2 x 2 da 1024px uniti da una linea --amber-ink da 01 a 04
-// (a serpentina nei margini: 01 → 02, giro a destra, ritorno nello spazio tra le righe, 03 → 04).
+// Quattro pilastri: impilati su mobile, 2 x 2 da 1024px, con un punto --amber-ink sul numero di ogni carta.
 // Ogni carta: numero, H3, "Cosa fa", TorsoDiagram con la zona accesa, <details> "Come" (lever_open).
 // Poi la chiusura e la striscia #da-dove-parti. Nessuna CTA.
 import Section from './Section.astro';
@@ -139,7 +138,7 @@ const voce = (s: string) => s.match(/^(\p{Lu}\p{Ll}+): (.+)$/u);
   @media (min-width: 1024px) {
     .metodo__grid { --p: var(--space-6); --g: var(--space-7); grid-template-columns: 1fr 1fr; }
     .metodo__card { grid-template-columns: 1fr 11rem; }
-    /* Nodo sul bordo alto di ogni carta e linea da 01 a 04 (decorativa). */
+    /* Un punto ambra sul bordo alto di ogni carta, all'altezza del numero: i passi da 01 a 04, senza linee fuori griglia. */
     .metodo__n::before {
       content: "";
       position: absolute;
@@ -149,29 +148,6 @@ const voce = (s: string) => s.match(/^(\p{Lu}\p{Ll}+): (.+)$/u);
       height: 9px;
       border-radius: 50%;
       background: var(--accent-text);
-    }
-    .metodo__card::before, .metodo__card::after {
-      content: "";
-      position: absolute;
-      pointer-events: none;
-      border: 0 solid var(--accent-text);
-    }
-    .metodo__card:nth-child(odd)::before { top: -1px; left: var(--p); width: calc(100% + var(--g)); border-top-width: 1px; }
-    .metodo__card:nth-child(2)::before {
-      top: -1px;
-      left: var(--p);
-      right: calc(var(--g) / -2);
-      height: calc(100% + var(--g) / 2 + 1px);
-      border-width: 1px 1px 0 0;
-      border-top-right-radius: var(--r-3);
-    }
-    .metodo__card:nth-child(3)::after {
-      top: calc(var(--g) / -2);
-      left: var(--p);
-      right: calc(-100% - var(--g) * 1.5);
-      height: calc(var(--g) / 2);
-      border-width: 1px 0 0 1px;
-      border-top-left-radius: var(--r-3);
     }
   }
 </style>

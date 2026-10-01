@@ -34,7 +34,10 @@ const [isolamento, conferma] = pensiero.isolamento;
         <p class="t-muted">{isolamento}</p>
         {conferma && <p class="t-lead"><strong>{conferma}</strong></p>}
       </div>
+    </div>
 
+    {/* La chiusura esce dalla colonna: a tutta larghezza sta in due righe. */}
+    <div class="pensiero__chiude pensiero__p" style="--g:var(--space-8)">
       <p class="t-h2 pensiero__fine">{pensiero.chiusura}</p>
 
       <p>
@@ -49,13 +52,18 @@ const [isolamento, conferma] = pensiero.isolamento;
 
 <style>
   .pensiero__p { display: grid; align-content: start; gap: var(--g); }
-  .pensiero__col { position: relative; z-index: 2; grid-column: 1 / -1; }
+  .pensiero__col, .pensiero__chiude { position: relative; z-index: 2; grid-column: 1 / -1; }
+  .pensiero__chiude { margin-top: var(--space-8); }
   .pensiero__scene { padding-left: var(--space-5); border-left: 1px solid var(--line-strong); max-width: 46ch; }
   .pensiero__h3 { font-size: var(--fs-h3); }
   .pensiero__cit { max-width: 30ch; }
   .pensiero__isola { max-width: 44ch; }
   .pensiero__fine { max-width: 17ch; }
   @media (min-width: 1024px) {
-    .pensiero__col { grid-column: 2 / 10; }
+    .pensiero__col { grid-column: 2 / 10; max-width: 52rem; }
+    .pensiero__scene, .pensiero__isola { max-width: none; }
+    .pensiero__cit { max-width: 40ch; }
+    .pensiero__chiude { grid-column: 2 / -1; }
+    .pensiero__fine { max-width: none; }
   }
 </style>

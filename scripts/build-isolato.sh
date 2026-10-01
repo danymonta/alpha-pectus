@@ -22,6 +22,8 @@ if [ "$MODO" = "dev" ]; then
 fi
 rm -rf "$OUT"
 npx astro build --outDir "$OUT"
+# Stesso passo di "npm run build" (regole pages.dev in _headers solo con CF_PAGES=1).
+DIST="$OUT" node scripts/piattaforma.mjs
 DIST="$OUT" node scripts/check-copy.mjs
 DIST="$OUT" node scripts/budget.mjs
 echo "Output: $OUT"

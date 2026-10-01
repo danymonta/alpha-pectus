@@ -14,6 +14,11 @@ const { fasi, notaMese3: nota, settimana } = percorso;
 const MESI = 12;
 // Desktop: la barra si riempie mentre passa dal 75% al 50% dell'altezza dello schermo, mese dopo mese.
 const riempi = (mesi: number) => +(25 + (25 * mesi) / MESI).toFixed(2);
+// "Dal mese 2 all'8. Costruire" -> ["Dal mese 2 all'8.", "Costruire"]
+const mesiFase = (h: string) => {
+  const k = h.lastIndexOf('. ');
+  return k > 0 ? [h.slice(0, k + 1), h.slice(k + 2)] : [h];
+};
 ---
 
 <Section id={percorso.id} mode="paper" zone="mofu" labelledby={`${percorso.id}-h2`}>
@@ -22,6 +27,7 @@ const riempi = (mesi: number) => +(25 + (25 * mesi) / MESI).toFixed(2);
       <p class="eyebrow">{percorso.eyebrow}</p>
       <h2 id={`${percorso.id}-h2`}>{percorso.h2}</h2>
       <p class="t-lead t-muted">{percorso.lead}</p>
+      {percorso.sintesi && <p class="t-body percorso__sintesi">{percorso.sintesi}</p>}
     </header>
 
     <div class="percorso__tl">
@@ -45,7 +51,8 @@ const riempi = (mesi: number) => +(25 + (25 * mesi) / MESI).toFixed(2);
       {
         fasi.map((f, i) => (
           <div class="percorso__fase" style={`--a:${f.daMese};--k:${i * 4 + 1};--c:var(--${f.tono})`}>
-            <h3>{f.h3}</h3>
+            {/* "Mese 1. Testare": su mobile i mesi diventano l'etichetta della carta, il nome della fase il titolo. */}
+            <h3>{mesiFase(f.h3).map((x, k) => (k === 0 && mesiFase(f.h3).length > 1 ? <span class="percorso__mesi">{x.replace(/\.$/, '')}<span class="percorso__punto">.</span> </span> : x))}</h3>
             <p>{f.testo}</p>
           </div>
         ))
@@ -73,49 +80,32 @@ const riempi = (mesi: number) => +(25 + (25 * mesi) / MESI).toFixed(2);
 <style>
   .percorso__head { max-width: 46rem; }
 
-  /* ---- Mobile: binario verticale ---- */
-  .percorso__tl {
+  .percorso__sintesi { max-width: 46rem; }
+
+  /* ---- Mobile: tre carte di fase impilate (bordo alto nel colore della fase), poi la nota del mese 3. ---- */
+  .percorso__tl { display: grid; gap: var(--space-3); margin-top: var(--space-7); }
+  .percorso__m, .percorso__track, .percorso__seg { display: none; }
+  .percorso__fase {
     display: grid;
-    grid-template-columns: 1.25rem 6px 1fr;
-    grid-template-rows: repeat(12, minmax(2.75rem, auto));
-    column-gap: var(--space-4);
-    margin-top: var(--space-8);
+    gap: var(--space-2);
+    align-content: start;
+    padding: var(--space-4) var(--space-4) var(--space-5);
+    border-top: 4px solid var(--c);
+    border-radius: var(--r-1);
+    background: var(--surface);
   }
-  .percorso__m {
-    grid-area: var(--i) / 1;
+  .percorso__mesi {
+    display: block;
+    margin-bottom: var(--space-1);
+    font-family: var(--font-sans);
     font-size: var(--fs-micro);
     font-weight: 620;
-    line-height: 1;
-    font-variant-numeric: tabular-nums lining-nums;
-    text-align: right;
+    letter-spacing: .14em;
+    text-transform: uppercase;
     color: var(--muted);
-    padding-top: .35rem;
   }
-  .percorso__track, .percorso__seg { grid-area: 1 / 2 / 13; background: var(--line); border-radius: 3px; }
-  .percorso__seg { grid-area: var(--a) / 2 / var(--b); background: var(--c); border-radius: 0; transform-origin: top; }
-  .percorso__fase { grid-area: var(--a) / 3; display: grid; gap: var(--space-2); align-content: start; padding-bottom: var(--space-6); }
-  .percorso__fase h3::before {
-    content: "";
-    display: inline-block;
-    width: .7em;
-    height: .7em;
-    margin-right: .45em;
-    background: var(--c);
-    border: 1px solid var(--line-strong);
-    border-radius: 2px;
-  }
-  .percorso__nota { grid-area: var(--a) / 3 / span 2; position: relative; align-self: start; padding: var(--space-4) 0 var(--space-6); }
-  .percorso__nota::before {
-    content: "";
-    position: absolute;
-    top: calc(var(--space-4) + .45em);
-    left: calc(var(--space-4) * -1 - 10px);
-    width: 14px;
-    height: 14px;
-    border: 2px solid var(--text);
-    border-radius: 50%;
-    background: var(--bg);
-  }
+  .percorso__punto { display: none; }
+  .percorso__nota { padding: var(--space-3) 0 0 var(--space-4); border-left: 2px solid var(--text); font-size: var(--fs-body); }
   .percorso__claim {
     max-width: 30ch;
     margin-top: var(--space-7);
@@ -135,17 +125,51 @@ const riempi = (mesi: number) => +(25 + (25 * mesi) / MESI).toFixed(2);
   /* ---- Da 1024px: barra orizzontale ---- */
   @media (min-width: 1024px) {
     .percorso__tl {
+      display: grid;
       grid-template-columns: repeat(12, 1fr);
       grid-template-rows: auto auto 14px auto;
-      column-gap: 0;
+      gap: 0;
+      margin-top: var(--space-8);
     }
-    .percorso__m { grid-area: 2 / var(--i); text-align: left; padding: 0 0 var(--space-3) var(--space-2); border-left: 1px solid var(--line-strong); }
-    .percorso__track { grid-area: 3 / 1 / 4 / -1; }
-    .percorso__seg { grid-area: 3 / var(--a) / 4 / var(--b); transform-origin: left; }
-    .percorso__fase { grid-area: 4 / var(--k) / 5 / span 4; padding: var(--space-6) var(--space-7) 0 0; }
+    .percorso__m {
+      display: block;
+      grid-area: 2 / var(--i);
+      padding: 0 0 var(--space-3) var(--space-2);
+      border-left: 1px solid var(--line-strong);
+      font-size: var(--fs-micro);
+      font-weight: 620;
+      line-height: 1;
+      font-variant-numeric: tabular-nums lining-nums;
+      color: var(--muted);
+    }
+    .percorso__track, .percorso__seg { display: block; grid-area: 3 / 1 / 4 / -1; background: var(--line); border-radius: 3px; }
+    .percorso__seg { grid-area: 3 / var(--a) / 4 / var(--b); background: var(--c); border-radius: 0; transform-origin: left; }
+    .percorso__fase { grid-area: 4 / var(--k) / 5 / span 4; padding: var(--space-6) var(--space-7) 0 0; border: 0; border-radius: 0; background: none; }
     .percorso__fase h3 { font-size: var(--fs-lead); }
-    .percorso__nota { grid-area: 1 / var(--a) / 2 / span 5; padding: 0 0 var(--space-5) var(--space-4); border-left: 2px solid var(--text); }
-    .percorso__nota::before { top: auto; bottom: -7px; left: -8px; }
+    .percorso__fase h3::before {
+      content: "";
+      display: inline-block;
+      width: .7em;
+      height: .7em;
+      margin-right: .45em;
+      background: var(--c);
+      border: 1px solid var(--line-strong);
+      border-radius: 2px;
+    }
+    .percorso__punto { display: inline; }
+    .percorso__mesi { display: inline; margin: 0; font: inherit; letter-spacing: normal; text-transform: none; color: inherit; }
+    .percorso__nota { position: relative; grid-area: 1 / var(--a) / 2 / span 5; padding: 0 0 var(--space-5) var(--space-4); font-size: var(--fs-lead); }
+    .percorso__nota::before {
+      content: "";
+      position: absolute;
+      bottom: -7px;
+      left: -8px;
+      width: 14px;
+      height: 14px;
+      border: 2px solid var(--text);
+      border-radius: 50%;
+      background: var(--bg);
+    }
     .percorso__claim { margin-top: var(--space-8); }
   }
 

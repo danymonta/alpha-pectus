@@ -13,7 +13,8 @@ import { SOCIAL, AZIENDA, PIXEL_ID, PERCORSO_ALPHA_URL } from '../data/site.mjs'
 import { dataIt } from '../lib/testo';
 
 interface Props {
-  /** true sulle pagine senza note (404, privacy): niente #fonti, i link di ritorno non avrebbero destinazione. */
+  /** true sulle pagine di servizio (404, privacy): solo lockup, social, riga legale e link Privacy.
+   *  Niente presentazione, niente #fonti (i link di ritorno non avrebbero destinazione). */
   compatto?: boolean;
 }
 const { compatto = false } = Astro.props;
@@ -35,14 +36,19 @@ const legale = [
 ].filter(Boolean) as string[];
 ---
 
-<footer class="footer mode-night riserva-sticky" data-sticky-hide>
+{/* Le pagine compatte (404, privacy) non hanno la barra fissa: niente spazio riservato. */}
+<footer class:list={['footer mode-night', { 'riserva-sticky': !compatto }]} data-sticky-hide>
   <Curva da="golden" a="night" profondita="piatta" />
   <div class="wrap footer__in">
     <div class="footer__brand">
       <Lockup class="footer__lockup" />
-      <p class="t-muted">{ft.descrizione}</p>
-      <p class="footer__firma">{ft.firma}</p>
-      <p class="footer__seguimi">{ft.seguimi}</p>
+      {!compatto && (
+        <>
+          <p class="t-muted">{ft.descrizione}</p>
+          <p class="footer__firma">{ft.firma}</p>
+          <p class="footer__seguimi">{ft.seguimi}</p>
+        </>
+      )}
       <ul role="list" class="footer__social">
         {ft.social.map((s) => {
           const rete = SOCIAL[s.rete as keyof typeof SOCIAL];
@@ -65,7 +71,13 @@ const legale = [
 
     {!compatto && (
     <section id={ft.fonti.id} class="footer__fonti" aria-labelledby="fonti-h2">
-      <h2 id="fonti-h2" class="caps footer__fh">{ft.fonti.h2}</h2>
+      {/* Elenco richiudibile: un clic su [n] o un arrivo con #fonte-n lo apre (src/scripts/fonti.js). */}
+      <details class="footer__det" data-fonti>
+      <summary class="footer__sum" data-evt="sources_open">
+        <h2 id="fonti-h2" class="caps footer__fh">{ft.fonti.h2}</h2>
+        <span class="footer__conta t-num" aria-hidden="true">{fonti.length}</span>
+        <Icon name="plus" size={18} class="footer__piu" />
+      </summary>
       <ol role="list" class="footer__ol">
         {fonti.map((f) => {
           const cit = `${f.editore}, ${f.titolo}${f.anno ? `, ${f.anno}` : ''}`;
@@ -87,21 +99,30 @@ const legale = [
           );
         })}
       </ol>
+      </details>
     </section>
     )}
 
     <div class="footer__base">
-      <p class="footer__disc">{ft.disclaimer}</p>
-      <p>
-        {ft.bylinePrima} <time datetime={ft.data}>{dataIt(ft.data)}</time>.
-      </p>
-      <p class="caps footer__valori">{ft.valori.join(' · ')}</p>
-      <ul role="list" class="footer__legale">
+      {!compatto && (
+        <>
+          <p class="footer__disc">{ft.disclaimer}</p>
+          <p>
+            {ft.bylinePrima} <time datetime={ft.data}>{dataIt(ft.data)}</time>.
+          </p>
+          <ul role="list" class="caps footer__valori footer__riga">
+            {ft.valori.map((v) => <li>{v}</li>)}
+          </ul>
+        </>
+      )}
+      <ul role="list" class="footer__legale footer__riga">
         {legale.map((x) => <li>{x}</li>)}
         <li><a href={L.privacyHref}>{L.privacy}</a></li>
-        <li>
-          <a href={PERCORSO_ALPHA_URL} target="_blank" rel="noopener" data-evt="outbound" data-evt-dest="pa">{L.sitoPA}</a>
-        </li>
+        {!compatto && (
+          <li>
+            <a href={PERCORSO_ALPHA_URL} target="_blank" rel="noopener" data-evt="outbound" data-evt-dest="pa">{L.sitoPA}</a>
+          </li>
+        )}
         {PIXEL_ID && (
           <li><button type="button" class="footer__pref" data-consenso-apri>{ft.preferenzeCookie}</button></li>
         )}
@@ -109,6 +130,10 @@ const legale = [
     </div>
   </div>
 </footer>
+
+<script>
+  import '../scripts/fonti.js';
+</script>
 
 <style>
   .footer__in { display: grid; gap: var(--space-8); padding-block: var(--space-9) var(--space-7); }
@@ -137,6 +162,11 @@ const legale = [
   .footer__link:hover .footer__freccia { transform: translateX(4px); }
 
   .footer__fh { color: var(--muted); font-family: var(--font-sans); font-stretch: 100%; line-height: 1.2; }
+  .footer__sum { display: flex; align-items: center; gap: var(--space-3); min-height: var(--tap-lg); border-bottom: 1px solid var(--line); list-style: none; cursor: pointer; }
+  .footer__sum::-webkit-details-marker { display: none; }
+  .footer__conta { color: var(--muted); font-size: var(--fs-small); }
+  .footer__piu { margin-left: auto; color: var(--accent-text); transition: rotate var(--dur-2) var(--ease); }
+  .footer__det[open] .footer__piu { rotate: 45deg; }
   .footer__ol { display: grid; gap: var(--space-1); margin-top: var(--space-4); font-size: var(--fs-small); line-height: 1.5; }
   .footer__fi { display: grid; grid-template-columns: 2.6em 1fr var(--tap); align-items: start; padding: var(--space-2) 0 var(--space-2) var(--space-3); margin-inline: calc(-1 * var(--space-3)); border-radius: var(--r-1); scroll-margin-top: 30vh; }
   .footer__fi:target { background: var(--surface); box-shadow: inset 2px 0 var(--amber); }
@@ -149,9 +179,10 @@ const legale = [
   .footer__base { display: grid; gap: var(--space-3); padding-top: var(--space-6); border-top: 1px solid var(--line); font-size: var(--fs-small); line-height: 1.5; color: var(--muted); }
   .footer__disc { max-width: var(--measure); }
   .footer__valori { margin-block: var(--space-3); }
-  .footer__legale { display: flex; flex-wrap: wrap; align-items: center; column-gap: var(--space-2); }
-  /* Separatore in coda: se la riga va a capo, la nuova riga non comincia con un punto. */
-  .footer__legale li:not(:last-child)::after { content: "·"; margin-left: var(--space-2); }
+  /* Righe con separatori: il punto sta prima di ogni voce dopo la prima, quindi nessuna riga finisce con un punto. */
+  .footer__riga { display: flex; flex-wrap: wrap; align-items: center; column-gap: var(--space-2); }
+  .footer__riga li + li::before { content: "·"; margin-right: var(--space-2); }
+  .footer__valori { row-gap: var(--space-1); }
   .footer__legale a, .footer__pref { display: inline-flex; align-items: center; min-height: var(--tap); color: var(--text); text-decoration: underline; text-decoration-color: var(--line-strong); }
 
   @media (min-width: 768px) {

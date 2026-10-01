@@ -77,8 +77,9 @@ const inclusi = o.inclusi.filter(Boolean);
     gap: var(--space-7);
     /* Mobile: il pannello va a filo dello schermo, così il bottone DM ha tutta la larghezza. */
     margin-inline: calc(-1 * var(--gutter));
-    padding: var(--space-7) var(--space-4);
-    border-block: 1px solid var(--line);
+    /* Il contenuto resta sul bordo della colonna di tutta la pagina (x = gutter). */
+    padding: var(--space-7) var(--gutter);
+    border-block: 1px solid var(--gold-line);
     background: var(--gold-glow), var(--surface);
     box-shadow: var(--shadow-sheet);
   }

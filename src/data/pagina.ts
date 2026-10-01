@@ -43,7 +43,7 @@ export const hero = {
   provaStriscia: [
     { forte: 'Nato con il pectus excavatum.', testo: 'Mai operato.' },
     { forte: 'Da 63 a 83 kg.', testo: 'Il cambiamento si è visto nel primo anno.' },
-    { forte: `Tra 30 e 40 uomini con il pectus`, testo: `seguiti in 12 mesi, fino a ${STATS.dataStatTesto}.` },
+    { forte: `Tra 30 e 40 uomini con il pectus`, testo: `seguiti negli ultimi 12 mesi, fino a ${STATS.dataStatTesto}.` },
     { forte: '45 euro di attrezzatura.', testo: 'Da casa, senza palestra.' },
   ],
 };
@@ -99,7 +99,7 @@ const capitoliTutti: Capitolo[] = [
     n: 1, id: 'storia-nascita', atto: 1, attoLabel: attoLabel(1),
     etichetta: 'Alla nascita', titolo: 'Un buco nel petto', numerale: null,
     riga: 'Sono nato con un buco nel petto.',
-    voce: "Pectus excavatum. Lo sterno cresce verso l'interno.",
+    voce: 'Pectus excavatum. Lo sterno è infossato.',
     trattamento: 'print', foto: 'storia-01-nascita', filtro: 'duotone', warm: 0, visibile: true,
   },
   {
@@ -181,7 +181,7 @@ const capitoliTutti: Capitolo[] = [
     voce: 'Il complimento più grande della mia vita.',
     trattamento: 'full', foto: 'storia-12-viaggio', filtro: 'naturale', warm: 1, visibile: true,
     chiusura:
-      'Dal 2023, con mio fratello, aiuto altri uomini a fare lo stesso, da casa. Più della metà di quelli che seguo ha il petto come il mio. Sono grato di esserci nato: è il motivo per cui li capisco.',
+      'Dal 2023, con mio fratello, aiuto altri uomini a fare lo stesso, da casa. Sono grato di essere nato così: è il motivo per cui li capisco.',
   },
 ];
 
@@ -245,8 +245,8 @@ export const pensiero = {
     'Probabilmente non conosci nessun altro con il petto come il tuo. Forse perché anche loro, al mare, non ci vanno.',
     'Più della metà degli uomini che seguo ha il petto come il tuo.',
   ],
-  chiusura: 'Non ti serve un petto nuovo. Ti serve che quel pensiero si spenga.',
-  scrollLink: { label: 'Cosa ho fatto, esattamente', href: '#cosa-ho-capito' },
+  chiusura: 'Non ti serve un petto nuovo. Ti serve che quel pensiero si\u00a0spenga.',
+  scrollLink: { label: 'Cosa ho capito, e cosa ho fatto', href: '#cosa-ho-capito' },
 };
 
 /* ------------------------------------------------------------------ */
@@ -268,10 +268,10 @@ export const ponte = {
     etichettaDavvero: 'Quello che succede davvero',
     carte: [
       {
-        h3: "Era tardi per l'operazione. Non per l'allenamento.",
-        detto: '“Andava fatto durante la crescita.” Per l\'ennesima volta.',
+        h3: "L'operazione aveva un momento migliore. L'allenamento non ce l'ha.",
+        detto: "“Andava fatto da ragazzo.” Te l'hanno detto per l'ennesima volta.",
         davvero:
-          "Era tardi per l'operazione, che funziona meglio quando le ossa crescono ancora. Per l'allenamento la finestra non si apre e non si chiude. Io ho iniziato a 18 anni. Chi seguo ne ha 25, 35, 45. E aspettare non è neutro: con gli anni il torace perde elasticità e la scrivania chiude le spalle, un anno dopo l'altro.",
+          "L'operazione funziona meglio quando le ossa crescono ancora, e da adulti comporta più dolore e più complicanze. L'allenamento non ha una finestra che si chiude. Io ho iniziato a 18 anni. Chi seguo ne ha 25, 35, 45.",
       },
       {
         h3: 'Lo sterno non si sposta. Non serve che si sposti.',
@@ -286,7 +286,7 @@ export const ponte = {
 /* ------------------------------------------------------------------ */
 /* La postura #postura (C.6)                                           */
 /* ------------------------------------------------------------------ */
-const CHIPS_ESERCIZIO = ['20 ripetizioni · ogni giorno', 'Elastico sottile · meno di 5 euro'];
+export const CHIPS_ESERCIZIO = ['20 ripetizioni · ogni giorno', 'Elastico sottile · meno di 5 euro'];
 
 export const postura = {
   id: 'postura',
@@ -365,9 +365,10 @@ export const postura = {
     ],
     note: [
       {
-        titolo: 'Fatti male, peggiorano le cose.',
+        // Ripristinare "Guarda bene i video" solo quando esistono public/video/esercizio-1..3.mp4.
+        titolo: 'Se li fai male, peggiorano le cose.',
         testo:
-          'Un esercizio di postura fatto male rinforza proprio lo schema che vuoi togliere. Guarda bene i video e, se puoi, filmati.',
+          'Un esercizio di postura fatto male rinforza proprio lo schema che vuoi togliere. Segui i punti uno per uno e, se puoi, riprenditi con il telefono.',
       },
       {
         titolo: 'Ogni giorno non vuol dire allenarsi ogni giorno.',
@@ -396,7 +397,7 @@ export const errore = {
   detto: '“Allena il petto, così si riempie.”',
   corpo: [
     'Se spingi senza tirare, le spalle si chiudono in avanti. Aggiungi otto ore alla scrivania. Il petto cresce, la postura si chiude, e il buco si vede di più, non di meno.',
-    'Non è colpa tua. Nessuno ti ha detto che non ti servono più muscoli. Ti servono i muscoli giusti.',
+    'Non è colpa tua. Nessuno ti ha detto quali muscoli servono. Non basta più massa: servono i muscoli giusti.',
   ],
   diagrammi: [
     {
@@ -421,7 +422,7 @@ export const metodo = {
   id: 'metodo',
   eyebrow: 'Il metodo',
   h2: 'Il metodo per il petto scavato: quattro pilastri.',
-  lead: 'Costruire muscolo non basta a coprire un petto scavato. Il metodo lavora quattro cose insieme, in un ordine preciso. Non ti servono più muscoli. Ti servono i muscoli giusti.',
+  lead: 'Costruire muscolo non basta a coprire un petto scavato. Il metodo lavora su quattro cose insieme, in un ordine preciso.',
   etichette: { cosaFa: 'Cosa fa', come: 'Come' },
   pilastri: [
     {
@@ -441,15 +442,15 @@ export const metodo = {
         "Alto: riempie la parte sopra il buco, dove l'occhio arriva per primo.",
         'Centrale: costruisce le fibre proprio attorno al vuoto. È la zona che cambia quanto sembra profondo.',
         'Basso: forza e carico, con le dip.',
-        "Gli anelli fanno la differenza: danno un allungamento che il pavimento non ti dà. Sul petto centrale conta la contrazione, non l'ampiezza.",
+        'Gli anelli fanno la differenza: in basso ti danno un allungamento che il pavimento non ti dà. Per il petto centrale, però, il punto è stringere bene in cima, non scendere di più.',
       ],
       secondaria: 'Push-up con piedi rialzati, V push-up, push-up sugli anelli, push-up a diamante, dip.' as string | null,
     },
     {
       n: '03', numero: 3, regione: 'respiro' as RegioneTorso,
       titolo: 'Il respiro.',
-      cosaFa: 'Espansione della gabbia toracica, e fiato per chi ne ha poco.',
-      come: ["Non è un riscaldamento. È parte del protocollo. Conta ancora di più se hai l'asma o ti manca il fiato."],
+      cosaFa: 'Apre la gabbia toracica e ti abitua a respirare bene sotto sforzo.',
+      come: ['Non è un riscaldamento. È parte del protocollo. Se ti manca il fiato, prima fatti controllare da un medico: se è tutto a posto, questo pilastro conta ancora di più.'],
       secondaria: null as string | null,
     },
     {
@@ -457,13 +458,13 @@ export const metodo = {
       titolo: "L'addome e le costole sporgenti.",
       cosaFa: 'Le costole ai lati smettono di sembrare aperte.',
       come: [
-        "In quasi tutti i casi di pectus le costole ai lati del buco sporgono. Un addome morbido le fa sembrare ancora più aperte. Prima costruiamo, poi definiamo: più l'addome è piatto, meno si notano.",
+        "Spesso, con il pectus, le costole ai lati del buco sporgono. Un addome morbido le fa sembrare ancora più aperte. Prima costruiamo, poi definiamo: più l'addome è piatto, meno si notano.",
       ],
       secondaria: null as string | null,
     },
   ],
   chiusura:
-    'Nessun pilastro da solo basta. È l\'ordine in cui li lavori, e come si parlano, che li rende un metodo e non una lista di esercizi.',
+    "Nessun pilastro da solo basta. È l'ordine in cui li lavori, e come si combinano, che li rende un metodo e non una lista di esercizi.",
   daDoveParti: {
     id: 'da-dove-parti',
     h3: 'Da dove parti',
@@ -488,7 +489,7 @@ export const metodo = {
 export const percorso = {
   id: 'percorso',
   eyebrow: 'Quanto tempo ci vuole',
-  h2: 'Dodici mesi. Non sei.',
+  h2: 'Dodici mesi, non sei.',
   lead: 'Sei mesi costruiscono un fisico. Per un petto che gli altri vedono in modo diverso, dodici mesi sono il minimo onesto. Serve una fase per costruire e una per definire, e non si possono comprimere.',
   fasi: [
     {
@@ -497,7 +498,7 @@ export const percorso = {
     },
     {
       nome: 'Costruire', h3: "Dal mese 2 all'8. Costruire", daMese: 2, aMese: 8, tono: 'phase-2',
-      testo: 'Progressione sugli esercizi scelti: leve più difficili, tempi più lenti, più ampiezza, carico sulle dip. Un leggero surplus calorico. Postura e respiro ogni settimana.',
+      testo: 'Progressione sugli esercizi scelti: leve più difficili, tempi più lenti, più ampiezza, carico sulle dip. Un leggero surplus calorico. Postura e respiro in ogni fase.',
     },
     {
       nome: 'Scoprire', h3: 'Dal mese 9 al 12. Scoprire', daMese: 9, aMese: 12, tono: 'phase-3',
@@ -510,6 +511,9 @@ export const percorso = {
       "Al terzo mese potresti guardarti allo specchio e non vedere niente sul petto. È normale, e te lo dico adesso. Il fisico cambia prima del petto, ed è quello che ti tiene dentro.",
   },
   claim: 'Cambiamento visibile entro il primo anno, risultato completo a 12 mesi.',
+  /** Frase citabile che riassume il metodo (F.7). */
+  sintesi:
+    'Il Percorso Alpha Pectus dura 12 mesi: un mese di test, sette mesi di costruzione con un leggero surplus calorico, quattro mesi di definizione. Tre sessioni a settimana da circa 45 minuti, a casa.',
   settimana: [
     { icona: 'clock', testo: 'Tre sessioni a settimana da circa 45 minuti, a casa.' },
     ...(C.posturaQuotidianaNelProgramma ? [{ icona: 'calendar', testo: 'Più pochi minuti di postura ogni giorno.' }] : []),
@@ -522,7 +526,7 @@ export const percorso = {
 export const attrezzatura = {
   id: 'attrezzatura',
   eyebrow: 'Allenamento a casa, senza palestra',
-  h2: 'Tutto quello che ti serve costa 45 euro.',
+  h2: 'Per allenarti a casa bastano 45 euro di attrezzatura.',
   foto: 'attrezzatura',
   scontrino: {
     titolo: 'Scontrino',
@@ -537,11 +541,11 @@ export const attrezzatura = {
   },
   /** Marcatori numerati sulla foto, posizione in percentuale: da regolare quando arriva la foto vera. */
   oggetti: [
-    { n: 1, forte: 'Anelli da ginnastica.', testo: 'Petto centrale in massimo allungamento, dip, trazioni.', marker: { x: '28%', y: '34%' } },
+    { n: 1, forte: 'Anelli da ginnastica.', testo: 'Allungamento profondo per il petto, dip, trazioni.', marker: { x: '28%', y: '34%' } },
     { n: 2, forte: 'Elastici.', testo: 'Postura e assistenza. Lo stesso elastico degli esercizi del video.', marker: { x: '64%', y: '58%' } },
     { n: 3, forte: 'Sbarra per trazioni.', testo: 'Per tirare: il contrappeso di tutto quello che spingi.', marker: { x: '50%', y: '82%' } },
   ],
-  sotto: "Nient'altro. Niente manubri, niente panca, niente abbonamento. Ti alleni dove ho iniziato io: in camera tua. Senza spogliatoio, senza spiegare niente a nessuno.",
+  sotto: "Nient'altro. Niente manubri, niente panca, niente abbonamento in palestra. Ti alleni dove ho iniziato io: in camera tua. Senza spogliatoio, senza spiegare niente a nessuno.",
   cta: { placement: 'metodo', leadIn: 'Ora sai cosa serve. Vuoi sapere da dove partiresti tu?' },
 };
 
@@ -552,7 +556,13 @@ export const ilMioCaso = {
   id: 'il-mio-caso',
   eyebrow: 'Il mio caso, prima e dopo',
   h2: "Il mio sterno è dov'era. Guarda cosa è cambiato intorno.",
-  lead: 'Il primo caso che ti mostro è il mio, perché è quello che conosco meglio. Il mio pectus era profondo: guarda il 2016. Nessuna operazione, nessuna palestra.',
+  /** H2 quando le foto prima e dopo non sono ancora disponibili. */
+  h2SenzaFoto: "Il mio sterno è dov'era. È cambiato tutto quello che c'è intorno.",
+  lead: 'Il caso che conosco meglio è il mio. Avevo un pectus profondo: guarda il 2016. Nessuna operazione, nessuna palestra.',
+  /** Lead quando le foto prima e dopo non sono ancora disponibili. */
+  leadSenzaFoto: 'Il caso che conosco meglio è il mio. Avevo un pectus profondo: nel 2016 il buco era la prima cosa che si vedeva. Nessuna operazione, nessuna palestra.',
+  /** Sommario del blocco richiudibile con la scheda del caso. */
+  schedaSommario: 'La scheda del mio caso',
   comparatore: {
     h3: 'Il mio pectus excavatum, prima e dopo',
     schede: { fronte: 'Fronte', treQuarti: 'Tre quarti', profilo: 'Profilo' },
@@ -561,8 +571,8 @@ export const ilMioCaso = {
     /** aria-label dello slider (input range). */
     sliderAria: 'Confronta prima e dopo',
     didascalia: C.stessaLuce
-      ? "Stessa posizione, stessa luce. Lo sterno è dov'era: è cambiato quello che c'è intorno."
-      : "Lo sterno è dov'era: è cambiato quello che c'è intorno.",
+      ? "Stessa posizione, stessa luce. Lo sterno è dov'era: è cambiato quello che c'è intorno. È il mio caso, non una promessa: il risultato dipende dal punto di partenza, dalla profondità del pectus e dalla costanza."
+      : "Lo sterno è dov'era: è cambiato quello che c'è intorno. È il mio caso, non una promessa: il risultato dipende dal punto di partenza, dalla profondità del pectus e dalla costanza.",
     nessunRitocco: C.nessunRitocco ? 'Nessun ritocco.' : null,
     soloFrontale2016: 'Del 2016 esiste solo la foto frontale.',
     annotazioni: {
@@ -604,7 +614,7 @@ export const ilMioCaso = {
 export const casiSezione = {
   id: 'casi',
   eyebrow: 'Pectus excavatum prima e dopo',
-  h2: 'Funziona solo su di me? Guarda loro.',
+  h2: 'Funziona solo su\u00a0di\u00a0me? Guarda\u00a0loro.',
   intro: [
     "Sai qual è la paura vera? Non che il metodo non funzioni. È provarci e sentirti confermare quello che ti hanno detto per tutta la vita.",
     'Per questo non ti faccio promesse. Ti faccio vedere uomini come te.',
@@ -635,6 +645,14 @@ export const casiSezione = {
     'I risultati dipendono dal punto di partenza, dalla profondità del pectus e dalla costanza. Nessuna misura è garantita.',
   ],
   cta: { placement: 'casi', leadIn: 'Vuoi capire a chi somiglia il tuo caso?' },
+  /** Testi della sezione quando nessun caso cliente è pubblicato (h2 e intro sostituiscono quelli sopra). */
+  vuoto: {
+    h2: 'Funziona solo su\u00a0di\u00a0me? Non sono l\'unico.',
+    intro: [
+      'Sai qual è la paura vera? Non che il metodo non funzioni. È provarci e sentirti confermare quello che ti hanno detto per tutta la vita.',
+      'Non ti faccio promesse. Ti do i numeri di chi seguo oggi. Le loro foto escono qui solo con il loro consenso scritto, e alcuni preferiscono non mostrare il viso: lo capisco.',
+    ],
+  },
 };
 
 /* ------------------------------------------------------------------ */
@@ -699,20 +717,23 @@ export const FONTI: Fonte[] = [
     url: null, urlCerto: false,
     verificata: false, accesso: null, cita: 'dolore cronico 7% contro 1% (fatto 6, nascosto)', pubblica: false,
   },
+  // pmc-dallas, sict e bambino-gesu non sono citate in pagina: restano non pubblicate, altrimenti
+  // in #fonti uscirebbero senza il rimando "Torna al testo" (F.8). pmc-dallas torna pubblica quando
+  // la frase sulla prevalenza negli adulti (F.7 punto 7) trova posto nella pagina.
   {
     chiave: 'pmc-dallas', editore: 'PubMed Central', titolo: 'Dallas Heart Study, prevalenza del pectus excavatum negli adulti (PMC7205298)', anno: null,
     url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7205298/', urlCerto: true,
-    verificata: false, accesso: null, cita: 'prevalenza negli adulti, indice di Haller', pubblica: true,
+    verificata: false, accesso: null, cita: 'prevalenza negli adulti, indice di Haller', pubblica: false,
   },
   {
     chiave: 'sict', editore: 'Società Italiana di Chirurgia Toracica', titolo: 'Pectus excavatum', anno: null,
     url: 'https://www.sichirurgiatoracica.it/pectus-excavatum-controindicazioni/', urlCerto: false,
-    verificata: false, accesso: null, cita: 'quadro clinico', pubblica: true,
+    verificata: false, accesso: null, cita: 'quadro clinico', pubblica: false,
   },
   {
     chiave: 'bambino-gesu', editore: 'Ospedale Pediatrico Bambino Gesù', titolo: 'Petto escavato', anno: null,
     url: 'https://www.ospedalebambinogesu.it/petto-escavato-80292/', urlCerto: false,
-    verificata: false, accesso: null, cita: 'quadro clinico', pubblica: true,
+    verificata: false, accesso: null, cita: 'quadro clinico', pubblica: false,
   },
 ];
 
@@ -736,14 +757,16 @@ export const confronto = {
   eyebrow: 'Numeri, non opinioni',
   h2: 'Operazione o allenamento per il pectus excavatum',
   intro:
-    "Non sono contro la chirurgia. Se il pectus comprime cuore o polmoni, l'operazione è la strada giusta, e te lo dirò ogni volta. Questo confronto è per chi ha cuore e polmoni a posto e un petto che non vuole più mostrare.",
+    "Non sono contro la chirurgia. Se il pectus comprime cuore o polmoni, la strada è un chirurgo toracico, e te lo dirò ogni volta. Questo confronto è per chi ha cuore e polmoni a posto e un petto che non vuole più mostrare.",
   inChiaro: {
     id: 'in-chiaro',
     eyebrow: 'In chiaro',
     h3: 'Pectus excavatum e allenamento: cosa cambia e cosa no',
+    /** Sommario del blocco richiudibile con le due liste. */
+    dettagli: "Cosa può cambiare l'allenamento, e cosa no",
     definizione: {
       testo:
-        "Il pectus excavatum, in italiano petto escavato, petto scavato o torace a imbuto, è la malformazione più comune della parete toracica: lo sterno e le cartilagini delle coste crescono verso l'interno e al centro del petto si forma un avvallamento. È presente dalla nascita, spesso si accentua durante la crescita ed è da 3 a 4 volte più frequente nei maschi. Le stime vanno da 1 nato su 300 a 1 su 1.000.",
+        "Il pectus excavatum, in italiano petto escavato, petto scavato o torace a imbuto, è la malformazione più comune della parete toracica: lo sterno e le cartilagini costali crescono verso l'interno e al centro del petto si forma un avvallamento. È presente dalla nascita, spesso si accentua durante la crescita ed è da 3 a 4 volte più frequente nei maschi. Le stime vanno da 1 nato su 300 a 1 su 1.000.",
       fonti: ['medscape', 'gavazzeni-petto'],
     },
     puoCambiare: {
@@ -759,26 +782,26 @@ export const confronto = {
       titolo: 'Cosa non può cambiare',
       voci: [
         'Lo sterno e le cartilagini: restano dove sono.',
-        'Una compressione su cuore o polmoni: se hai fiato corto anomalo, dolore al petto o palpitazioni, la strada è un chirurgo toracico.',
+        'Una compressione su cuore o polmoni: se hai affanno insolito, dolore al petto o palpitazioni, la strada è un chirurgo toracico.',
       ],
     },
     nota: 'Nessuno può prometterti un risultato in centimetri: dipende dalla profondità del pectus e dalla costanza.',
-    /** "Aggiornato il <time datetime={SITE_UPDATED}>…</time>. Scritto da Dany Montagnolo." */
-    aggiornatoPrima: 'Aggiornato il',
+    /** "Aggiornato: <time datetime={SITE_UPDATED}>…</time>. Scritto da Dany Montagnolo." */
+    aggiornatoPrima: 'Aggiornato:',
     aggiornatoDopo: 'Scritto da Dany Montagnolo.',
     data: SITE_UPDATED,
   },
   tabella: {
     caption:
-      'Petto escavato: operazione e allenamento a confronto, per i casi senza sintomi a cuore o polmoni',
-    colonne: { dimensione: 'Dimensione', operazione: 'Operazione (Nuss)', allenamento: 'Allenamento' },
+      'Petto escavato: operazione e allenamento a confronto, per i casi senza sintomi cardiaci o respiratori',
+    colonne: { dimensione: 'Voce', operazione: 'Operazione (Nuss)', allenamento: 'Allenamento' },
     righe: [
       { dimensione: 'Cambia lo scheletro', operazione: { testo: 'Sì', fonti: [] as string[] }, allenamento: 'No' },
       { dimensione: 'Cambia come appare il petto', operazione: { testo: 'Sì', fonti: [] as string[] }, allenamento: 'Sì' },
       {
         dimensione: 'Costo in Italia',
         operazione: {
-          testo: 'A carico del Servizio Sanitario Nazionale solo se c\'è una compressione su cuore o polmoni. Nei casi estetici è a carico del paziente.',
+          testo: 'A carico del Servizio Sanitario Nazionale quando il caso è considerato clinico, per esempio con una compressione su cuore o polmoni. Nei casi solo estetici, di solito a carico del paziente.',
           fonti: ['gavazzeni-nuss', 'medicitalia-costi'],
         },
         allenamento: 'Circa 45 euro di attrezzatura, più il percorso',
@@ -851,10 +874,10 @@ export const perChi = {
   nonPerTe: {
     h3: 'Non è per te se',
     voci: [
-      'hai sintomi a cuore o polmoni: fiato corto anomalo, dolore al petto, palpitazioni;',
+      'hai sintomi cardiaci o respiratori: affanno insolito, dolore al petto, palpitazioni;',
       ...(C.politicaMinori18 ? ['hai meno di 18 anni: parlane prima con un medico e con i tuoi genitori;'] : []),
       "hai il petto carenato, con lo sterno che sporge in fuori: è un'altra condizione, e questo percorso non è costruito per quella;",
-      'cerchi un risultato in 30 giorni: non esiste, e chi te lo promette ti sta vendendo qualcosa;',
+      'cerchi un risultato in 30 giorni: non esiste, e chi te lo promette ti sta mentendo;',
       'vuoi che ti prometta che lo sterno si sposterà: non lo farò;',
       'vuoi un PDF di esercizi da fare da solo: questo è un percorso seguito, per dodici mesi.',
     ],
@@ -865,7 +888,7 @@ export const perChi = {
       'Se il pectus ti comprime cuore o polmoni, o hai uno di questi sintomi, vai da un chirurgo toracico. Non è il mio campo, e non farò finta che lo sia.',
   },
   autorita:
-    "Quello di cui mi occupo io è l'uomo che ha cuore e polmoni a posto e da dieci anni non si toglie la maglietta.",
+    "Quello di cui mi occupo io è l'uomo che ha cuore e polmoni a posto e da anni non si toglie la maglietta.",
   cta: { placement: 'perte', leadIn: 'Se ti sei riconosciuto nella prima lista:' },
 };
 
@@ -893,7 +916,7 @@ export const offerta = {
   ],
   beneficio: {
     testo: 'Non lavori solo sul petto. Diventi più forte, più in forma, con una routine che resta.',
-    forte: 'Non è solo fisico. È sicurezza personale.',
+    forte: 'Non è solo fisico. È\u00a0sicurezza personale.',
   },
   cosaSuccede: {
     id: 'cosa-succede',
@@ -912,7 +935,7 @@ export const offerta = {
   },
   rassicurazioni: [
     { icona: 'camera-off', testo: 'Per scrivermi non devi mandare foto.' },
-    { icona: 'eye-off', testo: 'I messaggi diretti sono privati: nessuno dei tuoi follower lo vede.' },
+    { icona: 'eye-off', testo: 'I messaggi diretti sono privati: nessuno dei tuoi follower li vede.' },
     { icona: 'circle-check', testo: 'Chiedere non costa niente e non ti impegna.' },
   ],
   prezzo:
@@ -948,13 +971,13 @@ const GRUPPI_FAQ: { titolo: string; domande: Domanda[] }[] = [
         n: 2, slug: 'senza-operazione', pubblica: true,
         domanda: "Il petto scavato si può migliorare con l'allenamento, senza operazione?",
         risposta:
-          "Sì, se il tuo caso è estetico. L'allenamento non sposta lo sterno, ma cambia tutto quello che c'è intorno: petto, postura, addome. Il risultato è un petto che gli altri vedono in modo diverso. Se hai sintomi a cuore o polmoni, la strada è un chirurgo toracico.",
+          "Sì, se il tuo caso è estetico. L'allenamento non sposta lo sterno, ma cambia tutto quello che c'è intorno: petto, postura, addome. Il risultato è un petto che gli altri vedono in modo diverso. Se hai sintomi cardiaci o respiratori, la strada è un chirurgo toracico.",
       },
       {
         n: 3, slug: 'sterno', pubblica: true,
         domanda: 'Lo sterno si sposta o è solo muscolo?',
         risposta:
-          "Lo sterno non si sposta, e te lo dico chiaro perché quasi nessuno lo fa. Cambiano il muscolo attorno al vuoto, la postura che apre il torace e l'addome che smette di far sporgere le costole.",
+          "Lo sterno non si sposta, e te lo dico chiaro perché quasi nessuno lo fa. Cambiano il muscolo attorno al vuoto, la postura che apre il torace e l'addome, che fa notare meno le costole.",
       },
       {
         n: 4, slug: 'esercizi', pubblica: true,
@@ -966,7 +989,7 @@ const GRUPPI_FAQ: { titolo: string; domande: Domanda[] }[] = [
         n: 5, slug: '35-anni', pubblica: true,
         domanda: 'Ho più di 35 anni: è troppo tardi?',
         risposta:
-          "Era tardi per l'operazione, che funziona meglio durante la crescita. Per l'allenamento no. Aspettare, invece, non è neutro: con gli anni il torace perde elasticità e la postura tende a chiudersi.",
+          "Per l'allenamento no: non ha una finestra che si chiude, e chi seguo ha 25, 35, 45 anni. L'operazione funziona meglio durante la crescita e negli adulti comporta più dolore e più complicanze. Aspettare, però, ha un costo: con gli anni il torace perde elasticità e la postura tende a chiudersi.",
       },
       {
         n: 6, slug: 'profondo', pubblica: true,
@@ -996,7 +1019,7 @@ const GRUPPI_FAQ: { titolo: string; domande: Domanda[] }[] = [
         n: 10, slug: 'operazione-gratuita', pubblica: true,
         domanda: "L'operazione per il pectus è gratuita in Italia?",
         risposta:
-          'Solo quando il caso è considerato patologico, cioè se c\'è una compressione su cuore o polmoni. Se il tuo caso è estetico, la paghi tu. La barra resta nel torace circa tre anni e per toglierla serve un secondo intervento.',
+          'Dipende dalla valutazione del medico. Il Servizio Sanitario Nazionale la copre quando il caso è considerato clinico, per esempio con una compressione su cuore o polmoni. Se è considerato solo estetico, di solito la paghi tu: chiedilo al centro che ti visita. La barra resta nel torace circa tre anni e per toglierla serve un secondo intervento.',
       },
     ],
   },
@@ -1007,7 +1030,7 @@ const GRUPPI_FAQ: { titolo: string; domande: Domanda[] }[] = [
         n: 11, slug: 'allenato-anni', pubblica: true,
         domanda: 'Mi alleno da anni e il buco sembra più profondo: perché?',
         risposta:
-          'Quasi sempre perché hai spinto tanto e tirato poco. Le spalle si chiudono in avanti e il vuoto si vede di più. Non ti servono più muscoli, ti servono quelli giusti, con la trazione in ogni sessione.',
+          'Quasi sempre perché hai spinto tanto e tirato poco. Le spalle si chiudono in avanti e il vuoto si vede di più. Non serve più massa: servono i muscoli giusti, con la trazione in ogni sessione.',
       },
       {
         n: 12, slug: 'mai-allenato', pubblica: true,
@@ -1049,7 +1072,7 @@ const GRUPPI_FAQ: { titolo: string; domande: Domanda[] }[] = [
         n: 17, slug: 'medico', pubblica: true,
         domanda: 'Sei un medico?',
         risposta:
-          'No. Sono un coach e ho il pectus excavatum dalla nascita. Per questo non do consigli medici, e chi ha sintomi a cuore o polmoni lo mando da un chirurgo toracico.',
+          'No. Sono un coach, e ho il pectus excavatum dalla nascita. Non do consigli medici: chi ha sintomi cardiaci o respiratori lo mando da un chirurgo toracico.',
       },
       {
         n: 18, slug: 'foto', pubblica: C.faqFotoPrivate,
@@ -1097,19 +1120,19 @@ export const finale = {
   id: 'scrivimi',
   eyebrow: "L'ultima cosa",
   h2: "L'obiettivo non è uno sterno diverso.",
-  lead: 'È che nessuno se ne accorga. A partire da te.',
+  lead: 'È che il petto smetta di essere la prima cosa che si nota. A partire da te.',
   foto: 'dany-ritratto',
   lettera: [
-    'Io ho aspettato sedici anni prima di scoprire che c\'era una seconda strada. Tu la conosci adesso.',
+    'Io ho aspettato fino a diciotto anni prima di trovare una seconda strada. Tu la conosci adesso.',
     'Non sono un medico. Sono nato con il pectus excavatum, non mi sono mai operato, e dal 2023, con mio fratello, aiuto altri uomini a rendere il petto scavato meno visibile, da casa.',
     'Scrivimi PETTO su Instagram, raccontami il tuo caso, e capiamo insieme da dove partire.',
   ],
   firma: 'Dany',
   firmaSotto: 'Dany Montagnolo, fondatore di Percorso Alpha',
-  aggiornatoPrima: 'Aggiornato il',
+  aggiornatoPrima: 'Aggiornato:',
   data: SITE_UPDATED,
   /** Riga in maiuscoletto (text-transform in CSS, il testo resta in minuscolo). */
-  brandLine: 'Non è solo fisico. È sicurezza personale.',
+  brandLine: 'Non è solo fisico. È\u00a0sicurezza personale.',
   cta: { placement: 'finale' },
 };
 
@@ -1119,7 +1142,7 @@ export const finale = {
 export const footer = {
   descrizione: 'Percorso Alpha Pectus è il programma di Percorso Alpha per chi ha il pectus excavatum.',
   firma: "Lo sterno resta dov'è. Tutto il resto si allena.",
-  seguimi: 'Non sei ancora pronto? Seguimi: del pectus ne parlo apertamente.',
+  seguimi: 'Non sei ancora pronto? Seguimi: parlo del pectus apertamente.',
   social: [
     { rete: 'instagram', etichetta: 'Instagram · @_danymonta', dest: 'ig' },
     { rete: 'youtube', etichetta: 'YouTube · @montappv', dest: 'yt' },

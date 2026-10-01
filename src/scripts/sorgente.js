@@ -1,8 +1,18 @@
 // Sorgente del traffico e variante hero (spec G.1, G.4). Piattaforma. Condiviso da cta.js e analytics.js.
 // Letto una volta da location.search, solo in memoria: niente cookie, niente storage.
-// Token: ig-ad, ig-bio, ig-story, ig-dm, ig-dmauto, yt-channel, yt-description, pa-referral, direct.
+// Token: ig-ad, fb-ad, meta-ad, ig-bio, ig-story, ig-dm, ig-dmauto, yt-channel, yt-description, pa-referral, direct.
+// Inserzioni Meta: utm_source={{site_source_name}} dà ig, fb, an o msg; il costo per DM si giudica su ig-ad.
+// Combinazioni non in mappa: <fonte>-<mezzo> ripuliti (es. tiktok-paid).
 const MAPPA = {
   'instagram/paid': 'ig-ad',
+  'instagram/cpc': 'ig-ad',
+  'ig/paid': 'ig-ad',
+  'ig/cpc': 'ig-ad',
+  'facebook/paid': 'fb-ad',
+  'fb/paid': 'fb-ad',
+  'fb/cpc': 'fb-ad',
+  'an/paid': 'meta-ad',
+  'msg/paid': 'meta-ad',
   'instagram/bio': 'ig-bio',
   'instagram/story': 'ig-story',
   'instagram/dm': 'ig-dm',

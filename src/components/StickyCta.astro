@@ -10,7 +10,7 @@ import QRCode from 'qrcode';
 import CtaDm from './CtaDm.astro';
 import Lockup from './Lockup.astro';
 import Icon from './Icon.astro';
-import { DM_URL, REF_PREFIX, QR_TESTO, FRIZIONE, SOCIAL } from '../data/site.mjs';
+import { DM_URL, REF_PREFIX, QR_TESTO, FRIZIONE, SOCIAL, ARIA_STICKY } from '../data/site.mjs';
 
 // Il QR è uno solo e statico: ref pe_qr distingue i DM arrivati dal desktop.
 const urlQr = `${DM_URL}?ref=${REF_PREFIX}qr`;
@@ -19,32 +19,33 @@ const svgQr = (await QRCode.toString(urlQr, { type: 'svg', margin: 4, errorCorre
   .replace(/fill="#ffffff"/, 'style="fill:var(--night-text)"')
   .replace(/stroke="#000000"/, 'style="stroke:var(--ink)"');
 const testoLink = DM_URL.replace(/^https?:\/\//, '');
-// Testi accessibili brevi (da spostare in src/data/pagina.ts).
+// Testi accessibili: ARIA_STICKY in src/data/site.mjs.
 const ariaQr = `Codice QR: apre la chat con ${SOCIAL.instagram.handle} su Instagram`;
-const ariaChiudi = 'Chiudi';
+const ariaChiudi = ARIA_STICKY.chiudi;
+const ariaBarra = ARIA_STICKY.barra;
 ---
 
-<div class="sticky-cta sticky-cta--basso mode-night" data-sticky data-nosnippet hidden>
-  <CtaDm placement="sticky" size="sm" friction="short" inline={false} class="sticky-cta__cta" />
-</div>
+<aside class="sticky-cta sticky-cta--basso mode-night" aria-label={ariaBarra} data-sticky data-nosnippet hidden>
+  <CtaDm placement="sticky" size="sm" friction="micro" inline={false} class="sticky-cta__cta" />
+</aside>
 
-<div class="sticky-cta sticky-cta--alto mode-night" data-sticky data-nosnippet hidden>
+<aside class="sticky-cta sticky-cta--alto mode-night" aria-label={ariaBarra} data-sticky data-nosnippet hidden>
   <div class="wrap sticky-cta__in">
     <Lockup />
     <CtaDm placement="header" size="sm" friction="none" inline={false} class="sticky-cta__cta" />
   </div>
-</div>
+</aside>
 
 <div id="qr-dm" class="qr mode-night" popover data-qr data-nosnippet hidden role="dialog" aria-labelledby="qr-dm-testo">
+  <button class="qr__chiudi" type="button" popovertarget="qr-dm" popovertargetaction="hide" aria-label={ariaChiudi} data-qr-chiudi>
+    <Icon name="plus" size={20} />
+  </button>
   <div class="qr__codice" role="img" aria-label={ariaQr} set:html={svgQr} />
   <div class="qr__corpo">
     <p id="qr-dm-testo" class="qr__testo">{QR_TESTO}</p>
     <p class="qr__frizione">{FRIZIONE.short}</p>
     <a class="qr__link link-text" href={urlQr} data-qr-link>{testoLink}</a>
   </div>
-  <button class="qr__chiudi" type="button" popovertarget="qr-dm" popovertargetaction="hide" aria-label={ariaChiudi} data-qr-chiudi>
-    <Icon name="plus" size={20} />
-  </button>
 </div>
 
 <script>
@@ -62,10 +63,11 @@ const ariaChiudi = 'Chiudi';
   .sticky-cta--basso {
     bottom: 0;
     border-top: 1px solid var(--line);
-    padding: var(--space-3) max(var(--space-4), env(safe-area-inset-right)) calc(var(--space-3) + env(safe-area-inset-bottom)) max(var(--space-4), env(safe-area-inset-left));
+    /* Altezza reale = --sticky-h (tokens.css): bordo 1 + 8 + bottone 52 + 3 + una riga di frizione + 6. */
+    padding: var(--space-2) max(var(--space-4), env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(var(--space-4), env(safe-area-inset-left));
     transform: translateY(calc(100% + 1px));
   }
-  .sticky-cta--basso > .sticky-cta__cta { gap: var(--space-2); }
+  .sticky-cta--basso > .sticky-cta__cta { gap: 3px; }
   .sticky-cta--alto {
     top: 0;
     display: none;
@@ -113,7 +115,8 @@ const ariaChiudi = 'Chiudi';
     border-radius: var(--r-2);
     overflow: hidden;
   }
-  .qr__corpo { padding-right: var(--space-5); }
+  /* Spazio per il bottone di chiusura: il suo anello di fuoco non copre mai il testo. */
+  .qr__corpo { padding-right: calc(var(--tap) + var(--space-1)); }
   .qr__testo {
     font-size: var(--fs-body);
     font-weight: 650;
@@ -127,14 +130,16 @@ const ariaChiudi = 'Chiudi';
   }
   .qr__chiudi {
     position: absolute;
-    top: var(--space-1);
-    right: var(--space-1);
+    top: var(--space-2);
+    right: var(--space-2);
     display: grid;
     place-items: center;
     width: var(--tap);
     height: var(--tap);
     color: var(--muted);
-    transform: rotate(45deg);
   }
+  .qr__chiudi :global(svg) { transform: rotate(45deg); }
+  /* L'anello di fuoco resta dentro il pannello. */
+  .qr__chiudi:focus-visible { outline-offset: 0; }
   .qr__chiudi:hover { color: var(--text); }
 </style>

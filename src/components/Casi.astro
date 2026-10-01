@@ -18,6 +18,12 @@ const tutti = import.meta.env.DEV ? [...casiPubblicati(), ...casiInAttesa()] : c
 const pectus = tutti.filter((c) => c.pectusConfermato);
 const altri = tutti.filter((c) => !c.pectusConfermato);
 const n = s.cardVisibili;
+// Nessun caso pubblicato (produzione al lancio): testa dedicata, la fascia dei numeri diventa il centro della sezione.
+// Mai "Guarda loro" senza nessuno da guardare. s.vuoto arriva dai dati (copy); in sua assenza resta la testa normale.
+const vuoto = tutti.length === 0;
+const sv = (s as typeof s & { vuoto?: { h2: string; intro: string[] } }).vuoto;
+const h2 = vuoto && sv ? sv.h2 : s.h2;
+const intro = vuoto && sv ? sv.intro : s.intro;
 const gruppi: { casi: Caso[]; secondario: boolean }[] = [
   { casi: pectus, secondario: false },
   { casi: altri, secondario: true },
@@ -25,11 +31,11 @@ const gruppi: { casi: Caso[]; secondario: boolean }[] = [
 ---
 
 <Section id={s.id} mode="golden" zone="bofu" labelledby={`${s.id}-h2`} class="casi grain">
-  <div class="wrap casi__w">
+  <div class:list={['wrap casi__w', { 'casi__w--vuoto': vuoto }]}>
     <header class="casi__testa">
       <p class="eyebrow">{s.eyebrow}</p>
-      <h2 id={`${s.id}-h2`}>{s.h2}</h2>
-      {s.intro.map((p, i) => <p class:list={['t-lead', { casi__forte: i === s.intro.length - 1 }]}>{p}</p>)}
+      <h2 id={`${s.id}-h2`}>{h2}</h2>
+      {intro.map((p, i) => <p class:list={['t-lead', { casi__forte: i === intro.length - 1 }]}>{p}</p>)}
     </header>
 
     <div class="casi__stat">
@@ -114,5 +120,16 @@ const gruppi: { casi: Caso[]; secondario: boolean }[] = [
     .casi__stat { grid-column: 8 / -1; align-self: end; }
     .casi__griglia { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-6); }
     .casi__chiusura { grid-template-columns: 5fr 7fr; align-items: end; column-gap: var(--space-6); }
+    /* Vuoto: testa in 1 a 7, numeri a tutta larghezza, chiusura impilata sotto la colonna del testo. */
+    .casi__w--vuoto .casi__testa { grid-column: 1 / 8; }
+    .casi__w--vuoto .casi__stat { grid-column: 1 / -1; }
+    .casi__w--vuoto .casi__chiusura { grid-column: 1 / 8; grid-template-columns: minmax(0, 1fr); justify-items: start; }
+  }
+  /* Vuoto: la fascia dei numeri è il centro visivo della sezione. */
+  .casi__w--vuoto .casi__stat p:not(.casi__nota) { max-width: none; }
+  .casi__w--vuoto .casi__stat :global(strong) { font-size: clamp(3rem, 2rem + 4vw, 5.5rem); }
+  @media (min-width: 768px) {
+    .casi__w--vuoto .casi__stat { grid-template-columns: 1fr 1fr; column-gap: var(--space-6); }
+    .casi__w--vuoto .casi__nota { grid-column: 1 / -1; }
   }
 </style>

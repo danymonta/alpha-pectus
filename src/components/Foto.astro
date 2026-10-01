@@ -27,6 +27,18 @@ interface Props {
   ratio?: string;
   /** object-position. Default dal registro. */
   focus?: string;
+  /** Ritaglio art-directed sotto 1024px (es. '3:2'): <source media> con getImage width+height, fit cover,
+   *  posizione dal focus. Da 1024px resta il rapporto `ratio`. */
+  ratioMobile?: string;
+  /** sizes della sorgente mobile (default 100vw). */
+  sizesMobile?: string;
+  /** Larghezze della sorgente mobile (default [480, 720, 1080]). */
+  widthsMobile?: number[];
+  /** object-position da 1024px (es. per tenere il volto fuori dalla colonna di testo). */
+  focusDesktop?: string;
+  /** true = caricamento differito via JS: data-srcset/data-src, src 1x1 trasparente, copia reale in <noscript>.
+   *  Lo script del chiamante promuove data-* a srcset/src (vedi src/scripts/reel.js). */
+  differita?: boolean;
   fit?: 'cover' | 'contain';
   /** Classe sul <picture> (e sul segnaposto). */
   class?: string;
@@ -48,6 +60,15 @@ const {
   class: className,
   imgClass,
   segnaposto = true,
+  ratioMobile,
+  sizesMobile = '100vw',
+  widthsMobile = [480, 720, 1080],
+  // alt, ratio e focus: solo per l'<img> (alt) e per lo stile; mai sul <picture>.
+  alt: altProp,
+  ratio: ratioProp,
+  focus: focusProp,
+  focusDesktop,
+  differita = false,
   ...rest
 } = Astro.props;
 
@@ -56,16 +77,16 @@ const info = infoSlot(nome);
 const meta = getFoto(nome);
 // Proprietà lette da una copia: leggerle dall'originale lo pubblicherebbe con gli EXIF.
 const dim = dimensioniFoto(nome);
-const alt = Astro.props.alt ?? info?.alt ?? '';
-const ratio = Astro.props.ratio ?? info?.ratio ?? 'libero';
-const focus = Astro.props.focus ?? info?.focus ?? '50% 50%';
+const alt = altProp ?? info?.alt ?? '';
+const ratio = ratioProp ?? info?.ratio ?? 'libero';
+const focus = focusProp ?? info?.focus ?? '50% 50%';
 const cid = Object.fromEntries(Object.entries(rest).filter(([k]) => k.startsWith('data-astro-cid')));
 const dataAttr = Object.fromEntries(Object.entries(rest).filter(([k]) => !k.startsWith('data-astro-cid')));
 // scopedStyleStrategy 'class': la classe di scope del genitore (astro-xxxx) arriva dentro `class`.
 // La ripetiamo sull'<img> perché i selettori del genitore su imgClass continuino a corrispondere.
 const scope = String(className ?? '').split(/\s+/).filter((c) => /^astro-[a-z0-9]+$/.test(c));
 
-if (Astro.props.alt === undefined && !info) {
+if (altProp === undefined && !info) {
   console.warn(`[foto] slot "${nome}" non è nel registro src/data/foto.ts: passa un alt esplicito.`);
 }
 
@@ -76,12 +97,25 @@ const parseRatio = (r: string): [number, number] | null => {
 };
 const rr = parseRatio(ratio);
 
+/** focus "50% 30%" -> gravità di sharp ("top", "left top"...): il ritaglio in build segue il soggetto. */
+const gravita = (f: string) => {
+  const [x, y] = f.split(/\s+/).map((v) => parseFloat(v));
+  const vy = isNaN(y) ? '' : y < 40 ? 'top' : y > 60 ? 'bottom' : '';
+  const vx = isNaN(x) ? '' : x < 40 ? 'left' : x > 60 ? 'right' : '';
+  return [vx, vy].filter(Boolean).join(' ') || 'centre';
+};
+const rrM = ratioMobile ? parseRatio(ratioMobile) : null;
+const MQ_MOBILE = '(max-width: 1023.98px)';
+// GIF 1x1 trasparente: segnaposto delle foto differite (le dimensioni restano quelle vere, nessuno spostamento).
+const PIXEL = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+
 let render: null | {
   avif: string;
   webp: string;
   fallbackSrc: string;
   w: number;
   h: number;
+  mobile?: { avif: string; webp: string };
 } = null;
 
 if (meta && dim) {
@@ -105,12 +139,35 @@ if (meta && dim) {
     w: maxW,
     h,
   };
+  if (rrM) {
+    // Ritaglio mobile: il lato corto della sorgente limita la larghezza massima.
+    const maxMW = Math.min(dim.width, Math.floor((dim.height * rrM[0]) / rrM[1]));
+    const wm = widthsMobile.filter((w) => w <= maxMW);
+    const lm = wm.length ? wm : [maxMW];
+    const wM = Math.max(...lm);
+    const comuneM = {
+      src: meta,
+      widths: lm,
+      width: wM,
+      height: Math.round((wM * rrM[1]) / rrM[0]),
+      fit: 'cover' as const,
+      position: gravita(focus),
+      layout: 'none' as const,
+      sizes: sizesMobile,
+    };
+    const [am, wbm] = await Promise.all([
+      getImage({ ...comuneM, format: 'avif', quality: 55 }),
+      getImage({ ...comuneM, format: 'webp', quality: 72 }),
+    ]);
+    render.mobile = { avif: am.srcSet.attribute, webp: wbm.srcSet.attribute };
+  }
 }
 
 const stileImg = [
   rr ? `aspect-ratio:${rr[0]}/${rr[1]}` : '',
   `object-fit:${fit}`,
   `object-position:${focus}`,
+  focusDesktop ? `--fd:${focusDesktop}` : '',
 ]
   .filter(Boolean)
   .join(';');
@@ -118,8 +175,10 @@ const mostraSegnaposto = !meta && segnaposto && import.meta.env.DEV;
 ---
 
 {
-  render && (
+  render && !differita && (
     <picture class={className} data-foto={nome} {...cid} {...dataAttr}>
+      {render.mobile && <source media={MQ_MOBILE} type="image/avif" srcset={render.mobile.avif} sizes={sizesMobile} />}
+      {render.mobile && <source media={MQ_MOBILE} type="image/webp" srcset={render.mobile.webp} sizes={sizesMobile} />}
       <source type="image/avif" srcset={render.avif} sizes={sizes} />
       <source type="image/webp" srcset={render.webp} sizes={sizes} />
       <img
@@ -130,11 +189,50 @@ const mostraSegnaposto = !meta && segnaposto && import.meta.env.DEV;
         loading={loading}
         decoding={decoding}
         fetchpriority={fetchpriority}
-        class:list={['foto__img', imgClass, ...scope]}
+        class:list={['foto__img', { 'foto__img--fd': focusDesktop }, imgClass, ...scope]}
         style={stileImg}
         {...cid}
       />
     </picture>
+  )
+}
+{
+  render && differita && (
+    <>
+      <picture class:list={[className, 'foto--differita']} data-foto={nome} data-differita {...cid} {...dataAttr}>
+        <source type="image/avif" data-srcset={render.avif} sizes={sizes} />
+        <source type="image/webp" data-srcset={render.webp} sizes={sizes} />
+        <img
+          src={PIXEL}
+          data-src={render.fallbackSrc}
+          width={render.w}
+          height={render.h}
+          alt={alt}
+          loading={loading}
+          decoding="async"
+          class:list={['foto__img', { 'foto__img--fd': focusDesktop }, imgClass, ...scope]}
+          style={stileImg}
+          {...cid}
+        />
+      </picture>
+      <noscript>
+        <picture class={className} data-foto={nome} {...cid}>
+          <source type="image/avif" srcset={render.avif} sizes={sizes} />
+          <source type="image/webp" srcset={render.webp} sizes={sizes} />
+          <img
+            src={render.fallbackSrc}
+            width={render.w}
+            height={render.h}
+            alt={alt}
+            loading={loading}
+            decoding="async"
+            class:list={['foto__img', { 'foto__img--fd': focusDesktop }, imgClass, ...scope]}
+            style={stileImg}
+            {...cid}
+          />
+        </picture>
+      </noscript>
+    </>
   )
 }
 {
@@ -161,6 +259,11 @@ const mostraSegnaposto = !meta && segnaposto && import.meta.env.DEV;
   .foto__img {
     width: 100%;
     height: auto;
+  }
+  /* Senza JS la copia in <noscript> prende il posto della foto differita. */
+  :global(html:not(.js)) .foto--differita { display: none; }
+  @media (min-width: 1024px) {
+    .foto__img--fd { object-position: var(--fd) !important; }
   }
   .foto-slate {
     --grain-opacity: .06;

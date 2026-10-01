@@ -3,9 +3,12 @@
 //    Se un giorno DM_URL non è più ig.me, al posto del ref usa i parametri UTM.
 // 2. Al tocco: copia PETTO negli appunti e lascia partire subito la navigazione (niente attese, niente toast),
 //    e invia dm_click (cta; src e variant li aggiunge paTrack) via sendBeacon.
+//    Se dopo 1,5 s la pagina è ancora visibile (ig.me non si è aperto, tipico del browser in-app di Instagram),
+//    sotto la CTA toccata compare una volta FRIZIONE.fallback (più FRIZIONE.copiato se la copia è riuscita).
 // 3. Desktop (puntatore fine e almeno 1024px): apre il pannello con il QR (StickyCta.astro) invece di navigare.
+//    Tab fuori dal pannello lo chiude e riporta il focus alla CTA.
 // Senza JS il link funziona com'è nell'HTML.
-import { KEYWORD } from '../data/site.mjs';
+import { KEYWORD, FRIZIONE } from '../data/site.mjs';
 import { SRC, VARIANTE } from './sorgente.js';
 
 const links = document.querySelectorAll('a[data-dm]');
@@ -27,24 +30,55 @@ for (const a of links) {
   } catch {}
 }
 
-const vecchiaCopia = () => {
+// async: restituisce sempre una promessa (false: copia non confermata). Il corpo gira subito, dentro il tocco.
+const vecchiaCopia = async () => {
   try {
     const t = document.createElement('textarea');
     t.value = KEYWORD;
-    t.setAttribute('readonly', '');
+    t.readOnly = true;
     t.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
     document.body.append(t);
     t.select();
     document.execCommand('copy');
     t.remove();
   } catch {}
+  return false;
 };
+// true solo se l'API appunti conferma la copia: è l'unico caso in cui la pagina dice "già copiato".
 const copia = () => {
   try {
-    navigator.clipboard.writeText(KEYWORD).catch(() => {});
+    return navigator.clipboard.writeText(KEYWORD).then(() => true, vecchiaCopia);
   } catch {
-    vecchiaCopia();
+    return vecchiaCopia();
   }
+};
+
+// Riga di aiuto se ig.me non apre la chat. Mai prima della navigazione: il timer parte dopo il tocco.
+const aiuto = (a, copiato) => {
+  const ascolto = new AbortController();
+  const attesa = setTimeout(() => {
+    ascolto.abort();
+    if (document.hidden) return;
+    const box = a.closest('[data-cta-inline], [data-sticky]') || a.parentElement;
+    // La barra fissa è fuori dal flusso: la riga va dentro la barra, altrove subito dopo il blocco della CTA.
+    const dentro = box.matches('[data-sticky]');
+    const vicino = () => (dentro ? box.lastElementChild : box.nextElementSibling);
+    if (vicino()?.matches('[data-dm-aiuto]')) return;
+    // Prima la regione role=status vuota, poi il testo: così i lettori di schermo lo annunciano.
+    box.insertAdjacentHTML(dentro ? 'beforeend' : 'afterend', '<p class="t-small" data-dm-aiuto data-nosnippet role="status"></p>');
+    const p = vicino();
+    copiato.then((ok) => setTimeout(() => (p.textContent = FRIZIONE.fallback + (ok ? ' ' + FRIZIONE.copiato : '')), 50));
+  }, 1500);
+  // Navigazione partita (pagehide) o app di Instagram aperta (pagina nascosta): niente riga.
+  const annulla = (e) => {
+    if (e.type === 'pagehide' || document.hidden) {
+      clearTimeout(attesa);
+      ascolto.abort();
+    }
+  };
+  // Il controller fa da opzioni ({ signal }): abort() toglie entrambi i listener.
+  addEventListener('pagehide', annulla, ascolto);
+  document.addEventListener('visibilitychange', annulla, ascolto);
 };
 
 const panel = document.querySelector('[data-qr]');
@@ -55,6 +89,15 @@ if (panel && links.length && panel.showPopover) {
   panel.removeAttribute('hidden');
   const link = panel.querySelector('[data-qr-link]');
   link?.addEventListener('click', copia);
+
+  // Tab fuori dal pannello aperto: si chiude e il focus torna alla CTA. Un clic dentro il pannello
+  // (su testo o QR, non focalizzabili: il focus va al body) non lo chiude, perché il puntatore è sopra.
+  panel.addEventListener('focusout', (e) => {
+    if (panel.contains(e.relatedTarget) || panel.matches(':hover') || !panel.matches(':popover-open')) return;
+    const o = origine;
+    panel.hidePopover();
+    o?.focus({ preventScroll: true });
+  });
 
   const posiziona = () => {
     if (!origine) return;
@@ -101,5 +144,5 @@ document.addEventListener('click', (e) => {
     panel.apri(a);
     return;
   }
-  copia();
+  aiuto(a, copia());
 });

@@ -1,0 +1,29 @@
+# Header per Cloudflare Pages e Netlify (stessa sintassi, file unico). Spec F.1, E.2, J.3.
+# Su Netlify questo file sostituisce i blocchi [[headers]] di netlify.toml: non duplicarli là.
+
+/*
+  Strict-Transport-Security: max-age=31536000
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# File con hash nel nome: non cambiano mai.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Immagini dei clienti senza consenso all'indicizzazione (prefisso noindex-).
+/_astro/noindex-*
+  X-Robots-Tag: noindex
+
+/llms.txt
+  Content-Type: text/plain; charset=utf-8
+
+/robots.txt
+  Content-Type: text/plain; charset=utf-8
+
+/manifest.webmanifest
+  Content-Type: application/manifest+json; charset=utf-8
+
+# Clip degli esercizi: nomi fissi, quindi cache di un giorno (non immutable).
+/video/*
+  Cache-Control: public, max-age=86400

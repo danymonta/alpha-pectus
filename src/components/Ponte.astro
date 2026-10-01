@@ -31,10 +31,9 @@ const { convinzioni: cv } = ponte;
       </div>
     </div>
 
-    <p class="t-h2 ponte__firma">
+    <p class="t-hero ponte__firma">
       <Icon name="curva" size={40} class="ponte__curva" />
-      <span class="t-muted">{resta}</span>
-      {allena.length > 0 && <span>{allena.join(' ')}</span>}
+      <span class="t-muted">{resta}</span>{' '}{allena.length > 0 && <span>{allena.join(' ')}</span>}
     </p>
 
     <div id={cv.id} class="ponte__carte">
@@ -63,7 +62,8 @@ const { convinzioni: cv } = ponte;
   .ponte__p { display: grid; align-content: start; gap: var(--g); }
   .ponte__col, .ponte__carte { grid-column: 1 / -1; }
   .ponte__corpo { max-width: 40ch; }
-  .ponte__firma { display: grid; grid-column: 1 / -1; margin-block: var(--space-10); max-width: 16ch; }
+  /* Frase firma: la più grande della parte su carta, due righe, a filo del bordo del contenuto. */
+  .ponte__firma { display: grid; grid-column: 1 / -1; margin-block: var(--space-9); max-width: 14ch; font-weight: 760; font-stretch: 82%; }
   .ponte__curva { color: var(--accent-text); margin-bottom: var(--space-4); }
   .ponte__carte { display: grid; gap: var(--space-5); }
   .ponte__carta {
@@ -76,7 +76,8 @@ const { convinzioni: cv } = ponte;
   .ponte__davvero { padding-top: var(--space-5); border-top: 1px solid var(--line-strong); }
   @media (min-width: 1024px) {
     .ponte__col { grid-column: 1 / 9; }
-    .ponte__firma { grid-column: 2 / -1; max-width: 26ch; }
+    /* Da 1024px ogni frase sta su una riga: due righe in tutto. */
+    .ponte__firma { grid-column: 1 / -1; max-width: none; }
     .ponte__carte { grid-template-columns: 1fr 1fr; gap: var(--space-6); }
     .ponte__carta { padding: var(--space-7) var(--space-6); }
   }

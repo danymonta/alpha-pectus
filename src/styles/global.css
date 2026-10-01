@@ -16,6 +16,10 @@ html {
 @media (min-width: 1024px) {
   html { scroll-padding-top: calc(var(--bar-desktop-h) + var(--space-5)); }
 }
+/* Sotto 1024px la barra fissa in basso non copre mai l'elemento a fuoco né l'ancora di arrivo. */
+@media (max-width: 1023.98px) {
+  html { scroll-padding-bottom: calc(var(--sticky-h) + env(safe-area-inset-bottom) + var(--space-3)); }
+}
 body {
   min-height: 100svh;
   background: var(--night-bg);
@@ -97,9 +101,12 @@ strong, b { font-weight: 650; }
   line-height: var(--lh-slide);
   max-width: 20ch;
 }
-.t-lead { font-size: var(--fs-lead); line-height: 1.45; }
+.t-lead { font-size: var(--fs-lead); line-height: 1.45; text-wrap: pretty; }
 .t-body { font-size: var(--fs-body); line-height: var(--lh-body); }
 .t-small { font-size: var(--fs-small); line-height: 1.5; }
+/* Riga di aiuto inserita da src/scripts/cta.js se ig.me non apre la chat. */
+[data-dm-aiuto] { margin-top: var(--space-2); max-width: 38rem; }
+.sticky-cta [data-dm-aiuto] { margin-top: var(--space-1); line-height: 1.35; }
 .t-micro { font-size: var(--fs-micro); line-height: 1.35; }
 .t-muted { color: var(--muted); }
 /* Voce del pensiero: solo Newsreader corsivo, mai per enfasi altrove (B.2). */
@@ -137,6 +144,8 @@ strong, b { font-weight: 650; }
   font-size: var(--fs-micro);
   font-weight: 620;
 }
+/* Niente parola sola in coda: eyebrow e maiuscoletti bilanciati, lead senza orfani. */
+.eyebrow, .caps { text-wrap: balance; }
 
 /* ---------------- Layout (B.4) ---------------- */
 .wrap {
@@ -270,8 +279,12 @@ summary.btn-outline::-webkit-details-marker { display: none; }
   line-height: 1;
 }
 .btn-dm--sm { min-height: var(--btn-h-sm); }
-.btn-dm--lg { min-height: 64px; font-size: 1.0625rem; }
+/* CTA 5 (finale): il bottone più grande della pagina. */
+.btn-dm--lg { min-height: 72px; font-size: var(--fs-lead); }
 /* Telefoni stretti: l'etichetta non va mai a capo, quindi si stringono padding e spazi (360px: colonna di 320px). */
+@media (max-width: 767.98px) {
+  .btn-dm--lg { gap: 6px; padding-inline: var(--space-3); }
+}
 @media (max-width: 389.98px) {
   .btn-dm { gap: 6px; padding-inline: var(--space-3); }
   .btn-dm--lg { font-size: 1rem; }
@@ -281,6 +294,9 @@ summary.btn-outline::-webkit-details-marker { display: none; }
 }
 @media (min-width: 768px) {
   .btn-dm { width: auto; min-width: 22rem; }
+}
+@media (min-width: 1024px) {
+  .btn-dm--lg { min-width: 440px; }
 }
 
 /* Link DM testuale dell'hero: testo bone, sottolineatura ambra 2px. */

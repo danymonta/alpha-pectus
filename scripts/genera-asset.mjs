@@ -132,7 +132,7 @@ h1 { margin-top: 18px; font-size: ${foto ? 76 : 96}px; font-stretch: 82%; font-w
 ${foto ? `<img class="foto" src="${foto}" alt=""><div class="velo"></div>` : ''}
 <div class="grana"></div>
 <div class="lockup"><span class="alpha">PERCORSO ALPHA</span><span class="rule"></span><span class="pectus">Pectus</span></div>
-<div class="testo"><p class="prima">Ti hanno detto che era troppo tardi.</p><h1>Era tardi solo per l’operazione.</h1></div>
+<div class="testo"><p class="prima">Ti hanno detto che era troppo tardi.</p><h1>Per l’allenamento non lo è.</h1></div>
 <svg class="curva" viewBox="0 0 1200 120" width="1200" height="120"><path d="${curvaLarga}" fill="none" stroke="${AMBRA}" stroke-opacity=".55" stroke-width="3" stroke-linecap="round"/></svg>
 <div class="piede"><span><b>pectus.percorsoalpha.com</b></span><span>Dany Monta</span></div>
 </body></html>`;

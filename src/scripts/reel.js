@@ -28,6 +28,18 @@ if (T) {
   let started = 0;
   let x0 = 0;
   let l0 = 0;
+  let near = 0;
+
+  // Foto differite (Foto differita): data-srcset/data-src diventano srcset/src. Prima le <source>, poi l'<img>.
+  const load = (s) =>
+    s &&
+    s.querySelectorAll('[data-srcset],[data-src]').forEach((e) => {
+      if (e.dataset.srcset) e.srcset = e.dataset.srcset;
+      if (e.dataset.src) e.src = e.dataset.src;
+      delete e.dataset.srcset;
+      delete e.dataset.src;
+    });
+  const around = (i) => [i - 1, i, i + 1].forEach((k) => load(S[k]));
 
   $$('[data-reel-ui]').forEach((e) => (e.hidden = false));
 
@@ -38,13 +50,18 @@ if (T) {
     track('story_start');
     if (!still) R.classList.add('reel--anim');
     if (hint) hint.hidden = true;
+    S.forEach(load);
   };
 
   const set = (i) => {
     const s = S[i];
     cur = i;
+    if (near) around(i);
     s.classList.add('is-seen');
+    // Capitolo della svolta senza foto: il palco si scalda all'istante.
+    stage.style.transitionDuration = s.dataset.subito != null ? '0s' : '';
     stage.style.setProperty('--warm', s.dataset.warm);
+    stage.classList.toggle('is-full', s.classList.contains('reel__slide--full'));
     segs.forEach((b, k) => {
       b.classList.toggle('is-seen', k < i);
       k === i ? b.setAttribute('aria-current', 'step') : b.removeAttribute('aria-current');
@@ -89,6 +106,18 @@ if (T) {
   );
   S.forEach((s) => io.observe(s));
   set(0);
+
+  // Il palco a 200px dal viewport: si caricano il capitolo corrente e i vicini.
+  const vicino = new IntersectionObserver(
+    ([e]) => {
+      if (!e.isIntersecting) return;
+      vicino.disconnect();
+      near = 1;
+      around(cur);
+    },
+    { rootMargin: '200px 0px' },
+  );
+  vicino.observe(stage);
 
   prev.onclick = () => go(cur - 1, 1);
   next.onclick = () => go(cur + 1, 1);

@@ -5,6 +5,7 @@
 // I parametri come utm_* e fbclid restano nell'URL del browser: li leggono gli script della pagina.
 // Le inserzioni usano sempre il percorso /v/<slug>/, mai ?v=: questa funzione è solo una rete di sicurezza.
 // Dichiarata in netlify.toml ([[edge_functions]] path "/"): niente config inline, per non eseguirla due volte.
+// Gemella per Cloudflare Pages: functions/index.js (stessa logica). Se cambi una, cambia anche l'altra.
 import { DEFAULT, SLUG_VARIANTI } from '../../src/data/hero-varianti.mjs';
 
 export default async (request) => {

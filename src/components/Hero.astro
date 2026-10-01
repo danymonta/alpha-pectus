@@ -20,9 +20,9 @@ const { variante } = Astro.props;
 const dev = import.meta.env.DEV;
 const still = hasFoto(hero.foto.still) || dev;
 const inset = hasFoto(hero.foto.inset) || dev;
-// "2016 · 63 kg" -> "2016"; "Oggi · 83 kg" -> "Oggi" (numerali della composizione tipografica).
-const annoPrima = hero.etichette.prima.split(' · ')[0];
-const oggi = hero.etichette.dopo.split(' · ')[0];
+// "2016 · 63 kg" -> "2016" e "63 kg"; "Oggi · 83 kg" -> "Oggi" e "83 kg" (composizione tipografica).
+const [annoPrima, pesoPrima] = hero.etichette.prima.split(' · ');
+const [oggi, pesoOggi] = hero.etichette.dopo.split(' · ');
 ---
 
 <Section id={hero.id} mode="night" zone="tofu" pad={false} labelledby="inizio-h1" class="hero">
@@ -41,6 +41,9 @@ const oggi = hero.etichette.dopo.split(' · ')[0];
               loading="eager"
               fetchpriority="high"
               ratio="4:5"
+              ratioMobile="3:2"
+              sizesMobile="100vw"
+              widthsMobile={[480, 720, 1080]}
             />
             <figcaption class="t-micro hero__chip hero__chip--oggi">{hero.etichette.dopo}</figcaption>
           </figure>
@@ -49,8 +52,9 @@ const oggi = hero.etichette.dopo.split(' · ')[0];
             <span class="t-year hero__anno" aria-hidden="true">{annoPrima}</span>
             <span class="t-year hero__oggi" aria-hidden="true">{oggi}</span>
             <svg class="hero__curva" viewBox="0 0 200 24" aria-hidden="true"><path d="M0 3h64c14 0 20 18 36 18s22-18 36-18h64" /></svg>
-            <p class="t-micro hero__et">{!inset && hero.etichette.prima}</p>
-            <p class="t-micro hero__et">{hero.etichette.dopo}</p>
+            {/* Sotto i numerali solo i pesi; l'anno resta per i lettori di schermo. */}
+            <p class="t-micro hero__et">{!inset && <><span class="visually-hidden">{annoPrima} · </span>{pesoPrima ?? annoPrima}</>}</p>
+            <p class="t-micro hero__et"><span class="visually-hidden">{oggi} · </span>{pesoOggi ?? oggi}</p>
           </div>
         )
       }
@@ -59,7 +63,7 @@ const oggi = hero.etichette.dopo.split(' · ')[0];
           <figure class="hero__inset">
             <Foto
               slot={hero.foto.inset}
-              sizes="(min-width: 1024px) 170px, 24vw"
+              sizes="(min-width: 1024px) 170px, 26vw"
               widths={[180, 240, 360, 480]}
               loading="eager"
               ratio="4:5"
@@ -96,21 +100,15 @@ const oggi = hero.etichette.dopo.split(' · ')[0];
   }
   .h1-turn { display: block; color: var(--amber); }
 
-  /* Blocco foto: still al 62% a destra, stampa 2016 sull'angolo in basso a sinistra.
+  /* Blocco foto (mobile): still a tutta larghezza, ritaglio ad altezza fissa (sorgente 3:2 dedicata).
      D4: la riga di frizione del link DM deve stare nel primo schermo (circa 700px utili nel browser di Instagram).
-     Tutto il resto del primo schermo occupa circa 476px: la still si stringe sui telefoni bassi (fino al 44%)
-     e torna al 62% della spec appena l'altezza lo permette. svh è statico: nessuno spostamento con le barre. */
+     Tutto il resto del primo schermo occupa circa 476px: la still prende l'altezza che resta, tra 200 e 320px.
+     svh è statico: nessuno spostamento con le barre. La stampa 2016 sta dentro la cornice, in basso a sinistra. */
   .hero__foto {
     position: relative;
-    margin-block: var(--space-1) var(--space-4);
+    margin-block: var(--space-1) var(--space-3);
   }
-  .hero__still {
-    position: relative;
-    width: 62%;
-    width: clamp(44%, calc((100svh - 476px) * .8), 62%);
-    margin-left: auto;
-    margin-right: 8%;
-  }
+  .hero__still { position: relative; width: 100%; margin: 0; }
   .hero__still :global(picture),
   .hero__tipo {
     display: block;
@@ -118,20 +116,20 @@ const oggi = hero.etichette.dopo.split(' · ')[0];
     overflow: hidden;
     background: var(--surface);
   }
-  /* La stampa 2016 è larga il 38% della still e ne copre l'angolo in basso a sinistra per il 40% della sua larghezza. */
   .hero__inset {
     position: absolute;
     z-index: 2;
-    left: 14%;
-    left: calc(92% - clamp(44%, calc((100svh - 476px) * .8), 62%) * 1.228);
-    bottom: calc(-1 * var(--space-3));
-    width: calc(62% * .38);
-    width: calc(clamp(44%, calc((100svh - 476px) * .8), 62%) * .38);
+    left: var(--space-3);
+    bottom: var(--space-3);
+    width: 28%;
   }
   .hero__inset :global(picture) {
     display: block;
     border: 4px solid var(--print-border);
     box-shadow: var(--shadow-print);
+  }
+  @media (max-width: 1023.98px) {
+    .hero__still :global(img) { height: clamp(200px, calc(100svh - 476px), 320px); }
   }
   /* Etichette datate (D55): minuscolo per le unità, mai maiuscoletto. */
   .hero__chip {
@@ -146,7 +144,11 @@ const oggi = hero.etichette.dopo.split(' · ')[0];
   .hero__chip,
   .hero__et { font-weight: 620; }
   .hero__chip--oggi { top: var(--space-2); right: var(--space-2); }
-  .hero__inset .hero__chip { left: 50%; bottom: calc(-1 * var(--space-2)); translate: -50% 0; }
+  /* Il chip 2016 sta sopra la stampa, mai sopra l'immagine. */
+  .hero__inset .hero__chip { left: 0; bottom: 100%; margin-bottom: var(--space-1); }
+
+  /* Link DM: l'etichetta va su una riga sua, intera, sotto "Vuoi parlarne subito?". */
+  .hero__dm :global(.link-dm) { display: block; width: fit-content; padding-block: var(--space-1); white-space: nowrap; }
 
   /* Ripiego tipografico: una linea del tempo. L'anno del prima è cavo, oggi è pieno; in mezzo, la curva. */
   .hero__foto--tipo { padding: 0; }
@@ -164,6 +166,7 @@ const oggi = hero.etichette.dopo.split(' · ')[0];
   .hero__anno { color: transparent; -webkit-text-stroke: 1px var(--line-strong); }
   .hero__curva {
     grid-column: 1 / -1;
+    margin-top: var(--space-3);
     width: 100%;
     height: auto;
     fill: none;
@@ -231,11 +234,10 @@ const oggi = hero.etichette.dopo.split(' · ')[0];
     }
     .hero__still { width: auto; margin: 0; }
     .hero__inset { left: 0; bottom: var(--space-8); width: calc(80% * .38); }
-    .hero__grid > .hero__foto--tipo { padding: 0; width: min(100%, 448px); }
-    .hero__tipo { aspect-ratio: 4 / 5; grid-template-columns: 1fr; align-content: space-between; padding: var(--space-7) var(--space-6); }
-    .hero__curva { order: 1; }
-    .hero__oggi { order: 2; }
-    .hero__et + .hero__et { order: 3; text-align: left; }
+    /* Senza foto: la stessa composizione orizzontale del mobile (2016 cavo, la curva, Oggi pieno). */
+    .hero__grid > .hero__foto--tipo { align-self: center; padding: 0; width: min(100%, 560px); }
+    .hero__tipo { padding: var(--space-8) var(--space-7); gap: var(--space-4) var(--space-6); }
+    .hero__anno { -webkit-text-stroke-width: 1.5px; }
     .hero__grid > .hero__prove {
       grid-column: 1 / -1;
       grid-row: 8;
@@ -243,6 +245,7 @@ const oggi = hero.etichette.dopo.split(' · ')[0];
       gap: var(--space-6);
       margin-top: var(--space-7);
     }
-    .hero__anno { font-size: 10rem; }
+    .hero__anno,
+    .hero__oggi { font-size: 8rem; }
   }
 </style>

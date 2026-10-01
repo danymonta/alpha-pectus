@@ -1,5 +1,6 @@
 // Costanti del sito. Un solo posto per link, parola chiave, date e numeri.
-// File .mjs (JS puro) perché lo importano anche astro.config.mjs e la edge function Netlify.
+// File .mjs (JS puro) perché lo importa anche astro.config.mjs. functions/index.js (Cloudflare Pages) e
+// netlify/edge-functions/hero-variant.js (Netlify) importano solo hero-varianti.mjs, che resta senza dipendenze.
 // Regole per ogni testo italiano: niente emoji, niente trattini lunghi o medi,
 // accenti corretti, niente punti esclamativi, mai curare/guarire/correggere.
 
@@ -18,9 +19,18 @@ export const FRIZIONE = {
   short: 'Scrivi PETTO e invia. Ti rispondiamo io o il mio team. Chiedere è gratis e non ti impegna.',
   full: 'Si apre la chat con @_danymonta. Scrivi PETTO e invia. Ti rispondiamo io o il mio team con qualche domanda sul tuo caso e, se ha senso, ci sentiamo in una chiamata. Chiedere non costa niente e non ti impegna.',
   fallback: 'Non si apre la chat? Cerca @_danymonta su Instagram e tocca Messaggio.',
+  // Barra sticky compatta.
+  micro: 'Scrivi PETTO e invia. Gratis, senza impegno.',
+  // Suggerimento nei browser in-app, dopo aver copiato la parola chiave.
+  copiato: 'PETTO è già copiato: incollalo e invia.',
 };
 
 // Pannello desktop con QR (spec G.1).
+// Etichette accessibili delle barre fisse e del pannello QR (src/components/StickyCta.astro).
+export const ARIA_STICKY = {
+  barra: 'Scrivimi su Instagram',
+  chiudi: 'Chiudi',
+};
 export const QR_TESTO = 'Inquadra con il telefono: si apre la chat con me su Instagram.';
 
 // Date in formato ISO. SITE_UPDATED va aggiornata a ogni modifica di contenuto.
@@ -52,8 +62,7 @@ export const PIXEL_ID = '';
 // Analytics senza cookie (Plausible, spec G.4). Dominio vuoto = il listener non invia nulla.
 export const ANALYTICS = {
   plausibleDomain: '',
-  // Percorsi proxy definiti in netlify.toml (piattaforma).
-  scriptPath: '/pa/js/script.js',
+  // Percorso proxy: functions/pa/api/event.js (Cloudflare Pages) e netlify.toml (Netlify).
   eventPath: '/pa/api/event',
 };
 
@@ -62,6 +71,9 @@ export const SOCIAL = {
   youtube: { url: 'https://www.youtube.com/@montappv', handle: '@montappv', nome: 'YouTube' },
 };
 export const PERCORSO_ALPHA_URL = 'https://percorsoalpha.com/';
+
+// Chi ospita il sito: lo nomina la pagina privacy.
+export const HOSTING = { nome: 'Cloudflare' }; // 'Netlify' se si torna su Netlify
 
 // Dati aziendali: vuoti finché Dany non li conferma (spec H.11, J.5 punto 16).
 // Una stringa vuota non viene mai mostrata né messa nel JSON-LD.
@@ -79,14 +91,14 @@ export const SEO = {
     "Sono nato con il pectus excavatum e ho detto no all'operazione. Lo sterno non si è spostato, ma oggi il mio petto scavato si vede molto meno. Ecco come.",
   author: 'Dany Montagnolo',
   themeColor: '#0E0D0C',
-  ogTitle: "Ti hanno detto che era troppo tardi. Era tardi solo per l'operazione.",
+  ogTitle: "Ti hanno detto che era troppo tardi. Per l'allenamento non lo è.",
   ogDescription:
     'La storia di Dany Monta, nato con il pectus excavatum, e il metodo da casa che ha reso il suo petto scavato molto meno visibile. Senza operazione.',
   ogImage: '/og/pectus-excavatum-dany-monta.jpg',
   // Alt della versione tipografica provvisoria. Quando l'immagine diventa quella con la foto
   // (scripts/genera-asset.mjs og con scripts/og-foto.jpg), torna a:
-  // "Dany Monta oggi, in maglietta, accanto alla frase: era tardi solo per l'operazione."
-  ogImageAlt: "La frase: ti hanno detto che era troppo tardi, era tardi solo per l'operazione. Percorso Alpha Pectus, Dany Monta.",
+  // "Dany Monta oggi, in maglietta, accanto alla frase: per l'allenamento non è troppo tardi."
+  ogImageAlt: "La frase: ti hanno detto che era troppo tardi, per l'allenamento non lo è. Percorso Alpha Pectus, Dany Monta.",
   ogImageWidth: 1200,
   ogImageHeight: 630,
 };

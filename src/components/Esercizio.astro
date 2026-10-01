@@ -37,10 +37,9 @@ const poster =
     ? (await getImage({ src: getFoto(e.poster)!, width: 720, height: 900, fit: 'cover', format: 'webp', quality: 72 })).src
     : undefined;
 const idH = `esercizio-${e.n}-h4`;
-const ICONE = ['calendar', 'band'] as const;
 ---
 
-<article class="esercizio esercizio__p" style="--g:var(--space-4)" aria-labelledby={idH}>
+<article class:list={['esercizio esercizio__p', { 'esercizio--testo': stato === 'testo' }]} style="--g:var(--space-4)" aria-labelledby={idH}>
   <p class:list={['t-year esercizio__n', { 'esercizio__n--s': stato !== 'testo' }]} aria-hidden="true">{e.n}</p>
   <h4 id={idH}>{e.nome}{e.nomeTecnico && <span class="t-muted"> ({e.nomeTecnico})</span>}</h4>
 
@@ -89,26 +88,18 @@ const ICONE = ['calendar', 'band'] as const;
     )
   }
 
-  <ol class="esercizio__cues esercizio__p" style="--g:var(--space-2)">
+  {/* Indicazioni in ordine: <ol>, senza numeri a vista (il numero grande è già quello dell'esercizio). */}
+  <ol class="esercizio__cues esercizio__p" style="--g:var(--space-2)" role="list">
     {e.cues.map((c) => <li>{c}</li>)}
   </ol>
-  <ul class="esercizio__chips" role="list">
-    {
-      e.chips.map((c, i) => (
-        <li class="esercizio__chip t-small">
-          <Icon name={ICONE[i] ?? 'check'} size={18} />
-          {c}
-        </li>
-      ))
-    }
-  </ul>
 </article>
 
 <style>
   .esercizio__p { display: grid; align-content: start; gap: var(--g); }
   .esercizio { padding-top: var(--space-5); border-top: 1px solid var(--line-strong); }
   .esercizio__n { color: var(--accent-text); }
-  .esercizio__n--s { font-size: 4rem; }
+  .esercizio__n { font-size: clamp(3.5rem, 2.8rem + 3vw, 4.5rem); }
+  .esercizio__n--s { font-size: 3rem; }
   .esercizio__media { position: relative; overflow: hidden; border-radius: var(--r-2); background: var(--night-surface); }
   .esercizio__video { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
   .esercizio__btn {
@@ -123,15 +114,10 @@ const ICONE = ['calendar', 'band'] as const;
     background: var(--scrim-chip);
     color: var(--night-text);
   }
-  .esercizio__cues { padding-left: 1.25em; }
-  .esercizio__cues li::marker { color: var(--accent-text); font-weight: 700; }
-  .esercizio__chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-  .esercizio__chip {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    padding: var(--space-1) var(--space-3);
-    border: 1px solid var(--line-strong);
-    border-radius: 99px;
-  }
+  /* Lista ordinata senza numerali: un trattino corto in amber-ink. */
+  .esercizio__cues { padding: 0; list-style: none; }
+  .esercizio__cues li { position: relative; padding-left: var(--space-5); }
+  .esercizio__cues li::before { content: ""; position: absolute; left: 0; top: .78em; width: 12px; height: 2px; background: var(--accent-text); }
+  /* Senza video né poster: una carta, con il numero grande, così i tre esercizi si leggono come una serie. */
+  .esercizio--testo { height: 100%; padding: var(--space-5); border: 1px solid var(--line); border-radius: var(--r-2); background: var(--surface); box-shadow: var(--shadow-card); }
 </style>

@@ -17,7 +17,8 @@ interface Props {
   placement: string;
   /** Una riga sopra il bottone (l'unica parte che può cambiare). */
   leadIn?: string;
-  friction?: 'none' | 'short' | 'full' | 'full+fallback';
+  /** micro: una riga sola (barra fissa mobile). */
+  friction?: 'none' | 'micro' | 'short' | 'full' | 'full+fallback';
   /** button: bottone ambra. link: link testuale dell'hero (testo bone, sottolineatura ambra). */
   variant?: 'button' | 'link';
   size?: 'sm' | 'md' | 'lg';
@@ -80,8 +81,8 @@ const cid = Object.fromEntries(Object.entries(rest).filter(([k]) => k.startsWith
     )
   }
   {friction !== 'none' && (
-    <p class="cta-dm__friction" data-nosnippet>
-      {friction === 'short' ? FRIZIONE.short : FRIZIONE.full}
+    <p class:list={['cta-dm__friction', { 'cta-dm__friction--micro': friction === 'micro' }]} data-nosnippet>
+      {friction === 'micro' ? FRIZIONE.micro : friction === 'short' ? FRIZIONE.short : FRIZIONE.full}
     </p>
   )}
   {friction === 'full+fallback' && <p class="cta-dm__friction cta-dm__fallback" data-nosnippet>{FRIZIONE.fallback}</p>}
@@ -113,4 +114,6 @@ const cid = Object.fromEntries(Object.entries(rest).filter(([k]) => k.startsWith
     color: var(--muted);
     max-width: 52ch;
   }
+  /* Una riga: la barra fissa resta sotto i 88px (--sticky-h). */
+  .cta-dm__friction--micro { line-height: 1.2; max-width: none; }
 </style>

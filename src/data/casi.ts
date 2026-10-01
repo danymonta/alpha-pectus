@@ -13,6 +13,8 @@
 // In produzione escono solo i casi con pubblica: true e tutti i requisiti; se ne manca uno la build si ferma.
 // In sviluppo i casi con pubblica: false si vedono come segnaposto etichettato.
 // Regole: niente misure promesse, niente "cura", solo il nome di battesimo, frase del cliente vera e firmata.
+// Quando esce il primo caso cliente, ripristinare in public/llms.txt (sezione Pagine) "i casi dei clienti"
+// al posto di "i numeri sugli uomini che segue".
 import { CONFERME as C } from './conferme.mjs';
 import { hasFoto } from '../lib/foto';
 

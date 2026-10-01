@@ -1,0 +1,15 @@
+# Link brevi per i post organici (302 con UTM, spec G.4). Lo leggono Cloudflare Pages e Netlify.
+# Le inserzioni a pagamento NON passano di qui: puntano a /v/<variante>/?utm_source=instagram&utm_medium=paid&...
+# Cloudflare non considera uguali /ig e /ig/: ogni link breve senza parte variabile ha anche la riga con lo slash.
+# Vince la prima riga che corrisponde: /yt/ deve restare sopra /yt/*.
+/ig         /?utm_source=instagram&utm_medium=bio&utm_campaign=pectus&utm_content=bio          302
+/ig/        /?utm_source=instagram&utm_medium=bio&utm_campaign=pectus&utm_content=bio          302
+/s/*        /?utm_source=instagram&utm_medium=story&utm_campaign=pectus&utm_content=:splat     302
+/dm         /?utm_source=instagram&utm_medium=dm&utm_campaign=pectus&utm_content=manuale       302
+/dm/        /?utm_source=instagram&utm_medium=dm&utm_campaign=pectus&utm_content=manuale       302
+/mc/*       /?utm_source=instagram&utm_medium=dm_auto&utm_campaign=pectus&utm_content=:splat   302
+/yt         /?utm_source=youtube&utm_medium=channel&utm_campaign=pectus&utm_content=about      302
+/yt/        /?utm_source=youtube&utm_medium=channel&utm_campaign=pectus&utm_content=about      302
+/yt/*       /?utm_source=youtube&utm_medium=description&utm_campaign=pectus&utm_content=:splat 302
+/specchio   /?utm_source=instagram&utm_medium=story&utm_campaign=pectus&utm_content=specchio#specchio  302
+/specchio/  /?utm_source=instagram&utm_medium=story&utm_campaign=pectus&utm_content=specchio#specchio  302

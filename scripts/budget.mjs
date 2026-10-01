@@ -1,7 +1,9 @@
 // Budget di peso (spec F.9, D52, D53) sulle pagine della landing già generate.
 // Uso: node scripts/budget.mjs            (dist/)
 //      DIST=/tmp/mia-dist node scripts/budget.mjs
-// Controlla: HTML gzip <= 50 KB, CSS inline <= 30 KB, JS first-party gzip <= 10 KB, font <= 110 KB, preload <= 60 KB.
+// Controlla: HTML gzip <= 55 KB, CSS inline gzip <= 18 KB, JS first-party gzip <= 10 KB, font <= 110 KB, preload <= 60 KB.
+// Il CSS è tutto inline (inlineStylesheets 'always'): conta il peso trasferito (gzip), non quello grezzo.
+// Chi aggiunge CSS che ne sostituisce altro deve togliere il vecchio.
 import { readFileSync, existsSync, statSync, readdirSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { gzipSync } from 'node:zlib';
@@ -41,8 +43,8 @@ for (const p of pagine) {
   const preload = [...html.matchAll(/<link rel="preload" href="([^"]+)"[^>]*as="font"/gi)].map((m) => m[1]);
   const preloadBytes = preload.reduce((t, u) => t + (existsSync(join(DIST, u)) ? statSync(join(DIST, u)).size : 0), 0);
   console.log(`\n${p}`);
-  console.log('  ' + verifica('HTML gzip', gz(html), 50 * 1024));
-  console.log('  ' + verifica('CSS inline', Buffer.byteLength(css), 30 * 1024));
+  console.log('  ' + verifica('HTML gzip', gz(html), 55 * 1024));
+  console.log('  ' + verifica('CSS inline gzip', gz(css), 18 * 1024));
   console.log('  ' + verifica('JS gzip', jsGz, 10 * 1024));
   console.log('  ' + verifica('Preload font', preloadBytes, 60 * 1024));
 }

@@ -17,6 +17,9 @@ export interface SlotFoto {
   alt: string;
   /** object-position CSS, per tenere i volti fuori dal testo. */
   focus: string;
+  /** object-position da 1024px, solo per le foto piene del reel (capitoli 10 a 12): il volto a destra
+   *  della colonna di testo (spec D.3). Default nel reel: '72% 35%'. */
+  focusDesktop?: string;
   /** Una riga di regia, mostrata solo nel segnaposto in sviluppo. */
   regia: string;
   /** Dove si usa (documentazione). */
@@ -76,7 +79,7 @@ export const FOTO: SlotFoto[] = [
   {
     slot: 'pectus-dany-2019-fronte', ratio: '4:5', min: '1440 sul lato lungo', priorita: 'P1',
     alt: "Dany nel 2019, dopo un anno di allenamento a casa, stessa posa del 2016: l'avvallamento si vede molto meno.",
-    focus: '50% 40%', busto: true,
+    focus: '50% 40%', focusDesktop: '72% 35%', busto: true,
     regia: 'Il 2019, stessa posa del 2016. Va bene anche 9:16, si ritaglia con il focus.',
     dove: 'Capitolo 10, comparatore "Dopo un anno"',
   },
@@ -160,14 +163,14 @@ export const FOTO: SlotFoto[] = [
   {
     slot: 'storia-11-oggi', ratio: '4:5', min: '1440 x 1800', priorita: 'P1',
     alt: 'Dany oggi, in maglietta, con suo fratello.',
-    focus: '50% 30%',
+    focus: '50% 30%', focusDesktop: '72% 35%',
     regia: 'Dany oggi, naturale, con il fratello o nella vita di tutti i giorni. Niente pose eroiche.',
     dove: 'Capitolo 11',
   },
   {
     slot: 'storia-12-viaggio', ratio: '4:5', min: '1440 x 1800', priorita: 'P1',
     alt: 'Dany in viaggio, al tramonto, rivolto verso la fotocamera.',
-    focus: '50% 30%',
+    focus: '50% 30%', focusDesktop: '72% 35%',
     regia: 'In viaggio, luce del tramonto, rivolto verso la fotocamera, spontaneo.',
     dove: 'Capitolo 12',
   },

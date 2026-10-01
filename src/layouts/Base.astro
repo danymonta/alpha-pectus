@@ -33,14 +33,20 @@ const {
 } = Astro.props;
 
 const canonical = new URL(path, SITE_URL).href;
-// Anteprime Netlify: mai indicizzate (letto in build).
-const contesto = process.env.CONTEXT ?? '';
-const anteprima = contesto === 'deploy-preview' || contesto === 'branch-deploy';
+// Anteprime mai indicizzate (letto in build). Netlify: CONTEXT deploy-preview o branch-deploy.
+// Cloudflare Pages: CF_PAGES=1 e un ramo diverso da quello di produzione (RAMO_PRODUZIONE, se manca 'main').
+const env = process.env;
+const anteprimaNetlify = env.CONTEXT === 'deploy-preview' || env.CONTEXT === 'branch-deploy';
+const anteprimaCloudflare = env.CF_PAGES === '1' && (env.CF_PAGES_BRANCH ?? '') !== (env.RAMO_PRODUZIONE || 'main');
+const anteprima = anteprimaNetlify || anteprimaCloudflare;
 const robots =
   noindex || anteprima
     ? 'noindex, nofollow'
     : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
 const ogImage = new URL(SEO.ogImage, SITE_URL).href;
+// Metadati di condivisione: SEO.og* solo sulla landing (schema=true); 404 e privacy usano titolo e descrizione propri.
+const ogTitle = schema ? SEO.ogTitle : title;
+const ogDescription = schema ? SEO.ogDescription : description;
 const ldJson = schema ? jsonLdString(grafoJsonLd()) : null;
 ---
 
@@ -52,16 +58,16 @@ const ldJson = schema ? jsonLdString(grafoJsonLd()) : null;
     <title>{title}</title>
     <script is:inline>document.documentElement.classList.add('js')</script>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    {!noindex && <link rel="canonical" href={canonical} />}
     <meta name="robots" content={robots} />
     <meta name="author" content={SEO.author} />
     <meta name="theme-color" content={SEO.themeColor} />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={SITE_NAME} />
     <meta property="og:locale" content="it_IT" />
-    <meta property="og:url" content={canonical} />
-    <meta property="og:title" content={SEO.ogTitle} />
-    <meta property="og:description" content={SEO.ogDescription} />
+    {!noindex && <meta property="og:url" content={canonical} />}
+    <meta property="og:title" content={ogTitle} />
+    <meta property="og:description" content={ogDescription} />
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content={String(SEO.ogImageWidth)} />
     <meta property="og:image:height" content={String(SEO.ogImageHeight)} />

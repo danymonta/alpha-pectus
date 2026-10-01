@@ -1,6 +1,6 @@
 // Varianti dell'hero (spec C.2, D2, D3). Una pagina statica per variante in /v/<slug>/,
 // canonical sempre sulla root. La root / mostra DEFAULT. Le inserzioni puntano sempre al percorso /v/<slug>/.
-// Questo file lo importa anche netlify/edge-functions/hero-variant.js: niente dipendenze qui dentro.
+// Questo file lo importano anche functions/index.js (Cloudflare Pages) e netlify/edge-functions/hero-variant.js (Netlify): niente dipendenze qui dentro.
 //
 // Campi variabili: h1, turn (la parte in ambra dentro l'unico <h1>), sub, skipLabel, storiaH2 (opzionale).
 // Tutto il resto dell'hero (eyebrow, foto, etichette, striscia prove, CTA) è fisso: vedi src/data/pagina.ts.
@@ -21,7 +21,7 @@ export const VARIANTI = {
     uso: '/v/postura/, reel sulla postura in sponsorizzazione',
     h1: 'I medici mi dicevano: operazione o nuoto.',
     turn: 'Io non ho fatto nessuna delle due.',
-    sub: "Sono nato con il petto scavato. Nel video ti ho parlato della postura: è il primo pilastro, ma da sola non basta. Lo sterno resta dov'è. Qui trovi gli altri tre, e la mia storia.",
+    sub: "Sono nato con il petto scavato. Nel video ti ho parlato della postura: da sola non basta, e lo sterno resta dov'è. Qui trovi il resto: il petto, il respiro, l'addome. E la mia storia.",
     skipLabel: 'Conosci già la mia storia? Vai agli esercizi del video.',
   },
   storia: {
@@ -34,7 +34,7 @@ export const VARIANTI = {
   tardi: {
     uso: '/v/tardi/, futuro reel "troppo tardi"',
     h1: 'Ti hanno detto che era troppo tardi.',
-    turn: "Era tardi solo per l'operazione.",
+    turn: "Per l'allenamento non lo è.",
     sub: 'Sono nato con il petto scavato. Lo sterno non si sposta, e non ti dirò il contrario. Cambia tutto il resto: come gli altri vedono il tuo petto, e quel pensiero che non si spegne.',
     skipLabel: SKIP_STANDARD,
   },
