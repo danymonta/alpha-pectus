@@ -1,0 +1,177 @@
+---
+// Il metodo #metodo (spec C.8). Proprietario: engineer "metodo".
+// Quattro pilastri: impilati su mobile, 2 x 2 da 1024px uniti da una linea --amber-ink da 01 a 04
+// (a serpentina nei margini: 01 → 02, giro a destra, ritorno nello spazio tra le righe, 03 → 04).
+// Ogni carta: numero, H3, "Cosa fa", TorsoDiagram con la zona accesa, <details> "Come" (lever_open).
+// Poi la chiusura e la striscia #da-dove-parti. Nessuna CTA.
+import Section from './Section.astro';
+import Icon from './Icon.astro';
+import TorsoDiagram from './TorsoDiagram.astro';
+import { metodo } from '../data/pagina';
+
+const { pilastri, daDoveParti: dd, etichette } = metodo;
+// "Alto: riempie..." diventa <strong>Alto</strong> riempie... (solo se il prefisso è una parola sola).
+const voce = (s: string) => s.match(/^(\p{Lu}\p{Ll}+): (.+)$/u);
+---
+
+<Section id={metodo.id} mode="paper" zone="mofu" labelledby={`${metodo.id}-h2`}>
+  <div class="wrap">
+    <header class="metodo__head flow" style="--flow:var(--space-4)">
+      <p class="eyebrow">{metodo.eyebrow}</p>
+      <h2 id={`${metodo.id}-h2`}>{metodo.h2}</h2>
+      <p class="t-lead t-muted">{metodo.lead}</p>
+    </header>
+
+    <ol class="metodo__grid" role="list">
+      {
+        pilastri.map((p) => (
+          <li class="metodo__card">
+            <p class="metodo__n t-year" aria-hidden="true">{p.n}</p>
+            <h3 class="metodo__h">{p.titolo}</h3>
+            <div class="metodo__fig">
+              <TorsoDiagram regione={p.regione} />
+            </div>
+            <div class="metodo__fa">
+              <p class="eyebrow eyebrow--muted">{etichette.cosaFa}</p>
+              <p>{p.cosaFa}</p>
+            </div>
+            <details class="metodo__come">
+              <summary data-evt="lever_open" data-evt-pilastro={String(p.numero)}>
+                <span>
+                  {etichette.come}
+                  <span class="visually-hidden">: {p.titolo}</span>
+                </span>
+                <Icon name="plus" class="metodo__piu" />
+              </summary>
+              <ul class="metodo__voci" role="list">
+                {p.come.map((s) => {
+                  const m = voce(s);
+                  return m ? (
+                    <li>
+                      <strong>{m[1]}:</strong> {m[2]}
+                    </li>
+                  ) : (
+                    <li>{s}</li>
+                  );
+                })}
+              </ul>
+              {p.secondaria && <p class="metodo__sec t-small t-muted">{p.secondaria}</p>}
+            </details>
+          </li>
+        ))
+      }
+    </ol>
+
+    <p class="metodo__fine">{metodo.chiusura}</p>
+
+    <div id={dd.id} class="metodo__dd">
+      <h3>{dd.h3}</h3>
+      {
+        dd.carte.map((c) => (
+          <div class="metodo__ddc">
+            <h4>{c.titolo}</h4>
+            <p>{c.testo}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</Section>
+
+<style>
+  .metodo__head { max-width: 46rem; }
+  .metodo__grid { --p: var(--space-5); --g: var(--space-4); display: grid; gap: var(--g); margin-top: var(--space-8); }
+  .metodo__card {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 6.5rem;
+    grid-template-rows: auto 1fr;
+    column-gap: var(--space-4);
+    padding: var(--p);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-2);
+    box-shadow: var(--shadow-card);
+  }
+  .metodo__n {
+    font-size: clamp(3rem, 2.4rem + 2.4vw, 4.5rem);
+    color: var(--accent-text);
+  }
+  .metodo__h { margin-top: var(--space-3); }
+  .metodo__fig { grid-area: 1 / 2 / 3; align-self: center; }
+  .metodo__fa { grid-column: 1 / -1; display: grid; gap: var(--space-2); align-content: start; margin-top: var(--space-4); }
+  .metodo__come { grid-column: 1 / -1; margin-top: var(--space-5); border-top: 1px solid var(--line); }
+  .metodo__come summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: var(--tap-lg);
+    font-weight: 700;
+    list-style: none;
+    cursor: pointer;
+  }
+  .metodo__come summary::-webkit-details-marker { display: none; }
+  .metodo__piu { color: var(--accent-text); transition: transform var(--dur-2) var(--ease); }
+  .metodo__come[open] .metodo__piu { transform: rotate(45deg); }
+  .metodo__voci { display: grid; gap: var(--space-3); padding-block: var(--space-2) var(--space-4); }
+  .metodo__voci li { padding-left: var(--space-4); border-left: 2px solid var(--phase-2); }
+  .metodo__sec { padding-bottom: var(--space-4); }
+  .metodo__fine {
+    max-width: 34ch;
+    margin-top: var(--space-8);
+    font-family: var(--font-display);
+    font-size: var(--fs-h3);
+    font-stretch: 82%;
+    font-weight: 700;
+    line-height: var(--lh-h3);
+    text-wrap: balance;
+  }
+  .metodo__dd { display: grid; gap: var(--space-5); margin-top: var(--space-8); padding-top: var(--space-5); border-top: 1px solid var(--line-strong); }
+  .metodo__ddc { display: grid; gap: var(--space-2); align-content: start; }
+  .metodo__ddc h4 { font-size: var(--fs-body); font-weight: 700; }
+  .metodo__ddc p { color: var(--muted); }
+  @media (min-width: 768px) {
+    .metodo__card { grid-template-columns: 1fr 9rem; grid-template-rows: auto auto 1fr; }
+    .metodo__fig { grid-area: 1 / 2 / 4; align-self: start; }
+    .metodo__fa { grid-column: 1; }
+    .metodo__dd { grid-template-columns: 1fr 1fr 1fr; column-gap: var(--space-6); }
+  }
+  @media (min-width: 1024px) {
+    .metodo__grid { --p: var(--space-6); --g: var(--space-7); grid-template-columns: 1fr 1fr; }
+    .metodo__card { grid-template-columns: 1fr 11rem; }
+    /* Nodo sul bordo alto di ogni carta e linea da 01 a 04 (decorativa). */
+    .metodo__n::before {
+      content: "";
+      position: absolute;
+      top: -5px;
+      left: calc(var(--p) - 4px);
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--accent-text);
+    }
+    .metodo__card::before, .metodo__card::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      border: 0 solid var(--accent-text);
+    }
+    .metodo__card:nth-child(odd)::before { top: -1px; left: var(--p); width: calc(100% + var(--g)); border-top-width: 1px; }
+    .metodo__card:nth-child(2)::before {
+      top: -1px;
+      left: var(--p);
+      right: calc(var(--g) / -2);
+      height: calc(100% + var(--g) / 2 + 1px);
+      border-width: 1px 1px 0 0;
+      border-top-right-radius: var(--r-3);
+    }
+    .metodo__card:nth-child(3)::after {
+      top: calc(var(--g) / -2);
+      left: var(--p);
+      right: calc(-100% - var(--g) * 1.5);
+      height: calc(var(--g) / 2);
+      border-width: 1px 0 0 1px;
+      border-top-left-radius: var(--r-3);
+    }
+  }
+</style>

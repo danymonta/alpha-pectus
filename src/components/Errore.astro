@@ -1,0 +1,109 @@
+---
+// L'errore #errore (spec C.7). Paper, una schermata. L'H2 con "più visibile" in --verdict è il tipo più forte del MOFU.
+// Due diagrammi di profilo del torso, SVG inline disegnati qui (tratto 1.5px inchiostro, muscolo in ambra al 35%):
+// "Solo spinta" (spalle chiuse in avanti, freccia --verdict sull'avvallamento) e
+// "Spinta, trazione e postura" (postura aperta, segno --success). Ognuno con <title> e <desc> dai dati.
+// La linea tratteggiata verticale è il filo a piombo: nel primo la testa esce in avanti, nel secondo è allineata.
+import Section from './Section.astro';
+import { errore } from '../data/pagina';
+
+const [solo, completo] = errore.diagrammi;
+const figure = [
+  {
+    d: solo,
+    colore: 'errore__v',
+    muscoli: ['M114 86C124 92 134 104 135 116C135 126 129 133 123 138C117 131 112 118 112 104Z'],
+    linee: [
+      'M102 58C98 67 92 74 84 78C70 86 60 102 59 122C58 144 66 160 67 180C68 200 64 216 64 236',
+      'M122 57C124 67 124 76 122 84C126 93 135 104 135 116C135 126 127 132 123 138C120 145 129 151 132 161C136 175 135 191 129 205L125 236',
+    ],
+    testa: 'rotate(18 114 38) translate(18 9)',
+    braccio: 'M99 96C99 116 103 138 105 160L110 206C111 214 121 214 121 206L117 158C117 134 118 110 116 96C113 86 102 86 99 96Z',
+    segno: 'M184 138H132M139 131L131 138L139 145',
+  },
+  {
+    d: completo,
+    colore: 'errore__ok',
+    muscoli: [
+      'M110 76C118 80 129 92 132 108C133 118 129 126 125 131C114 126 104 112 102 94Z',
+      'M80 70C72 76 66 88 65 102C65 116 68 130 70 142C78 124 82 100 82 80Z',
+    ],
+    linee: [
+      'M85 50C85 58 84 64 80 68C72 74 66 84 65 100C64 120 70 140 71 160C72 180 66 200 66 236',
+      'M105 49C106 58 106 64 108 70C112 76 116 80 120 86C130 96 134 108 131 120C129 127 124 129 124 134C124 140 129 146 129 154C129 168 122 178 121 196L120 236',
+    ],
+    testa: '',
+    braccio: 'M82 82C80 100 82 130 84 158L88 206C89 214 99 214 99 206L97 156C98 128 101 100 100 84C97 74 85 74 82 82Z',
+    segno: 'M162 124A10 10 0 1 1 162 144A10 10 0 1 1 162 124ZM157.5 134.5L160.5 137.5L166.5 130.5',
+  },
+];
+---
+
+<Section id={errore.id} mode="paper" zone="mofu" labelledby={`${errore.id}-h2`}>
+  <div class="wrap grid errore__w">
+    <header class="errore__testa errore__p" style="--g:var(--space-4)">
+      <p class="eyebrow">{errore.eyebrow}</p>
+      <h2 id={`${errore.id}-h2`}>{errore.h2.prima}<span class="errore__v">{errore.h2.verdetto}</span>{errore.h2.dopo}</h2>
+    </header>
+
+    <div class="errore__testo errore__p" style="--g:var(--space-4)">
+      <div class="errore__p" style="--g:var(--space-2)">
+        <p class="eyebrow eyebrow--muted">{errore.etichettaDetto}</p>
+        <p class="t-voice t-muted">{errore.detto}</p>
+      </div>
+      {errore.corpo.map((p, i) => (i === errore.corpo.length - 1 ? <p class="t-lead"><strong>{p}</strong></p> : <p>{p}</p>))}
+    </div>
+
+    <div class="errore__figure">
+      {
+        figure.map((f, i) => (
+          <figure class="errore__p" style="--g:var(--space-3)">
+            <svg
+              viewBox="0 0 200 240"
+              role="img"
+              aria-labelledby={`errore-fig-${i + 1}-t errore-fig-${i + 1}-d`}
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <title id={`errore-fig-${i + 1}-t`}>{f.d.svgTitle}</title>
+              <desc id={`errore-fig-${i + 1}-d`}>{f.d.svgDesc}</desc>
+              <path class="errore__f" d="M92 4V236" stroke-width="1" stroke-dasharray="2 4" vector-effect="non-scaling-stroke" />
+              <g class="errore__m" fill="currentColor" fill-opacity=".35" stroke="none">
+                {f.muscoli.map((m) => <path d={m} />)}
+              </g>
+              {f.linee.map((l) => <path d={l} vector-effect="non-scaling-stroke" />)}
+              <g class="errore__fondo">
+                <ellipse cx="96" cy="29" rx="18" ry="21" transform={f.testa || undefined} vector-effect="non-scaling-stroke" />
+                <path d={f.braccio} vector-effect="non-scaling-stroke" />
+              </g>
+              <path class={f.colore} d={f.segno} stroke-width="2" vector-effect="non-scaling-stroke" />
+            </svg>
+            <figcaption class={`errore__cap t-small ${f.colore}`}>{f.d.titolo}</figcaption>
+          </figure>
+        ))
+      }
+    </div>
+  </div>
+</Section>
+
+<style>
+  .errore__p { display: grid; align-content: start; gap: var(--g); }
+  .errore__w { row-gap: var(--space-7); }
+  .errore__testa, .errore__testo, .errore__figure { grid-column: 1 / -1; }
+  .errore__testo { max-width: 40rem; }
+  .errore__v { color: var(--verdict); }
+  .errore__ok { color: var(--success); }
+  .errore__m { color: var(--amber); }
+  .errore__f { color: var(--line-strong); }
+  .errore__fondo { fill: var(--bg); }
+  .errore__figure { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+  .errore__cap { padding-top: var(--space-3); border-top: 2px solid; font-weight: 650; }
+  @media (min-width: 1024px) {
+    .errore__testa { grid-column: 1 / 11; }
+    .errore__testo { grid-column: 1 / 7; }
+    .errore__figure { grid-column: 7 / -1; gap: var(--space-6); }
+  }
+</style>

@@ -1,0 +1,62 @@
+---
+// L'ultima cosa #scrivimi (spec C.17, D34). Proprietario: engineer "bofu".
+// La sezione golden più calda (doppia luce bassa in alto a destra). Ritratto dany-ritratto 4:5, raggio 8px:
+// a sinistra da 1024px, sopra su mobile. Senza foto in produzione il blocco non esiste e resta la lettera (E.1).
+// Lettera in Archivo, firma in Newsreader corsivo 2rem, riga del marchio una volta in maiuscoletto,
+// poi la CTA 5 (ref=pe_finale), il bottone più grande della pagina, con frizione completa e riserva.
+// Nessun link social qui. Dopo: il divisorio piatto, primo elemento del Footer.
+import Section from './Section.astro';
+import Foto from './Foto.astro';
+import Icon from './Icon.astro';
+import CtaDm from './CtaDm.astro';
+import { hasFoto } from '../lib/foto';
+import { dataIt } from '../lib/testo';
+import { finale as f } from '../data/pagina';
+
+const conFoto = hasFoto(f.foto) || import.meta.env.DEV;
+---
+
+<Section id={f.id} mode="golden" zone="bofu" labelledby={`${f.id}-h2`} data-sticky-hide class="finale">
+  <div class:list={['wrap finale__grid', { 'finale__grid--foto': conFoto }]}>
+    {conFoto && (
+      <Foto slot={f.foto} ratio="4:5" sizes="(min-width: 1280px) 480px, (min-width: 1024px) 38vw, 100vw" class="finale__foto" />
+    )}
+    <div class="finale__testo">
+      <p class="eyebrow">{f.eyebrow}</p>
+      <h2 id={`${f.id}-h2`}>{f.h2}</h2>
+      <p class="finale__lead">{f.lead}</p>
+      <div class="finale__lettera">
+        {f.lettera.map((p) => <p>{p}</p>)}
+      </div>
+      <p class="finale__firma">{f.firma}</p>
+      <p class="finale__chi t-small">
+        {f.firmaSotto} · {f.aggiornatoPrima} <time datetime={f.data}>{dataIt(f.data)}</time>
+      </p>
+      <p class="finale__brand caps">
+        <Icon name="curva" size={20} class="finale__curva" />
+        <span>{f.brandLine}</span>
+      </p>
+      <CtaDm placement={f.cta.placement} friction="full+fallback" size="lg" class="finale__cta" />
+    </div>
+  </div>
+</Section>
+
+<style>
+  .finale { background: var(--gold-glow), var(--gold-glow), var(--bg); }
+  .finale__grid { display: grid; gap: var(--space-7); }
+  .finale__foto { max-width: 26rem; border-radius: var(--r-2); overflow: hidden; box-shadow: var(--shadow-print); }
+  .finale__testo { display: grid; gap: var(--space-5); max-width: 40rem; }
+  .finale__testo h2 { margin-top: calc(-1 * var(--space-2)); }
+  .finale__lead { font-size: var(--fs-h3); font-weight: 600; line-height: 1.25; letter-spacing: -.01em; text-wrap: balance; }
+  .finale__lettera { display: grid; gap: var(--space-4); padding-top: var(--space-5); border-top: 1px solid var(--line); }
+  .finale__firma { font-family: var(--font-voice); font-style: italic; font-weight: 500; font-size: 2rem; line-height: 1; color: var(--accent-text); }
+  .finale__chi { margin-top: calc(-1 * var(--space-3)); color: var(--muted); }
+  .finale__brand { display: flex; align-items: center; gap: var(--space-3); padding-block: var(--space-4); border-block: 1px solid var(--line); color: var(--muted); }
+  .finale__curva { flex: none; color: var(--accent-text); }
+  .finale__cta { margin-top: var(--space-3); }
+  @media (min-width: 1024px) {
+    .finale__grid--foto { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--space-6); align-items: start; }
+    .finale__foto { grid-column: 1 / 6; max-width: none; position: sticky; top: var(--space-9); }
+    .finale__grid--foto .finale__testo { grid-column: 7 / -1; }
+  }
+</style>

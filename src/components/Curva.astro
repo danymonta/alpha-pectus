@@ -1,0 +1,66 @@
+---
+// La curva (spec B.5): divisorio tra modalità. Una linea orizzontale con un avvallamento morbido e simmetrico.
+// Il divisorio si appoggia sull'inizio della sezione SUCCESSIVA (margine negativo) e disegna solo l'avvallamento
+// con lo sfondo della PRECEDENTE: così la luce bassa del golden (--gold-glow) parte dal bordo, senza una fascia piatta.
+// Profondità: 'forte' 48/28 (night -> paper, dopo il pensiero), 'media' 20/12 (paper -> golden, dopo attrezzatura),
+// 'piatta' 0 (golden -> footer: una linea sottile).
+type Modo = 'night' | 'paper' | 'golden';
+interface Props {
+  da: Modo;
+  a: Modo;
+  profondita: 'forte' | 'media' | 'piatta';
+  class?: string;
+}
+const { da, a, profondita, class: className } = Astro.props;
+const colore: Record<Modo, string> = {
+  night: 'var(--night-bg)',
+  paper: 'var(--paper-bg)',
+  golden: 'var(--gold-bg)',
+};
+const altezze = { forte: [28, 48], media: [12, 20], piatta: [0, 0] } as const;
+const [mobile, desktop] = altezze[profondita];
+---
+
+{
+  profondita === 'piatta' ? (
+    <div class:list={['curva', 'curva--piatta', className]} style={`--curva-da:${colore[da]};--curva-a:${colore[a]}`} aria-hidden="true" />
+  ) : (
+    <div
+      class:list={['curva', className]}
+      style={`--curva-da:${colore[da]};--curva-a:${colore[a]};--curva-h:${mobile}px;--curva-h-d:${desktop}px`}
+      aria-hidden="true"
+    >
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none" focusable="false">
+        <path d="M0 0 H30 C40 0 42 100 50 100 C58 100 60 0 70 0 H100 Z" />
+      </svg>
+    </div>
+  )
+}
+
+<style>
+  .curva {
+    display: block;
+    position: relative;
+    z-index: 1;
+    height: var(--curva-h);
+    margin-bottom: calc(-1 * var(--curva-h));
+    line-height: 0;
+    pointer-events: none;
+  }
+  /* 1px sopra il bordo: copre la fessura di sub-pixel con lo stesso colore della sezione precedente. */
+  .curva svg {
+    position: absolute;
+    top: -1px;
+    width: 100%;
+    height: calc(100% + 1px);
+    fill: var(--curva-da);
+  }
+  @media (min-width: 768px) {
+    .curva { height: var(--curva-h-d); margin-bottom: calc(-1 * var(--curva-h-d)); }
+  }
+  .curva--piatta {
+    height: 1px;
+    margin: 0;
+    background: var(--gold-line);
+  }
+</style>

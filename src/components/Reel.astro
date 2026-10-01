@@ -1,0 +1,333 @@
+---
+// Il reel #storia (spec D.1 a D.7, C.3, E.1). Proprietario: hero-reel. Nessuna CTA qui dentro.
+// Senza JS: lista verticale leggibile (ogni capitolo con il suo calore). Con html.js: carosello a scroll-snap
+// orizzontale, pattern APG non a rotazione, mai auto-avanzamento. Comportamento in src/scripts/reel.js.
+// Foto mancante in produzione: il capitolo diventa tipografico (numerale enorme in contorno, con grana).
+import Section from './Section.astro';
+import Foto from './Foto.astro';
+import Icon from './Icon.astro';
+import { storia, capitoli, ATTI } from '../data/pagina';
+import { hasFoto, infoSlot, dimensioniFoto } from '../lib/foto';
+
+interface Props {
+  variante: { slug: string; skipLabel: string; storiaH2?: string };
+}
+const { variante } = Astro.props;
+const h2 = variante.storiaH2 ?? storia.h2;
+const tot = capitoli.length;
+const dev = import.meta.env.DEV;
+const due = (x: number) => String(x).padStart(2, '0');
+// Atti presenti (un capitolo può essere nascosto da una conferma): primo capitolo e numero di capitoli.
+const atti = ATTI.map((nome, k) => ({
+  nome,
+  atto: k + 1,
+  primo: capitoli.findIndex((c) => c.atto === k + 1),
+  n: capitoli.filter((c) => c.atto === k + 1).length,
+})).filter((a) => a.n > 0);
+const filtri = { duotone: 'duo', 'grayscale-70': 'g70', 'grayscale-40': 'g40', naturale: '' } as const;
+const fx = (c: { centrato?: boolean }, i: number) => (c.centrato ? {} : { class: 'reel__fx', style: `--i:${i}` });
+
+const slides = capitoli.map((c, i) => {
+  const foto = c.trattamento !== 'text' && c.foto && (hasFoto(c.foto) || dev) ? c.foto : null;
+  // Mai duotone su una foto con il busto (D15), qualunque cosa dica il dato.
+  const filtro = foto && !infoSlot(foto)?.busto ? filtri[c.filtro] : '';
+  const tipo = c.trattamento !== 'text' && !foto;
+  // Una didascalia della foto ("Foto del 2016. 63 kg.") non esce se la foto non c'è.
+  const voce = tipo && c.didascalia ? null : c.voce;
+  // Rapporto della stampa: la cornice segue l'immagine anche quando è limitata in altezza.
+  const d = foto ? dimensioniFoto(foto) : undefined;
+  const ar = d ? `--ar:${(d.width / d.height).toFixed(4)}` : undefined;
+  // Numero e unità restano sulla stessa riga ("83 kg").
+  const nb = (t: string | null) => t && t.replace(/(\d) kg/g, '$1\u00a0kg');
+  return { ...c, i, foto, filtro, tipo, voce: nb(voce), riga: nb(c.riga)!, ar, lunga: c.riga.length > 110, ultimo: i === tot - 1 };
+});
+---
+
+<Section
+  id={storia.id}
+  mode="night"
+  zone="tofu"
+  labelledby={storia.h2Id}
+  class="reel"
+  aria-roledescription={storia.roledescription.carosello}
+  data-reel
+>
+  <div class="wrap reel__head">
+    <p class="eyebrow">{storia.eyebrow}</p>
+    <h2 id={storia.h2Id}>{h2}</h2>
+    <a class="link-text reel__skip" href="#postura" data-evt="story_skip" data-nosnippet>
+      {variante.skipLabel}<Icon name="arrow-down" size={18} />
+    </a>
+  </div>
+
+  <div class="reel__stage grain" data-reel-stage>
+    <div class="reel__top" data-reel-ui hidden data-nosnippet>
+      <div class="reel__bar">
+        {slides.map((c) => (
+          <button
+            type="button"
+            class:list={['reel__seg', { 'reel__seg--atto': c.i > 0 && c.atto !== capitoli[c.i - 1].atto }]}
+            aria-label={storia.segmentoAria(c.i + 1, tot, c.etichetta)}
+            aria-controls="storia-track"
+            data-reel-seg
+          />
+        ))}
+      </div>
+      <div class="reel__atti" aria-hidden="true" style={`grid-template-columns:${atti.map((a) => `minmax(max-content,${a.n}fr)`).join(' ')}`}>
+        {atti.map((a) => (
+          <button type="button" class="caps" tabindex="-1" data-reel-act={a.primo} data-atto={a.atto}>{a.nome}</button>
+        ))}
+      </div>
+    </div>
+
+    <div class="reel__track" id="storia-track" tabindex="0" data-reel-track>
+      {slides.map((c) => (
+        <div
+          class:list={[
+            'reel__slide',
+            `reel__slide--${c.tipo ? 'tipo' : c.trattamento}`,
+            { 'reel__slide--centro': c.centrato, 'reel__slide--grande': c.stampaGrande, 'reel__slide--tardi': c.atto > 2 },
+          ]}
+          id={c.id}
+          role="group"
+          aria-roledescription={storia.roledescription.capitolo}
+          aria-label={storia.gruppoAria(c.i + 1, tot)}
+          data-warm={c.warm}
+          data-atto={c.atto}
+          data-say={storia.annuncio(c.i + 1, tot, c.etichetta)}
+          style={`--warm:${c.warm}`}
+        >
+          {c.foto && (
+            <figure class:list={['reel__media', c.trattamento === 'full' ? 'reel__full' : 'reel__print', c.filtro && `reel__print--${c.filtro}`]} style={c.ar}>
+              {c.trattamento === 'full' ? (
+                <Foto slot={c.foto} sizes="(min-width: 1024px) min(1280px, 100vw), 92vw" widths={[480, 720, 1080, 1600]} ratio="libero" imgClass="reel__img" />
+              ) : (
+                <Foto slot={c.foto} sizes={c.stampaGrande ? '(min-width: 1024px) 30vw, 90vw' : '(min-width: 1024px) 30vw, 70vw'} widths={[360, 480, 640, 800]} ratio="libero" class={c.filtro ? 'reel__pic grain grain--print' : 'reel__pic'} imgClass="reel__img" />
+              )}
+            </figure>
+          )}
+          {c.tipo && (
+            <div class="reel__media reel__vuoto" aria-hidden="true">
+              <span class:list={['reel__cavo', { 'reel__cavo--parole': !c.numerale, reel__amb: c.atto > 2 }]}>{c.numerale ?? c.etichetta}</span>
+            </div>
+          )}
+          <div class="reel__testo">
+            {/* fx: classe e ritardo dell'animazione di attivazione (60 ms di scarto); il capitolo 7 non si anima. */}
+            <p class="eyebrow eyebrow--muted" {...fx(c, 0)}>{c.attoLabel}</p>
+            {c.numerale && !c.tipo && (
+              <p class:list={[c.centrato ? 't-h3' : 't-year', c.atto > 2 ? 'reel__amb' : 't-muted']} aria-hidden="true" {...fx(c, 1)}>{c.numerale}</p>
+            )}
+            <h3 class:list={['reel__h3', { 'visually-hidden': c.centrato }]} {...fx(c, 1)}>{c.etichetta}. {c.titolo}</h3>
+            <p class:list={[c.centrato ? 't-lead' : 't-slide', { 'reel__lunga': c.lunga }]} {...fx(c, 2)}>{c.riga}</p>
+            {c.voce && <p class="t-voice t-muted" {...fx(c, 3)}>{c.voce}</p>}
+            {c.chiusura && <p class="t-small t-muted measure" {...fx(c, 4)}>{c.chiusura}</p>}
+            {c.ultimo && (
+              <p class="reel__fine">
+                <a class="btn-outline" href={storia.fine.continuaHref}>{storia.fine.continua}<Icon name="arrow-down" size={18} /></a>
+                <a class="link-text" href={storia.fine.rivediHref} data-reel-restart>{storia.fine.rivedi}</a>
+              </p>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="reel__nav" data-reel-ui hidden data-nosnippet>
+      <button type="button" class="reel__btn" aria-controls="storia-track" data-reel-prev>
+        <Icon name="chevron-left" /><span class="visually-hidden">{storia.controlli.indietro}</span>
+      </button>
+      <p class="reel__count t-num t-small" aria-hidden="true" data-reel-count>{due(1)} / {due(tot)}</p>
+      <button type="button" class="reel__btn" aria-controls="storia-track" data-reel-next>
+        <Icon name="chevron-right" /><span class="visually-hidden">{storia.controlli.avanti}</span>
+      </button>
+    </div>
+    <p class="reel__hint t-micro" data-reel-hint hidden data-nosnippet>{storia.suggerimento}<Icon name="chevron-right" size={16} /></p>
+    <p class="visually-hidden" aria-live="polite" data-reel-live></p>
+  </div>
+
+  <div class="wrap">
+    <details class="reel__long measure">
+      <summary class="btn-outline" data-evt="story_fulltext_open">{storia.lunga.summary}<Icon name="plus" size={18} class="reel__plus" /></summary>
+      <div class="reel__lunga-testo flow">
+        {storia.lunga.paragrafi.map((p) => <p>{p}</p>)}
+      </div>
+    </details>
+  </div>
+</Section>
+
+<script>
+  import '../scripts/reel.js';
+</script>
+
+<style>
+  /* Testata */
+  .reel__head { display: grid; gap: var(--space-4); margin-bottom: var(--space-6); }
+  .reel__skip { justify-self: end; font-size: var(--fs-small); color: var(--muted); text-align: right; }
+
+  /* Senza JS (D.5): lista verticale, ogni capitolo porta il suo calore. */
+  .reel__stage { margin-inline: var(--space-2); }
+  .reel__slide {
+    position: relative;
+    display: grid;
+    gap: var(--space-5);
+    align-content: end;
+    margin-bottom: var(--space-2);
+    padding: var(--space-7) var(--space-5);
+    border-radius: var(--r-3);
+    background: color-mix(in oklab, var(--night-bg), var(--gold-bg) calc(var(--warm) * 100%));
+    overflow: hidden;
+  }
+  .reel__testo { position: relative; z-index: 2; display: grid; gap: var(--space-3); justify-items: start; }
+  .reel__amb { color: var(--accent-text); }
+  /* h3 in tondo, mai maiuscoletto: "Da 63 a 83 kg" resta minuscolo (D55). */
+  .reel__h3 { font-size: var(--fs-small); font-weight: 650; }
+  .reel__lunga { font-size: calc(var(--fs-slide) * .86); max-width: 24ch; }
+  .reel__fine { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-5); }
+  /* Capitolo 7: l'unico centrato, silenzio intorno. */
+  .reel__slide--centro { align-content: center; justify-items: center; text-align: center; min-height: 60svh; }
+  .reel__slide--centro .reel__testo { justify-items: center; }
+
+  /* Media: stampa d'archivio, foto piena, oppure numerale cavo (ripiego E.1). */
+  .reel__print { --max-h: 52svh; container-type: inline-size; text-align: center; }
+  .reel__pic { display: inline-block; vertical-align: top; border: 6px solid var(--print-border); box-shadow: var(--shadow-print); rotate: -1deg; }
+  .reel__slide:nth-child(even) .reel__pic { rotate: .8deg; }
+  .reel__print .reel__img { width: min(100cqw - 12px, var(--max-h) * var(--ar, .8)); }
+  .reel__print--duo .reel__img { filter: var(--duotone); }
+  .reel__print--g70 .reel__img { filter: grayscale(.7); }
+  .reel__print--g40 .reel__img { filter: grayscale(.4); }
+  .reel__full { margin: calc(-1 * var(--space-7)) calc(-1 * var(--space-5)) 0; }
+  .reel__vuoto { display: grid; align-items: center; overflow: hidden; }
+  .reel__cavo {
+    font: 820 clamp(8rem, 44vw, 15rem) / .8 var(--font-display);
+    font-stretch: 68%;
+    letter-spacing: -0.04em;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--line-strong);
+  }
+  .reel__cavo.reel__amb { -webkit-text-stroke-color: var(--accent-text); }
+  .reel__cavo--parole { font-size: clamp(3.5rem, 17vw, 7rem); line-height: .9; }
+
+  /* Storia per intero */
+  .reel__long { margin-top: var(--space-7); }
+  .reel__long[open] .reel__plus { rotate: 45deg; }
+  .reel__lunga-testo { padding-top: var(--space-6); }
+
+  /* Con JS (D.1): il palco a scroll-snap. */
+  :global(.js) .reel__stage {
+    --stage-h: max(calc(100svh - 16px), 560px);
+    height: var(--stage-h);
+    max-width: 1280px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-3);
+    overflow: hidden;
+    background: color-mix(in oklab, var(--night-bg), var(--gold-bg) calc(var(--warm, 0) * 100%));
+    transition: background-color 600ms var(--ease);
+  }
+  :global(.js) .reel__track {
+    position: relative;
+    display: flex;
+    height: 100%;
+    overflow: auto hidden;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+  :global(.js) .reel__track::-webkit-scrollbar { display: none; }
+  :global(.js) .reel__track:focus-visible { outline-offset: -4px; }
+  :global(.js) .reel__slide {
+    flex: 0 0 100%;
+    margin: 0;
+    padding: 84px var(--space-5) 76px;
+    border-radius: 0;
+    background: none;
+    grid-template-rows: minmax(0, 1fr) auto;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+  :global(.js) .reel__slide--text,
+  :global(.js) .reel__slide--full { grid-template-rows: auto; }
+  :global(.js) .reel__slide--centro { min-height: 0; }
+  :global(.js) .reel__print { --max-h: calc(var(--stage-h) * .52); align-self: center; }
+  :global(.js) .reel__full { position: absolute; inset: 0; grid-area: auto; margin: 0; }
+  :global(.js) .reel__full :global(picture),
+  :global(.js) .reel__full .reel__img { width: 100%; height: 100%; }
+  :global(.js) .reel__full::after { content: ""; position: absolute; inset: 0; background: var(--scrim-mobile); }
+  /* Sotto tutto il testo sopra una foto, velatura almeno all'80% (B.1) che segue l'altezza del testo. */
+  :global(.js) .reel__full + .reel__testo::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -128px -24px -76px;
+    background: linear-gradient(to top, color-mix(in oklab, var(--night-bg) 88%, transparent), color-mix(in oklab, var(--night-bg) 80%, transparent) calc(100% - 128px), transparent);
+  }
+
+  /* Avanzamento, atti, controlli: sopra il palco; i gesti passano al binario. */
+  .reel__top,
+  .reel__nav,
+  .reel__hint { position: absolute; z-index: 4; pointer-events: none; }
+  .reel__top,
+  .reel__nav { left: 0; right: 0; }
+  .reel__top button,
+  .reel__nav button { pointer-events: auto; }
+  .reel__top { top: 0; padding: var(--space-2) var(--space-3) var(--space-4); background: linear-gradient(var(--scrim-chip), transparent); }
+  .reel__bar { display: flex; gap: var(--space-1); }
+  .reel__seg { flex: 1; height: 24px; }
+  .reel__seg--atto { margin-left: var(--space-2); }
+  .reel__seg::before { content: ""; display: block; height: 3px; border-radius: 2px; background: var(--progress-unseen); }
+  .reel__seg.is-seen::before { background: var(--night-text); }
+  .reel__seg[aria-current]::before { height: 4px; background: var(--amber); }
+  .reel__atti { display: grid; column-gap: var(--space-3); }
+  .reel__atti button { min-height: 36px; text-align: left; font-stretch: 82%; color: var(--muted); }
+  .reel__atti .is-on { color: var(--night-text); }
+  .reel__nav { bottom: var(--space-4); display: flex; align-items: center; justify-content: space-between; padding-inline: var(--space-4); }
+  .reel__btn {
+    display: grid;
+    place-items: center;
+    width: var(--tap-lg);
+    height: var(--tap-lg);
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+  }
+  .reel__btn,
+  .reel__count,
+  .reel__hint { background: var(--scrim-chip); }
+  .reel__btn:active { transform: scale(.94); }
+  .reel__btn[aria-disabled="true"] { opacity: .35; }
+  .reel__count,
+  .reel__hint { padding: var(--space-1) var(--space-3); border-radius: 99px; color: var(--muted); }
+
+  /* Suggerimento al capitolo 1 (solo touch): pulsa due volte, sparisce alla prima interazione. */
+  .reel__hint { top: 42%; right: var(--space-4); display: flex; gap: var(--space-1); padding-block: var(--space-2); border: 1px solid var(--line-strong); color: var(--text); transition: opacity var(--dur-3); }
+  .reel__hint.is-go { animation: reel-pulse 1.1s var(--ease) .6s 2; }
+  .reel__hint.is-out { opacity: 0; }
+  @keyframes reel-pulse { 50% { transform: scale(1.06); } }
+
+  /* Attivazione del capitolo: solo dopo la prima interazione, solo con classi aggiunte da JS. */
+  .reel--anim .reel__slide:not(.is-seen) .reel__fx { opacity: 0; transform: translateY(12px); }
+  .reel--anim .reel__fx {
+    transition: opacity var(--dur-3) var(--ease) calc(var(--i) * 60ms), transform var(--dur-3) var(--ease) calc(var(--i) * 60ms);
+  }
+  .reel--anim .reel__slide:not(.is-seen) .reel__full .reel__img { transform: scale(1.04); }
+  .reel--anim .reel__full .reel__img { transition: transform 1.2s var(--ease); }
+
+  @media (min-width: 768px) {
+    .reel__stage { margin-inline: var(--gutter); }
+    .reel__slide { padding-inline: var(--space-7); }
+  }
+  @media (min-width: 1024px) {
+    .reel__slide { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--space-6); align-items: center; }
+    .reel__testo { grid-area: 1 / 1 / 2 / 6; }
+    .reel__media { grid-area: 1 / 6 / 2 / 13; }
+    .reel__slide--centro .reel__testo { grid-column: 3 / 11; }
+    .reel__cavo { font-size: 20rem; }
+    .reel__cavo--parole { font-size: 8rem; }
+    :global(.js) .reel__stage { --stage-h: min(88vh, 880px); margin-inline: auto; }
+    :global(.js) .reel__slide { padding: 110px var(--space-8) 96px; grid-template-rows: auto; align-content: center; }
+    :global(.js) .reel__slide--full .reel__testo { align-self: end; }
+    :global(.js) .reel__full::after { background: var(--scrim-desktop); }
+    :global(.js) .reel__full + .reel__testo::before { display: none; }
+    .reel__top { padding: var(--space-4) var(--space-8) 0; }
+    .reel__nav { justify-content: flex-end; gap: var(--space-4); padding-inline: var(--space-8); bottom: var(--space-6); }
+    .reel__count { order: -1; }
+  }
+</style>

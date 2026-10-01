@@ -1,0 +1,20 @@
+---
+// Richiami alle fonti di #operazione-o-allenamento (spec C.13, F.8). Proprietario: engineer "bofu".
+// <sup><a href="#fonte-N" id="rif-N-k">[N]</a></sup>, uniti e senza a capo; ogni voce di #fonti torna a #rif-N-1.
+interface Props {
+  lista: { n: number; id: string }[];
+}
+const { lista } = Astro.props;
+---
+
+{lista.length > 0 && (
+  <span class="note">{lista.map((x) => <sup><a href={`#fonte-${x.n}`} id={x.id}>[{x.n}]</a></sup>)}</span>
+)}
+
+<style>
+  .note { margin-left: .2em; white-space: nowrap; }
+  sup { line-height: 0; font-size: .75em; font-weight: 650; }
+  a { padding: 2px 1px; color: var(--accent-text); text-decoration: none; scroll-margin-top: 30vh; }
+  a:hover { text-decoration: underline; }
+  a:target { outline: 2px solid var(--focus); border-radius: 2px; }
+</style>

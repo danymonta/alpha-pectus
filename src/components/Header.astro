@@ -1,0 +1,25 @@
+---
+// Header (spec C.1): trasparente sopra l'hero, non fisso, solo il lockup, nessuna CTA, nessuna navigazione.
+// La barra desktop compatta che compare dal ponte è in StickyCta.astro (piattaforma).
+import Lockup from './Lockup.astro';
+---
+
+<header class="site-header mode-night">
+  <div class="wrap site-header__inner">
+    <Lockup />
+  </div>
+</header>
+
+<style>
+  .site-header {
+    background: transparent;
+  }
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    height: 56px;
+  }
+  @media (min-width: 1024px) {
+    .site-header__inner { height: var(--bar-desktop-h); }
+  }
+</style>

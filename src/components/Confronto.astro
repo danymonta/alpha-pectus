@@ -1,0 +1,161 @@
+---
+// Operazione o allenamento #operazione-o-allenamento (spec C.13, F.7, G.7). Proprietario: engineer "bofu".
+// Golden con un foglio di carta (.sheet-paper) appoggiato sopra: la scheda #in-chiaro, la tabella, il riquadro adulti.
+// La chiusura (unico punto con persuasione) torna sul golden, sotto il foglio. Nessuna CTA (G.1).
+// Tabella: markup <table> vero, con i ruoli espliciti perché sotto 768px le righe diventano schede impilate
+// (etichetta della dimensione, poi operazione e allenamento affiancati). Nessuno scorrimento orizzontale.
+// Note: <sup><a href="#fonte-N" id="rif-N-k">[N]</a></sup>, k = occorrenza della fonte sulla pagina
+// (le fonti si citano solo qui; il Footer ricava le stesse occorrenze per i link di ritorno).
+import Section from './Section.astro';
+import Icon from './Icon.astro';
+import Note from './ConfrontoNote.astro';
+import { confronto as c, numeroFonte } from '../data/pagina';
+import { dataIt } from '../lib/testo';
+
+// Contatore delle occorrenze, nell'ordine in cui le note compaiono nel documento.
+const visti = new Map<string, number>();
+const note = (chiavi: string[] = []) =>
+  chiavi.map((k) => {
+    const n = numeroFonte(k);
+    const i = (visti.get(k) ?? 0) + 1;
+    visti.set(k, i);
+    return { n, id: `rif-${n}-${i}` };
+  });
+
+const { inChiaro: ic, tabella: t, adulti } = c;
+const noteDef = note(ic.definizione.fonti);
+const righe = t.righe.map((r) => ({ ...r, note: note(r.operazione.fonti) }));
+const noteAdulti = note(adulti.fonti);
+const ultima = c.chiusura.length - 1;
+---
+
+<Section id={c.id} mode="golden" zone="bofu" labelledby={`${c.id}-h2`}>
+  <div class="wrap">
+    <header class="confronto__head flow" style="--flow:var(--space-4)">
+      <p class="eyebrow">{c.eyebrow}</p>
+      <h2 id={`${c.id}-h2`}>{c.h2}</h2>
+      <p class="t-lead">{c.intro}</p>
+    </header>
+
+    <div class="sheet-paper confronto__foglio">
+      <article id={ic.id} class="confronto__chiaro" aria-labelledby={`${ic.id}-h3`}>
+        <p class="eyebrow">{ic.eyebrow}</p>
+        <h3 id={`${ic.id}-h3`}>{ic.h3}</h3>
+        <p class="confronto__def">
+          {ic.definizione.testo}<Note lista={noteDef} />
+        </p>
+        <div class="confronto__liste">
+          <div>
+            <h4>{ic.puoCambiare.titolo}</h4>
+            <ul role="list">
+              {ic.puoCambiare.voci.map((v) => (
+                <li>
+                  <Icon name="check" size={20} class="confronto__si" />
+                  <span>{v}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h4>{ic.nonPuo.titolo}</h4>
+            <ul role="list" class="confronto__no">
+              {ic.nonPuo.voci.map((v) => <li><span>{v}</span></li>)}
+            </ul>
+          </div>
+        </div>
+        <p class="confronto__nota">{ic.nota}</p>
+        <p class="t-small t-muted">
+          {ic.aggiornatoPrima} <time datetime={ic.data}>{dataIt(ic.data)}</time>. {ic.aggiornatoDopo}
+        </p>
+      </article>
+
+      <table class="confronto__t" role="table">
+        <caption class="confronto__cap">{t.caption}</caption>
+        <thead class="confronto__th" role="rowgroup">
+          <tr role="row">
+            <th scope="col" role="columnheader" class="confronto__h confronto__h1">{t.colonne.dimensione}</th>
+            <th scope="col" role="columnheader" class="confronto__h confronto__op">{t.colonne.operazione}</th>
+            <th scope="col" role="columnheader" class="confronto__h confronto__al confronto__alc">{t.colonne.allenamento}</th>
+          </tr>
+        </thead>
+        <tbody class="confronto__tb" role="rowgroup">
+          {righe.map((r) => (
+            <tr class="confronto__r" role="row">
+              <th scope="row" role="rowheader" class="confronto__d">{r.dimensione}</th>
+              <td role="cell" class="confronto__c">
+                <span class="confronto__lab confronto__op" aria-hidden="true">{t.colonne.operazione}</span>
+                {r.operazione.testo}<Note lista={r.note} />
+              </td>
+              <td role="cell" class="confronto__c confronto__alc">
+                <span class="confronto__lab confronto__al" aria-hidden="true">{t.colonne.allenamento}</span>
+                {r.allenamento}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <aside class="confronto__adulti" aria-labelledby={`${c.id}-adulti`}>
+        <h3 id={`${c.id}-adulti`}>{adulti.h3}</h3>
+        <p class="measure">
+          {adulti.testo}<Note lista={noteAdulti} />
+        </p>
+      </aside>
+    </div>
+
+    <div class="confronto__fine">
+      {c.chiusura.map((p, i) => <p class:list={{ confronto__ult: i === ultima }}>{p}</p>)}
+    </div>
+  </div>
+</Section>
+
+<style>
+  .confronto__head { max-width: 46rem; }
+  .confronto__foglio { margin-top: var(--space-7); padding: var(--space-6) var(--space-4); }
+  .confronto__chiaro { display: grid; gap: var(--space-4); padding-bottom: var(--space-7); border-bottom: 1px solid var(--line); }
+  .confronto__def { max-width: var(--measure); }
+  .confronto__liste { display: grid; gap: var(--space-5); margin-top: var(--space-2); }
+  .confronto__liste ul { display: grid; gap: var(--space-3); margin-top: var(--space-3); }
+  .confronto__liste li { display: flex; gap: var(--space-3); }
+  .confronto__si { flex: none; margin-top: .2em; color: var(--success); }
+  .confronto__no li::before { content: ""; flex: none; width: 7px; height: 7px; margin: .65em 7px 0 6px; border-radius: 50%; background: var(--steel); }
+  .confronto__nota { padding-left: var(--space-4); border-left: 2px solid var(--line-strong); font-weight: 650; max-width: var(--measure); }
+
+  /* Tabella. Mobile: schede impilate; da 768px tabella classica. Selettori a una classe: meno CSS con lo scope. */
+  .confronto__t { width: 100%; margin-top: var(--space-7); font-size: var(--fs-small); line-height: 1.45; font-variant-numeric: tabular-nums lining-nums; }
+  .confronto__cap { padding-bottom: var(--space-4); text-align: left; font-size: var(--fs-lead); font-weight: 680; line-height: 1.3; text-wrap: balance; }
+  .confronto__h, .confronto__d, .confronto__c { text-align: left; vertical-align: top; font-weight: 400; }
+  .confronto__d { font-weight: 680; }
+  .confronto__op { color: var(--steel); }
+  .confronto__al { color: var(--accent-text); }
+  .confronto__alc { background: var(--amber-tint); }
+  @media (max-width: 767.98px) {
+    .confronto__t, .confronto__cap, .confronto__tb, .confronto__d, .confronto__c { display: block; }
+    .confronto__th { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+    .confronto__r { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); padding: var(--space-4) 0; border-top: 1px solid var(--line); }
+    .confronto__d { grid-column: 1 / -1; font-size: var(--fs-body); }
+    .confronto__c { padding: var(--space-3); border-radius: var(--r-1); background: var(--surface); }
+    .confronto__alc { background: var(--amber-tint); }
+    .confronto__lab { display: block; margin-bottom: var(--space-1); font-size: var(--fs-micro); font-weight: 680; }
+  }
+  @media (min-width: 768px) {
+    .confronto__foglio { padding: var(--space-8) var(--space-7); }
+    .confronto__liste { grid-template-columns: 1fr 1fr; gap: var(--space-6); }
+    .confronto__t { font-size: var(--fs-body); }
+    .confronto__h, .confronto__d, .confronto__c { padding: var(--space-4) var(--space-5); border-bottom: 1px solid var(--line); }
+    .confronto__h { width: 38%; padding-block: var(--space-3); border-bottom: 2px solid var(--line-strong); background: var(--bg); font-size: var(--fs-micro); font-weight: 680; letter-spacing: .1em; text-transform: uppercase; }
+    .confronto__h.confronto__alc { background: var(--amber-tint); }
+    .confronto__h1, .confronto__d { width: 24%; padding-left: 0; }
+    .confronto__lab { display: none; }
+  }
+  @media (min-width: 1024px) {
+    /* Intestazioni ferme sotto la barra desktop (72px) mentre la tabella è in vista. */
+    .confronto__h { position: sticky; top: var(--bar-desktop-h); z-index: 1; }
+  }
+
+  .confronto__adulti { display: grid; gap: var(--space-3); margin-top: var(--space-7); padding: var(--space-5); border: 1px solid var(--steel); border-left-width: 4px; border-radius: var(--r-2); }
+  .confronto__adulti h3 { color: var(--steel); }
+
+  .confronto__fine { display: grid; gap: var(--space-5); max-width: 44rem; margin-top: var(--space-8); font-size: var(--fs-lead); line-height: 1.45; }
+  .confronto__ult { font-family: var(--font-display); font-size: var(--fs-h2); font-stretch: 82%; font-weight: 760; line-height: var(--lh-h2); letter-spacing: -.02em; text-wrap: balance; }
+</style>

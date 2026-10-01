@@ -1,0 +1,89 @@
+---
+// Banner del consenso per il pixel di Meta (spec G.8, D31). Proprietario: piattaforma.
+// Esiste solo se PIXEL_ID (src/data/site.mjs) non è vuoto: altrimenti non rende nulla e non carica script.
+// Foglio in basso non modale, night, al massimo 150px, mai sopra l'H1, nessuno spostamento di layout.
+// Rifiuta e Accetta: stessa misura, stesso stile, stesso peso, affiancati, nessuno in ambra. La X conta come rifiuto.
+// Scorrere non è consenso. Il pixel parte solo dopo "Accetta" (src/scripts/consenso.js).
+import { PIXEL_ID } from '../data/site.mjs';
+import Icon from './Icon.astro';
+import ConsensoScript from './ConsensoScript.astro';
+
+// Testi della spec G.8 (da spostare in src/data/pagina.ts).
+const T = {
+  testo: 'Con il tuo consenso uso il pixel di Meta per misurare le inserzioni che portano qui. Se rifiuti, la pagina funziona uguale.',
+  informativa: 'Informativa privacy',
+  rifiuta: 'Rifiuta',
+  accetta: 'Accetta',
+  chiudi: 'Chiudi e rifiuta',
+  regione: 'Consenso al pixel di Meta',
+};
+---
+
+{
+  PIXEL_ID && (
+    <>
+      <div class="consenso mode-night" role="region" aria-label={T.regione} data-consenso data-nosnippet hidden>
+        <p class="consenso__testo">
+          {T.testo} <a href="/privacy/">{T.informativa}</a>
+        </p>
+        <div class="consenso__azioni">
+          <button type="button" class="btn-outline consenso__btn" data-scelta="no">{T.rifiuta}</button>
+          <button type="button" class="btn-outline consenso__btn" data-scelta="si">{T.accetta}</button>
+        </div>
+        <button type="button" class="consenso__chiudi" data-scelta="no" aria-label={T.chiudi}>
+          <Icon name="plus" size={20} />
+        </button>
+      </div>
+      <ConsensoScript />
+    </>
+  )
+}
+
+<style>
+  .consenso {
+    position: fixed;
+    z-index: 60;
+    inset: auto var(--space-2) calc(var(--space-2) + env(safe-area-inset-bottom));
+    display: grid;
+    gap: var(--space-3);
+    max-height: 150px;
+    padding: var(--space-3) var(--space-4);
+    padding-right: calc(var(--tap) + var(--space-2));
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-3);
+    box-shadow: var(--shadow-sheet);
+  }
+  .consenso__testo {
+    font-size: var(--fs-micro);
+    line-height: 1.4;
+    color: var(--muted);
+  }
+  .consenso__testo a { color: var(--text); }
+  .consenso__azioni {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2);
+  }
+  .consenso__btn { min-height: var(--tap); }
+  .consenso__chiudi {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: grid;
+    place-items: center;
+    width: var(--tap);
+    height: var(--tap);
+    color: var(--muted);
+    transform: rotate(45deg);
+  }
+  @media (min-width: 768px) {
+    .consenso {
+      left: auto;
+      width: 30rem;
+      inset-inline-end: var(--space-5);
+      bottom: calc(var(--space-5) + env(safe-area-inset-bottom));
+    }
+    .consenso__testo { font-size: var(--fs-small); line-height: 1.45; }
+  }
+</style>

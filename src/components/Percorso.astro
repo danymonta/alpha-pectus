@@ -1,0 +1,174 @@
+---
+// Dodici mesi #percorso (spec C.9, B.7.6). Proprietario: engineer "metodo".
+// Un'unica griglia, due disposizioni:
+// - mobile: binario verticale a sinistra (una riga per mese, numeri dei mesi), testi delle fasi accanto al
+//   loro mese d'inizio, nota del mese 3 appuntata alla riga 3; i mesi senza testo restano spazio vuoto;
+// - da 1024px: barra orizzontale di 12 mesi, fasi in proporzione (1/12, 7/12, 4/12), nota sopra il mese 3.
+// Riempimento delle fasi con animation-timeline: view() solo come miglioramento progressivo:
+// senza supporto, o con movimento ridotto, la barra è già piena. Nessuna CTA.
+import Section from './Section.astro';
+import Icon, { type IconName } from './Icon.astro';
+import { percorso } from '../data/pagina';
+
+const { fasi, notaMese3: nota, settimana } = percorso;
+const MESI = 12;
+// Desktop: la barra si riempie mentre passa dal 75% al 50% dell'altezza dello schermo, mese dopo mese.
+const riempi = (mesi: number) => +(25 + (25 * mesi) / MESI).toFixed(2);
+---
+
+<Section id={percorso.id} mode="paper" zone="mofu" labelledby={`${percorso.id}-h2`}>
+  <div class="wrap">
+    <header class="percorso__head flow" style="--flow:var(--space-4)">
+      <p class="eyebrow">{percorso.eyebrow}</p>
+      <h2 id={`${percorso.id}-h2`}>{percorso.h2}</h2>
+      <p class="t-lead t-muted">{percorso.lead}</p>
+    </header>
+
+    <div class="percorso__tl">
+      {
+        Array.from({ length: MESI }, (_, i) => (
+          <span class="percorso__m" style={`--i:${i + 1}`} aria-hidden="true">
+            {i + 1}
+          </span>
+        ))
+      }
+      <span class="percorso__track" aria-hidden="true" />
+      {
+        fasi.map((f) => (
+          <span
+            class="percorso__seg"
+            style={`--a:${f.daMese};--b:${f.aMese + 1};--c:var(--${f.tono});--r:cover ${riempi(f.daMese - 1)}vh cover ${riempi(f.aMese)}vh`}
+            aria-hidden="true"
+          />
+        ))
+      }
+      {
+        fasi.map((f, i) => (
+          <div class="percorso__fase" style={`--a:${f.daMese};--k:${i * 4 + 1};--c:var(--${f.tono})`}>
+            <h3>{f.h3}</h3>
+            <p>{f.testo}</p>
+          </div>
+        ))
+      }
+      <p class="percorso__nota t-voice" style={`--a:${nota.mese}`}>{nota.testo}</p>
+    </div>
+
+    <p class="percorso__claim">{percorso.claim}</p>
+
+    {
+      settimana.length > 0 && (
+        <ul class="percorso__sett" role="list">
+          {settimana.map((s) => (
+            <li>
+              <Icon name={s.icona as IconName} class="percorso__ico" />
+              {s.testo}
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</Section>
+
+<style>
+  .percorso__head { max-width: 46rem; }
+
+  /* ---- Mobile: binario verticale ---- */
+  .percorso__tl {
+    display: grid;
+    grid-template-columns: 1.25rem 6px 1fr;
+    grid-template-rows: repeat(12, minmax(2.75rem, auto));
+    column-gap: var(--space-4);
+    margin-top: var(--space-8);
+  }
+  .percorso__m {
+    grid-area: var(--i) / 1;
+    font-size: var(--fs-micro);
+    font-weight: 620;
+    line-height: 1;
+    font-variant-numeric: tabular-nums lining-nums;
+    text-align: right;
+    color: var(--muted);
+    padding-top: .35rem;
+  }
+  .percorso__track, .percorso__seg { grid-area: 1 / 2 / 13; background: var(--line); border-radius: 3px; }
+  .percorso__seg { grid-area: var(--a) / 2 / var(--b); background: var(--c); border-radius: 0; transform-origin: top; }
+  .percorso__fase { grid-area: var(--a) / 3; display: grid; gap: var(--space-2); align-content: start; padding-bottom: var(--space-6); }
+  .percorso__fase h3::before {
+    content: "";
+    display: inline-block;
+    width: .7em;
+    height: .7em;
+    margin-right: .45em;
+    background: var(--c);
+    border: 1px solid var(--line-strong);
+    border-radius: 2px;
+  }
+  .percorso__nota { grid-area: var(--a) / 3 / span 2; position: relative; align-self: start; padding: var(--space-4) 0 var(--space-6); }
+  .percorso__nota::before {
+    content: "";
+    position: absolute;
+    top: calc(var(--space-4) + .45em);
+    left: calc(var(--space-4) * -1 - 10px);
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--text);
+    border-radius: 50%;
+    background: var(--bg);
+  }
+  .percorso__claim {
+    max-width: 30ch;
+    margin-top: var(--space-7);
+    padding-top: var(--space-5);
+    border-top: 2px solid var(--text);
+    font-family: var(--font-display);
+    font-size: var(--fs-h3);
+    font-stretch: 82%;
+    font-weight: 760;
+    line-height: var(--lh-h3);
+    text-wrap: balance;
+  }
+  .percorso__sett { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-6); margin-top: var(--space-5); }
+  .percorso__sett li { display: flex; align-items: center; gap: var(--space-3); }
+  .percorso__ico { flex: none; color: var(--accent-text); }
+
+  /* ---- Da 1024px: barra orizzontale ---- */
+  @media (min-width: 1024px) {
+    .percorso__tl {
+      grid-template-columns: repeat(12, 1fr);
+      grid-template-rows: auto auto 14px auto;
+      column-gap: 0;
+    }
+    .percorso__m { grid-area: 2 / var(--i); text-align: left; padding: 0 0 var(--space-3) var(--space-2); border-left: 1px solid var(--line-strong); }
+    .percorso__track { grid-area: 3 / 1 / 4 / -1; }
+    .percorso__seg { grid-area: 3 / var(--a) / 4 / var(--b); transform-origin: left; }
+    .percorso__fase { grid-area: 4 / var(--k) / 5 / span 4; padding: var(--space-6) var(--space-7) 0 0; }
+    .percorso__fase h3 { font-size: var(--fs-lead); }
+    .percorso__nota { grid-area: 1 / var(--a) / 2 / span 5; padding: 0 0 var(--space-5) var(--space-4); border-left: 2px solid var(--text); }
+    .percorso__nota::before { top: auto; bottom: -7px; left: -8px; }
+    .percorso__claim { margin-top: var(--space-8); }
+  }
+
+  /* Riempimento al passaggio (B.7.6): solo dove il browser lo supporta e il movimento è consentito. */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .percorso__seg {
+        animation-name: percorso-fill;
+        animation-fill-mode: both;
+        animation-timing-function: linear;
+        animation-timeline: view();
+        animation-range: cover 40vh cover calc(100% - 55vh);
+      }
+      @media (min-width: 1024px) {
+        .percorso__seg { animation-range: var(--r); }
+      }
+    }
+  }
+  @keyframes percorso-fill {
+    from { transform: scale(var(--sx, 1), var(--sy, 0)); }
+    to { transform: none; }
+  }
+  @media (min-width: 1024px) {
+    .percorso__seg { --sx: 0; --sy: 1; }
+  }
+</style>

@@ -1,0 +1,346 @@
+---
+// Comparatore prima e dopo (spec C.11, D38, D39, D40). Proprietario: engineer "proof".
+// Senza JS: le due foto affiancate. Con html.js: foto sovrapposte, la "prima" ritagliata con clip-path
+// e un <input type="range"> nativo sopra (tastiera e lettori di schermo). L'input ha pointer-events: none;
+// solo il suo cursore (44px, alto quanto il riquadro) riceve il dito, allineato alla maniglia visibile:
+// così su iOS si trascina dalla maniglia e il resto del riquadro lascia scorrere la pagina (touch-action: pan-y).
+// Schede di vista ("Fronte | Tre quarti | Profilo") e "Dopo un anno | Oggi" sono radio nativi: funzionano
+// solo con CSS (:has). "Mostra cosa è cambiato" è una checkbox: sovrappone le etichette, spenta all'inizio;
+// le stesse righe sono sempre nel figcaption come lista. src/scripts/comparatore.js muove il ritaglio,
+// aggiorna aria-valuetext e invia comparator_use (slide, angle, after, annotate) una volta per tipo.
+import Foto from './Foto.astro';
+
+interface Strato {
+  slot: string;
+  /** Etichetta sul chip nel riquadro, es. "2016 · 63 kg". */
+  etichetta: string;
+  alt?: string;
+}
+interface Vista {
+  /** fronte, tre-quarti, profilo */
+  id: 'fronte' | 'tre-quarti' | 'profilo';
+  label: string;
+  prima?: Strato | null;
+  dopo: Strato;
+  /** Solo fronte: la foto "dopo un anno". */
+  dopoAnno?: Strato | null;
+  /** Riga sotto la foto quando manca la "prima" (D40). */
+  nota?: string | null;
+}
+interface Props {
+  /** Prefisso unico per name e id dei controlli. */
+  uid: string;
+  viste: Vista[];
+  /** Etichette del toggle; usato solo se una vista ha dopoAnno. */
+  toggleDopo?: { dopoUnAnno: string; oggi: string };
+  sliderAria: string;
+  /** aria-valuetext, {n} = percentuale. */
+  valoreTesto: string;
+  annotazioni?: { toggle: string; righe: string[] } | null;
+  didascalia: string[];
+  sizes?: string;
+  /** Legenda (nascosta) dei due gruppi di radio. */
+  legende?: { vista: string; dopo: string };
+  class?: string;
+}
+
+const {
+  uid,
+  viste,
+  toggleDopo,
+  sliderAria,
+  valoreTesto,
+  annotazioni,
+  didascalia,
+  sizes = '(min-width: 1024px) 560px, 100vw',
+  legende,
+  class: className,
+} = Astro.props;
+
+const conAnno = toggleDopo && viste.some((v) => v.dopoAnno);
+// Posizione verticale delle etichette (percentuale dell'altezza), nell'ordine delle righe:
+// petto alto, spalle, addome. Da regolare quando arrivano le foto vere.
+const POSIZIONI = [37, 21, 63];
+const larghezze = [360, 480, 720, 960, 1200];
+---
+
+<figure class:list={['comparatore', className]} data-comparatore>
+  {
+    (viste.length > 1 || conAnno) && (
+      <div class="comparatore__barra">
+        {viste.length > 1 && (
+          <fieldset class="comparatore__seg">
+            {legende && <legend class="visually-hidden">{legende.vista}</legend>}
+            {viste.map((v, i) => (
+              <>
+                <input type="radio" class="visually-hidden" name={`${uid}-vista`} id={`${uid}-${v.id}`} value={v.id} checked={i === 0} data-kind="angle" />
+                <label for={`${uid}-${v.id}`}>{v.label}</label>
+              </>
+            ))}
+          </fieldset>
+        )}
+        {conAnno && (
+          <fieldset class="comparatore__seg comparatore__dopo">
+            {legende && <legend class="visually-hidden">{legende.dopo}</legend>}
+            <input type="radio" class="visually-hidden" name={`${uid}-dopo`} id={`${uid}-anno`} value="anno" data-kind="after" />
+            <label for={`${uid}-anno`}>{toggleDopo!.dopoUnAnno}</label>
+            <input type="radio" class="visually-hidden" name={`${uid}-dopo`} id={`${uid}-oggi`} value="oggi" checked data-kind="after" />
+            <label for={`${uid}-oggi`}>{toggleDopo!.oggi}</label>
+          </fieldset>
+        )}
+      </div>
+    )
+  }
+
+  {
+    viste.map((v, i) => {
+      const strati = [
+        v.prima && { ...v.prima, ruolo: 'prima' },
+        { ...v.dopo, ruolo: 'oggi' },
+        conAnno && v.dopoAnno && { ...v.dopoAnno, ruolo: 'anno' },
+      ].filter(Boolean) as (Strato & { ruolo: string })[];
+      return (
+        <div
+          class:list={['comparatore__vista', { 'comparatore__vista--coppia': v.prima, 'comparatore__vista--anno': conAnno && v.dopoAnno }]}
+          data-vista={v.id}
+          data-sola={viste.length === 1 ? '' : undefined}
+          style={i === 0 ? undefined : 'display:none'}
+        >
+          {strati.map((s) => (
+            <div class={`comparatore__strato comparatore__strato--${s.ruolo}`} data-dopo={s.ruolo === 'prima' ? undefined : s.ruolo}>
+              <Foto slot={s.slot} alt={s.alt} ratio="4:5" sizes={sizes} widths={larghezze} />
+              <span class="comparatore__chip">{s.etichetta}</span>
+            </div>
+          ))}
+          {v.prima && (
+            <>
+              <input
+                type="range"
+                class="comparatore__range"
+                min="0"
+                max="100"
+                step="1"
+                value="50"
+                aria-label={sliderAria}
+                aria-valuetext={valoreTesto.replace('{n}', '50')}
+                data-testo={valoreTesto}
+                data-comparatore-range
+                hidden
+              />
+              <span class="comparatore__maniglia" aria-hidden="true" />
+            </>
+          )}
+          {annotazioni && (
+            <ul class="comparatore__note" aria-hidden="true" role="list">
+              {annotazioni.righe.map((r, k) => (
+                <li style={`top:${POSIZIONI[k] ?? 50 + k * 10}%`}>{r.split(':')[0]}</li>
+              ))}
+            </ul>
+          )}
+          {v.nota && <p class="comparatore__nota t-small">{v.nota}</p>}
+        </div>
+      );
+    })
+  }
+
+  {
+    annotazioni && (
+      <div class="comparatore__opz">
+        <input type="checkbox" class="visually-hidden" id={`${uid}-note`} value="note" data-kind="annotate" />
+        <label for={`${uid}-note`}>{annotazioni.toggle}</label>
+      </div>
+    )
+  }
+
+  <figcaption class="comparatore__cap">
+    <p>{didascalia.join(' ')}</p>
+    {
+      annotazioni && (
+        <ul role="list">
+          {annotazioni.righe.map((r) => {
+            const [a, ...b] = r.split(':');
+            return b.length ? (
+              <li>
+                <strong>{a}:</strong>
+                {b.join(':')}
+              </li>
+            ) : (
+              <li>{r}</li>
+            );
+          })}
+        </ul>
+      )
+    }
+  </figcaption>
+</figure>
+
+<script>
+  import '../scripts/comparatore.js';
+</script>
+
+<style>
+  .comparatore { display: grid; gap: var(--space-4); }
+  .comparatore__barra { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+  .comparatore__seg { display: flex; flex: 1 1 auto; min-width: 0; padding: 0; border: 0; }
+  .comparatore__seg label, .comparatore__opz label {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--tap-lg);
+    padding: 0 var(--space-4);
+    border: 1px solid var(--line-strong);
+    font-size: var(--fs-small);
+    font-weight: 650;
+    cursor: pointer;
+    transition: background-color var(--dur-2) var(--ease);
+  }
+  .comparatore__seg label:first-of-type { border-radius: var(--r-btn) 0 0 var(--r-btn); }
+  .comparatore__seg label:last-of-type { border-radius: 0 var(--r-btn) var(--r-btn) 0; margin-left: -1px; }
+  :checked + label { background: var(--text); color: var(--bg); }
+  :focus-visible + label { outline: 2px solid var(--focus); outline-offset: 3px; position: relative; }
+  .comparatore:has([value='tre-quarti']:checked, [value='profilo']:checked) .comparatore__dopo { visibility: hidden; }
+
+  /* Viste: una alla volta (radio). Senza :has resta la prima. */
+  .comparatore__vista {
+    --p: .5;
+    --x: calc(22px + (100% - 44px) * var(--p));
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    border-radius: var(--r-2);
+    overflow: hidden;
+    background: var(--surface);
+    container-type: inline-size;
+    touch-action: pan-y;
+  }
+  .comparatore__vista:not(.comparatore__vista--coppia) { grid-template-columns: 1fr; }
+  .comparatore__vista[data-sola],
+  .comparatore:has([value='fronte']:checked) [data-vista='fronte'],
+  .comparatore:has([value='tre-quarti']:checked) [data-vista='tre-quarti'],
+  .comparatore:has([value='profilo']:checked) [data-vista='profilo'] { display: grid !important; }
+  .comparatore:has([value='tre-quarti']:checked, [value='profilo']:checked) [data-vista='fronte'] { display: none !important; }
+  .comparatore:has([value='anno']:checked) .comparatore__vista--anno [data-dopo='oggi'],
+  .comparatore:has([value='oggi']:checked) [data-dopo='anno'] { display: none; }
+
+  .comparatore__strato { position: relative; min-width: 0; }
+  .comparatore__chip {
+    position: absolute;
+    top: var(--space-3);
+    left: var(--space-3);
+    z-index: 2;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--r-1);
+    background: var(--scrim-chip);
+    color: var(--night-text);
+    font-size: var(--fs-micro);
+    font-weight: 620;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.35;
+  }
+
+  /* Con JS: strati sovrapposti, la "prima" ritagliata fino alla maniglia. */
+  :global(.js) .comparatore__vista--coppia { grid-template-columns: 1fr; gap: 0; }
+  :global(.js) .comparatore__vista--coppia > .comparatore__strato { grid-area: 1 / 1; }
+  :global(.js) .comparatore__strato--prima { z-index: 1; clip-path: inset(0 calc(100% - var(--x)) 0 0); }
+  :global(.js) .comparatore__vista--coppia [data-dopo] .comparatore__chip { left: auto; right: var(--space-3); }
+  .comparatore__maniglia { display: none; }
+  :global(.js) .comparatore__maniglia {
+    display: block;
+    position: absolute;
+    inset: 0 auto 0 var(--x);
+    z-index: 3;
+    width: 2px;
+    margin-left: -1px;
+    background: var(--night-text);
+    pointer-events: none;
+  }
+  .comparatore__maniglia::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: var(--tap);
+    height: var(--tap);
+    translate: -50% -50%;
+    border-radius: 50%;
+    background: var(--night-text) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230E0D0C' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 7l-5 5 5 5M15 7l5 5-5 5'/%3E%3C/svg%3E") center / 24px no-repeat;
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--ink) 45%, transparent);
+  }
+  .comparatore__range:focus-visible + .comparatore__maniglia::after { outline: 3px solid var(--focus); outline-offset: 3px; }
+  .comparatore__range {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    background: none;
+    -webkit-appearance: none;
+    appearance: none;
+    pointer-events: none;
+    touch-action: pan-y;
+    cursor: ew-resize;
+  }
+  .comparatore__range:focus { outline: none; }
+  .comparatore__range::-webkit-slider-runnable-track { height: 100%; background: none; }
+  .comparatore__range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: var(--tap);
+    height: 125cqw;
+    background: none;
+    border: 0;
+    pointer-events: auto;
+  }
+  .comparatore__range::-moz-range-track { height: 100%; background: none; }
+  .comparatore__range::-moz-range-thumb { width: var(--tap); height: 125cqw; background: none; border: 0; border-radius: 0; pointer-events: auto; }
+
+  /* Annotazioni: spente all'inizio; nominano cosa è stato allenato, mai quanto è cambiato (D39). */
+  .comparatore__note {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--dur-2) var(--ease);
+  }
+  .comparatore:has([value='note']:checked) .comparatore__note { opacity: 1; }
+  .comparatore__note li {
+    position: absolute;
+    right: var(--space-3);
+    translate: 0 -50%;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--r-1);
+    background: var(--scrim-chip);
+    color: var(--night-text);
+    font-size: var(--fs-micro);
+    font-weight: 620;
+  }
+  .comparatore__note li::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    width: 15cqw;
+    border-top: 1px solid var(--night-text);
+  }
+  .comparatore__nota { padding: var(--space-3) var(--space-4); color: var(--muted); }
+
+  .comparatore__opz label { display: inline-flex; gap: var(--space-3); border-radius: var(--r-btn); }
+  .comparatore__opz label::before {
+    content: "";
+    width: 32px;
+    height: 18px;
+    border-radius: 9px;
+    border: 1px solid var(--line-strong);
+    background: radial-gradient(circle 6px at 9px 50%, var(--muted) 98%, transparent);
+    transition: background-position var(--dur-2) var(--ease);
+  }
+  .comparatore__opz :checked + label { background: none; color: inherit; }
+  .comparatore__opz :checked + label::before { background: radial-gradient(circle 6px at 23px 50%, var(--bg) 98%, transparent), var(--text); border-color: var(--text); }
+
+  .comparatore__cap { display: grid; gap: var(--space-3); color: var(--muted); font-size: var(--fs-small); line-height: 1.5; }
+  .comparatore__cap ul { display: grid; gap: var(--space-1); }
+  .comparatore__cap strong { color: var(--text); }
+</style>

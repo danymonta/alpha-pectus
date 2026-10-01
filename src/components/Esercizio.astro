@@ -1,0 +1,137 @@
+---
+// Carta esercizio (spec C.6 #esercizi, E.1, E.2, B.7). Proprietario: tofu-mofu. Usata solo da Postura.astro.
+// Stati (E.1), decisi in build:
+//   video   public/video/esercizio-N.mp4 esiste: <video> 4:5 muto, in loop, preload none, poster dallo slot foto.
+//           Senza JS: controlli nativi. Con JS (scripts/postura.js): la sorgente si carica vicino al viewport,
+//           parte al 50% di visibilità, bottone play/pausa 44px; movimento ridotto o risparmio dati: poster + play.
+//   poster  video assente, poster presente: solo la foto, nessun bottone play.
+//   testo   né video né poster: solo le indicazioni, numero ingrandito.
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+import { getImage } from 'astro:assets';
+import Foto from './Foto.astro';
+import Icon from './Icon.astro';
+import { hasFoto, getFoto } from '../lib/foto';
+
+interface Props {
+  esercizio: {
+    n: number;
+    nome: string;
+    nomeTecnico: string | null;
+    cues: string[];
+    chips: string[];
+    poster: string;
+    video: string;
+    videoAria: string;
+  };
+  etichette: { play: string; pausa: string };
+}
+const { esercizio: e, etichette } = Astro.props;
+
+const haVideo = existsSync(join(process.cwd(), 'public', e.video));
+const haPoster = hasFoto(e.poster);
+const stato = haVideo ? 'video' : haPoster ? 'poster' : 'testo';
+// Poster del video: un solo WebP 720 x 900, stesso formato del clip (4:5).
+const poster =
+  haVideo && haPoster
+    ? (await getImage({ src: getFoto(e.poster)!, width: 720, height: 900, fit: 'cover', format: 'webp', quality: 72 })).src
+    : undefined;
+const idH = `esercizio-${e.n}-h4`;
+const ICONE = ['calendar', 'band'] as const;
+---
+
+<article class="esercizio esercizio__p" style="--g:var(--space-4)" aria-labelledby={idH}>
+  <p class:list={['t-year esercizio__n', { 'esercizio__n--s': stato !== 'testo' }]} aria-hidden="true">{e.n}</p>
+  <h4 id={idH}>{e.nome}{e.nomeTecnico && <span class="t-muted"> ({e.nomeTecnico})</span>}</h4>
+
+  {
+    stato === 'video' && (
+      <div class="esercizio__media" data-esercizio>
+        <video
+          class="esercizio__video"
+          width="720"
+          height="900"
+          controls
+          muted
+          loop
+          playsinline
+          disablepictureinpicture
+          preload={poster ? 'none' : 'metadata'}
+          poster={poster}
+          aria-label={e.videoAria}
+        >
+          <source src={e.video} type="video/mp4" />
+        </video>
+        <button
+          type="button"
+          class="esercizio__btn"
+          hidden
+          data-esercizio-btn
+          data-play={etichette.play}
+          data-pausa={etichette.pausa}
+          aria-label={etichette.play}
+        >
+          <Icon name="play" size={20} data-i="play" />
+          <Icon name="pause" size={20} data-i="pausa" />
+        </button>
+      </div>
+    )
+  }
+  {
+    stato === 'poster' && (
+      <Foto
+        slot={e.poster}
+        ratio="4:5"
+        sizes="(min-width: 1024px) 380px, (min-width: 768px) 60vw, 100vw"
+        widths={[360, 480, 720, 960]}
+        class="esercizio__media"
+      />
+    )
+  }
+
+  <ol class="esercizio__cues esercizio__p" style="--g:var(--space-2)">
+    {e.cues.map((c) => <li>{c}</li>)}
+  </ol>
+  <ul class="esercizio__chips" role="list">
+    {
+      e.chips.map((c, i) => (
+        <li class="esercizio__chip t-small">
+          <Icon name={ICONE[i] ?? 'check'} size={18} />
+          {c}
+        </li>
+      ))
+    }
+  </ul>
+</article>
+
+<style>
+  .esercizio__p { display: grid; align-content: start; gap: var(--g); }
+  .esercizio { padding-top: var(--space-5); border-top: 1px solid var(--line-strong); }
+  .esercizio__n { color: var(--accent-text); }
+  .esercizio__n--s { font-size: 4rem; }
+  .esercizio__media { position: relative; overflow: hidden; border-radius: var(--r-2); background: var(--night-surface); }
+  .esercizio__video { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+  .esercizio__btn {
+    position: absolute;
+    right: var(--space-3);
+    bottom: var(--space-3);
+    display: grid;
+    place-items: center;
+    width: var(--tap);
+    height: var(--tap);
+    border-radius: 50%;
+    background: var(--scrim-chip);
+    color: var(--night-text);
+  }
+  .esercizio__cues { padding-left: 1.25em; }
+  .esercizio__cues li::marker { color: var(--accent-text); font-weight: 700; }
+  .esercizio__chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .esercizio__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-3);
+    border: 1px solid var(--line-strong);
+    border-radius: 99px;
+  }
+</style>

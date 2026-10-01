@@ -1,0 +1,14 @@
+---
+// Landing, variante base (organico, bio, ricerca). Spec D2.
+import Base from '../layouts/Base.astro';
+import Pagina from '../components/Pagina.astro';
+import { DEFAULT, getVariante, validaVarianti } from '../data/hero-varianti.mjs';
+import { violazioni } from '../lib/regole-copy.mjs';
+
+validaVarianti(violazioni);
+const variante = getVariante(DEFAULT);
+---
+
+<Base variante={variante.slug}>
+  <Pagina variante={variante} />
+</Base>

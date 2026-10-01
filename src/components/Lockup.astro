@@ -1,0 +1,59 @@
+---
+// Lockup del marchio (spec C.1): PERCORSO ALPHA + filetto verticale + "Pectus" in Newsreader corsivo ambra.
+// Non è un link (D8). Con il logo ufficiale confermato (conferme.logoUfficiale) usa public/brand/percorso-alpha-logo.svg.
+import { header } from '../data/pagina';
+import { BRAND } from '../data/site.mjs';
+import { CONFERME as C } from '../data/conferme.mjs';
+
+interface Props {
+  /** 'breve' su mobile stretto: "α Pectus". */
+  forma?: 'intera' | 'breve';
+  class?: string;
+  [key: `data-${string}`]: unknown;
+}
+const { forma = 'intera', class: className, ...rest } = Astro.props;
+const cid = Object.fromEntries(Object.entries(rest).filter(([k]) => k.startsWith('data-astro-cid')));
+---
+
+<p class:list={['lockup', className]} {...cid}>
+  <span class="visually-hidden">{header.ariaLabel}</span>
+  {
+    C.logoUfficiale ? (
+      <img class="lockup__logo" src={BRAND.logoSvg} alt="" width="140" height="20" />
+    ) : (
+      <span class="lockup__alpha" aria-hidden="true">{forma === 'breve' ? header.lockupBreve : header.lockup}</span>
+    )
+  }
+  <span class="lockup__rule" aria-hidden="true"></span>
+  <span class="lockup__pectus" aria-hidden="true">{header.pectus}</span>
+</p>
+
+<style>
+  .lockup {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    color: var(--text);
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .lockup__alpha {
+    font-family: var(--font-sans);
+    font-weight: 800;
+    font-size: .9375rem;
+    letter-spacing: .08em;
+  }
+  .lockup__logo { height: 20px; width: auto; }
+  .lockup__rule {
+    width: 1px;
+    height: 20px;
+    background: var(--line-strong);
+  }
+  .lockup__pectus {
+    font-family: var(--font-voice);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.25rem;
+    color: var(--amber);
+  }
+</style>

@@ -1,0 +1,26 @@
+---
+// Contenitore standard di una sezione: id fisso (spec C.0), modalità colore, zona del funnel.
+// Uso: <Section id="metodo" mode="paper" zone="mofu" labelledby="metodo-h2"> ... </Section>
+// Ogni altro attributo (data-evt-zone, data-sticky-hide, aria-*) passa così com'è.
+interface Props {
+  id: string;
+  mode: 'night' | 'paper' | 'golden';
+  zone: 'tofu' | 'mofu' | 'bofu';
+  labelledby?: string;
+  class?: string;
+  /** Aggiunge .section (padding verticale standard). Default true. */
+  pad?: boolean;
+  [key: string]: unknown;
+}
+const { id, mode, zone, labelledby, class: className, pad = true, ...rest } = Astro.props;
+---
+
+<section
+  id={id}
+  class:list={[`mode-${mode}`, { section: pad }, className]}
+  data-zone={zone}
+  aria-labelledby={labelledby}
+  {...rest}
+>
+  <slot />
+</section>

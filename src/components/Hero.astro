@@ -1,0 +1,248 @@
+---
+// Hero #inizio (spec C.2, D4 a D7, D55, F.9). Proprietario: hero-reel.
+// Riceve la variante (src/data/hero-varianti.mjs): h1, turn, sub. Tutto il resto è fisso (pagina.ts).
+// Primo schermo mobile: eyebrow, H1, blocco foto, invito alla storia, link DM. Sub e striscia prove sotto la piega.
+// LCP: foto hero eager + fetchpriority high, dimensioni esplicite, nessuna animazione sopra la piega.
+// Foto mancante in produzione: composizione tipografica (2016 cavo, la curva, Oggi pieno), mai un riquadro vuoto.
+import Section from './Section.astro';
+import Foto from './Foto.astro';
+import Icon from './Icon.astro';
+import CtaDm from './CtaDm.astro';
+import { hero, capitoli } from '../data/pagina';
+import { hasFoto } from '../lib/foto';
+
+interface Props {
+  variante: { slug: string; h1: string; turn: string; sub: string; skipLabel: string; storiaH2?: string };
+}
+const { variante } = Astro.props;
+
+// In sviluppo <Foto> mostra il ciak segnaposto; in produzione, senza file, parte il ripiego tipografico.
+const dev = import.meta.env.DEV;
+const still = hasFoto(hero.foto.still) || dev;
+const inset = hasFoto(hero.foto.inset) || dev;
+// "2016 · 63 kg" -> "2016"; "Oggi · 83 kg" -> "Oggi" (numerali della composizione tipografica).
+const annoPrima = hero.etichette.prima.split(' · ')[0];
+const oggi = hero.etichette.dopo.split(' · ')[0];
+---
+
+<Section id={hero.id} mode="night" zone="tofu" pad={false} labelledby="inizio-h1" class="hero">
+  <div class="wrap hero__grid">
+    <p class="eyebrow eyebrow--muted hero__eyebrow">{hero.eyebrow}</p>
+    <h1 id="inizio-h1" class="hero__h1">{variante.h1} <span class="h1-turn">{variante.turn}</span></h1>
+
+    <div class:list={['hero__foto', { 'hero__foto--tipo': !still }]}>
+      {
+        still ? (
+          <figure class="hero__still">
+            <Foto
+              slot={hero.foto.still}
+              sizes="(min-width: 1024px) 40vw, 62vw"
+              widths={[360, 480, 720, 960, 1200]}
+              loading="eager"
+              fetchpriority="high"
+              ratio="4:5"
+            />
+            <figcaption class="t-micro hero__chip hero__chip--oggi">{hero.etichette.dopo}</figcaption>
+          </figure>
+        ) : (
+          <div class="hero__tipo grain">
+            <span class="t-year hero__anno" aria-hidden="true">{annoPrima}</span>
+            <span class="t-year hero__oggi" aria-hidden="true">{oggi}</span>
+            <svg class="hero__curva" viewBox="0 0 200 24" aria-hidden="true"><path d="M0 3h64c14 0 20 18 36 18s22-18 36-18h64" /></svg>
+            <p class="t-micro hero__et">{!inset && hero.etichette.prima}</p>
+            <p class="t-micro hero__et">{hero.etichette.dopo}</p>
+          </div>
+        )
+      }
+      {
+        inset && (
+          <figure class="hero__inset">
+            <Foto
+              slot={hero.foto.inset}
+              sizes="(min-width: 1024px) 170px, 24vw"
+              widths={[180, 240, 360, 480]}
+              loading="eager"
+              ratio="4:5"
+            />
+            <figcaption class="t-micro hero__chip">{hero.etichette.prima}</figcaption>
+          </figure>
+        )
+      }
+    </div>
+
+    <a class="btn-outline btn-outline--full hero__cue" href={hero.storiaCue.href}>
+      <span class="hero__cue-riga">{hero.storiaCue.label}<Icon name="arrow-down" size={18} /></span>
+      <span class="t-micro hero__cue-sotto"><span class="hero__mini" style={`--n:${capitoli.length}`}></span>{hero.storiaCue.sotto}</span>
+    </a>
+
+    <CtaDm placement="hero" variant="link" leadIn={hero.dmLeadIn} class="hero__dm" />
+
+    <p class="t-lead hero__sub">{variante.sub}</p>
+
+    <ul class="hero__prove" role="list">
+      {hero.provaStriscia.map((p) => (
+        <li><strong>{p.forte}</strong> {p.testo}</li>
+      ))}
+    </ul>
+  </div>
+</Section>
+
+<style>
+  .hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-3);
+    padding-block: var(--space-2) var(--space-8);
+  }
+  .h1-turn { display: block; color: var(--amber); }
+
+  /* Blocco foto: still al 62% a destra, stampa 2016 sull'angolo in basso a sinistra.
+     D4: la riga di frizione del link DM deve stare nel primo schermo (circa 700px utili nel browser di Instagram).
+     Tutto il resto del primo schermo occupa circa 476px: la still si stringe sui telefoni bassi (fino al 44%)
+     e torna al 62% della spec appena l'altezza lo permette. svh è statico: nessuno spostamento con le barre. */
+  .hero__foto {
+    position: relative;
+    margin-block: var(--space-1) var(--space-4);
+  }
+  .hero__still {
+    position: relative;
+    width: 62%;
+    width: clamp(44%, calc((100svh - 476px) * .8), 62%);
+    margin-left: auto;
+    margin-right: 8%;
+  }
+  .hero__still :global(picture),
+  .hero__tipo {
+    display: block;
+    border-radius: var(--r-2);
+    overflow: hidden;
+    background: var(--surface);
+  }
+  /* La stampa 2016 è larga il 38% della still e ne copre l'angolo in basso a sinistra per il 40% della sua larghezza. */
+  .hero__inset {
+    position: absolute;
+    z-index: 2;
+    left: 14%;
+    left: calc(92% - clamp(44%, calc((100svh - 476px) * .8), 62%) * 1.228);
+    bottom: calc(-1 * var(--space-3));
+    width: calc(62% * .38);
+    width: calc(clamp(44%, calc((100svh - 476px) * .8), 62%) * .38);
+  }
+  .hero__inset :global(picture) {
+    display: block;
+    border: 4px solid var(--print-border);
+    box-shadow: var(--shadow-print);
+  }
+  /* Etichette datate (D55): minuscolo per le unità, mai maiuscoletto. */
+  .hero__chip {
+    position: absolute;
+    z-index: 3;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--r-1);
+    background: var(--scrim-chip);
+    color: var(--night-text);
+    white-space: nowrap;
+  }
+  .hero__chip,
+  .hero__et { font-weight: 620; }
+  .hero__chip--oggi { top: var(--space-2); right: var(--space-2); }
+  .hero__inset .hero__chip { left: 50%; bottom: calc(-1 * var(--space-2)); translate: -50% 0; }
+
+  /* Ripiego tipografico: una linea del tempo. L'anno del prima è cavo, oggi è pieno; in mezzo, la curva. */
+  .hero__foto--tipo { padding: 0; }
+  .hero__tipo {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: var(--space-3) var(--space-4);
+    padding: var(--space-5);
+    border: 1px solid var(--line);
+  }
+  .hero__tipo > * { position: relative; z-index: 2; }
+  .hero__anno,
+  .hero__oggi { font-size: clamp(3.75rem, 22vw, 9rem); }
+  .hero__anno { color: transparent; -webkit-text-stroke: 1px var(--line-strong); }
+  .hero__curva {
+    grid-column: 1 / -1;
+    width: 100%;
+    height: auto;
+    fill: none;
+    stroke: var(--accent-text);
+    stroke-width: 1.5;
+    vector-effect: non-scaling-stroke;
+  }
+  .hero__et { color: var(--muted); }
+  .hero__et + .hero__et { color: var(--text); text-align: right; }
+
+  /* Invito alla storia: outline di navigazione, con la mini barra dei capitoli. */
+  .hero__cue { flex-direction: column; gap: var(--space-1); padding-block: var(--space-1); }
+  .hero__cue-riga,
+  .hero__cue-sotto { display: inline-flex; align-items: center; gap: var(--space-2); }
+  .hero__cue-sotto { color: var(--muted); font-weight: 500; }
+  .hero__mini {
+    width: calc(var(--n) * 8px - 2px);
+    height: 2px;
+    background: linear-gradient(90deg, var(--amber) 0 6px, transparent 0), repeating-linear-gradient(90deg, var(--progress-unseen) 0 6px, transparent 0 8px);
+  }
+
+  .hero__sub { max-width: 34ch; margin-top: var(--space-7); }
+  .hero__prove {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-5) var(--space-4);
+    margin-top: var(--space-4);
+    padding: 0;
+    font-size: var(--fs-small);
+    line-height: 1.45;
+    color: var(--muted);
+  }
+  .hero__prove li { padding-top: var(--space-3); border-top: 1px solid var(--line); }
+  .hero__prove strong {
+    display: block;
+    margin-bottom: var(--space-1);
+    color: var(--text);
+    font-family: var(--font-display);
+    font-size: var(--fs-lead);
+    font-stretch: 82%;
+    font-weight: 700;
+    line-height: 1.15;
+  }
+
+  @media (min-width: 1024px) {
+    .hero__grid {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      grid-template-rows: 1fr repeat(5, auto) 1fr auto;
+      gap: var(--space-5) var(--space-6);
+      padding-block: var(--space-5) var(--space-9);
+    }
+    .hero__grid > * { grid-column: 1 / 7; }
+    .hero__eyebrow { grid-row: 2; }
+    .hero__h1 { grid-row: 3; }
+    .hero__sub { grid-row: 4; margin-top: 0; }
+    .hero__cue { grid-row: 5; justify-self: start; width: auto; min-width: 22rem; margin-top: var(--space-3); }
+    .hero__dm { grid-row: 6; }
+    .hero__grid > .hero__foto {
+      grid-column: 7 / 13;
+      grid-row: 1 / 8;
+      justify-self: end;
+      width: min(100%, 560px);
+      margin: 0;
+      padding-inline: 20% 0;
+    }
+    .hero__still { width: auto; margin: 0; }
+    .hero__inset { left: 0; bottom: var(--space-8); width: calc(80% * .38); }
+    .hero__grid > .hero__foto--tipo { padding: 0; width: min(100%, 448px); }
+    .hero__tipo { aspect-ratio: 4 / 5; grid-template-columns: 1fr; align-content: space-between; padding: var(--space-7) var(--space-6); }
+    .hero__curva { order: 1; }
+    .hero__oggi { order: 2; }
+    .hero__et + .hero__et { order: 3; text-align: left; }
+    .hero__grid > .hero__prove {
+      grid-column: 1 / -1;
+      grid-row: 8;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-6);
+      margin-top: var(--space-7);
+    }
+    .hero__anno { font-size: 10rem; }
+  }
+</style>

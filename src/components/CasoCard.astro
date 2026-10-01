@@ -1,0 +1,98 @@
+---
+// Card di un caso cliente (spec C.12, E.4, D41). Proprietario: engineer "proof".
+// Modello fisso per tutti: titolo "Nome, età, lavoro", <dl> con etichette fisse, frase tra caporali
+// (solo se vera), coppie di foto 4:5 fronte e profilo, ogni <figure> con la data dello scatto.
+// I dati vengono da src/data/casi.ts: per aggiungere un cliente basta un oggetto in CASI più le foto.
+// variante: "guida" = card in evidenza (due colonne su desktop), "secondaria" = ricomposizioni senza pectus.
+// In sviluppo, un caso non pubblicabile mostra l'elenco di cosa manca (mai in produzione).
+import Foto from './Foto.astro';
+import { casiSezione as s } from '../data/pagina';
+import { altCaso, problemiCaso, type Caso, type CoppiaFoto } from '../data/casi';
+import { dataIt } from '../lib/testo';
+
+interface Props {
+  caso: Caso;
+  livello?: 3 | 4;
+  variante?: 'guida' | 'normale' | 'secondaria';
+  /** Riga sopra la card in evidenza ("Stesso petto, stesso metodo."). */
+  occhiello?: string;
+}
+const { caso: c, livello = 3, variante = 'normale', occhiello } = Astro.props;
+const H = livello === 4 ? 'h4' : 'h3';
+const titolo = [c.nome, c.eta != null ? `${c.eta} anni` : null, c.lavoro].filter(Boolean).join(', ');
+const righe = [
+  { e: s.etichette.mesi, v: c.mesi != null ? String(c.mesi) : '' },
+  { e: s.etichette.partenza, v: c.partenza },
+  { e: s.etichette.lavoroFatto, v: c.lavoroFatto },
+  { e: s.etichette.cambiato, v: c.cambiato },
+].filter((r) => r.v);
+const coppie = [c.foto.fronte, c.foto.profilo].filter(Boolean) as CoppiaFoto[];
+const mancanze = import.meta.env.DEV && !c.pubblica ? problemiCaso(c) : [];
+const sizes = variante === 'guida' ? '(min-width: 1024px) 380px, 50vw' : '(min-width: 1024px) 190px, 50vw';
+const data = (d: string) => (/^\d{4}-\d{2}$/.test(d) ? d : null);
+---
+
+<article class:list={['caso-card', `caso-card--${variante}`]} id={`caso-${c.id}`} aria-labelledby={`caso-${c.id}-h`}>
+  {occhiello && <p class="caso-card__occhiello eyebrow">{occhiello}</p>}
+  {
+    mancanze.length > 0 && (
+      <p class="caso-card__dev t-micro">Segnaposto, non pubblicato: {mancanze.join('; ')}.</p>
+    )
+  }
+  <div class="caso-card__foto">
+    {
+      coppie.map((p) => (
+        <div class="caso-card__coppia">
+          {[
+            { slot: p.prima, alt: p.alt.prima, d: data(p.dataPrima) },
+            { slot: p.dopo, alt: p.alt.dopo, d: data(p.dataDopo) },
+          ].map((x) => (
+            <figure>
+              <Foto slot={x.slot} alt={altCaso(c, x.alt)} ratio="4:5" focus={c.focus} sizes={sizes} widths={[240, 360, 480, 720]} />
+              {x.d && (
+                <figcaption>
+                  <time datetime={x.d}>{dataIt(x.d)}</time>
+                </figcaption>
+              )}
+            </figure>
+          ))}
+        </div>
+      ))
+    }
+  </div>
+  <div class="caso-card__testo">
+    <H class="caso-card__h" id={`caso-${c.id}-h`}>{titolo}</H>
+    <dl>
+      {
+        righe.map((r) => (
+          <div>
+            <dt>{r.e}</dt>
+            <dd>{r.v}</dd>
+          </div>
+        ))
+      }
+    </dl>
+    {c.citazione && <blockquote class="caso-card__frase">«{c.citazione}»</blockquote>}
+  </div>
+</article>
+
+<style>
+  .caso-card { display: grid; gap: var(--space-4); align-content: start; padding: var(--space-4); border: 1px solid var(--line); border-radius: var(--r-2); background: var(--surface); }
+  .caso-card__dev { padding: var(--space-2); outline: 1px dashed var(--line-strong); color: var(--muted); }
+  .caso-card__foto { display: grid; gap: var(--space-3); }
+  .caso-card__coppia { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+  .caso-card__coppia :is(picture, .foto-slate) { border-radius: var(--r-1); overflow: hidden; }
+  .caso-card figcaption { padding-top: var(--space-1); font-size: var(--fs-micro); color: var(--muted); font-variant-numeric: tabular-nums; }
+  .caso-card__testo { display: grid; gap: var(--space-4); align-content: start; }
+  .caso-card dl div { padding-block: var(--space-2); border-top: 1px solid var(--line); }
+  .caso-card dt { font-size: var(--fs-micro); font-weight: 620; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .caso-card dd { font-size: var(--fs-small); line-height: 1.5; font-variant-numeric: tabular-nums; }
+  .caso-card__frase { font-family: var(--font-voice); font-style: italic; font-size: var(--fs-lead); line-height: var(--lh-voice); }
+  .caso-card--secondaria { background: none; }
+  .caso-card--secondaria .caso-card__coppia { max-width: 20rem; }
+  @media (min-width: 1024px) {
+    .caso-card--guida { grid-column: span 2; grid-template-columns: 1fr 1fr; column-gap: var(--space-6); padding: var(--space-5); }
+    .caso-card--guida > :not(.caso-card__foto, .caso-card__testo) { grid-column: 1 / -1; }
+    .caso-card--guida .caso-card__h { font-size: var(--fs-h3); }
+  }
+</style>

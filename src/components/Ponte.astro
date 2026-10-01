@@ -1,0 +1,83 @@
+---
+// Quello che ho capito #cosa-ho-capito (spec C.5). Paper: qui la pagina passa alla luce.
+// Parte 1 monumentale (poche parole, molto bianco), parte 2 #convinzioni: due carte
+// "Quello che ti hanno detto" / "Quello che succede davvero". Nessuna CTA.
+// data-sticky-start: la barra fissa (piattaforma) compare quando questa sezione arriva al 60% del viewport (D29, G.3).
+import Section from './Section.astro';
+import Icon from './Icon.astro';
+import { ponte } from '../data/pagina';
+
+// La frase firma va su due righe: quello che resta (attenuato), quello che si allena (inchiostro).
+const [resta, ...allena] = ponte.monumentale.split(/(?<=\.)\s+/);
+const { convinzioni: cv } = ponte;
+---
+
+<Section
+  id={ponte.id}
+  mode="paper"
+  zone="mofu"
+  labelledby={`${ponte.id}-h2`}
+  data-evt-zone="mofu"
+  data-sticky-start
+>
+  <div class="wrap grid">
+    <div class="ponte__col ponte__p" style="--g:var(--space-7)">
+      <header class="ponte__p" style="--g:var(--space-4)">
+        <p class="eyebrow">{ponte.eyebrow}</p>
+        <h2 id={`${ponte.id}-h2`}>{ponte.h2}</h2>
+      </header>
+      <div class="t-lead ponte__p ponte__corpo" style="--g:var(--space-4)">
+        {ponte.corpo.map((p) => <p>{p}</p>)}
+      </div>
+    </div>
+
+    <p class="t-h2 ponte__firma">
+      <Icon name="curva" size={40} class="ponte__curva" />
+      <span class="t-muted">{resta}</span>
+      {allena.length > 0 && <span>{allena.join(' ')}</span>}
+    </p>
+
+    <div id={cv.id} class="ponte__carte">
+      {
+        cv.carte.map((c, i) => (
+          <article class="ponte__carta ponte__p" style="--g:var(--space-5)" aria-labelledby={`${cv.id}-${i + 1}`}>
+            <h3 id={`${cv.id}-${i + 1}`}>{c.h3}</h3>
+            <dl class="ponte__p" style="--g:var(--space-5)">
+              <div class="ponte__p" style="--g:var(--space-2)">
+                <dt class="eyebrow eyebrow--muted">{cv.etichettaDetto}</dt>
+                <dd class="t-voice t-muted">{c.detto}</dd>
+              </div>
+              <div class="ponte__davvero ponte__p" style="--g:var(--space-2)">
+                <dt class="eyebrow">{cv.etichettaDavvero}</dt>
+                <dd>{c.davvero}</dd>
+              </div>
+            </dl>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</Section>
+
+<style>
+  .ponte__p { display: grid; align-content: start; gap: var(--g); }
+  .ponte__col, .ponte__carte { grid-column: 1 / -1; }
+  .ponte__corpo { max-width: 40ch; }
+  .ponte__firma { display: grid; grid-column: 1 / -1; margin-block: var(--space-10); max-width: 16ch; }
+  .ponte__curva { color: var(--accent-text); margin-bottom: var(--space-4); }
+  .ponte__carte { display: grid; gap: var(--space-5); }
+  .ponte__carta {
+    padding: var(--space-6) var(--space-5);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-2);
+    box-shadow: var(--shadow-card);
+  }
+  .ponte__davvero { padding-top: var(--space-5); border-top: 1px solid var(--line-strong); }
+  @media (min-width: 1024px) {
+    .ponte__col { grid-column: 1 / 9; }
+    .ponte__firma { grid-column: 2 / -1; max-width: 26ch; }
+    .ponte__carte { grid-template-columns: 1fr 1fr; gap: var(--space-6); }
+    .ponte__carta { padding: var(--space-7) var(--space-6); }
+  }
+</style>

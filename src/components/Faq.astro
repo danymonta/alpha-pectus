@@ -1,0 +1,93 @@
+---
+// Domande #domande (spec C.16, D42). Proprietario: engineer "bofu".
+// Golden. Tre gruppi con etichetta in maiuscoletto (<p>), <details>/<summary> nativi con un <h3> nel summary,
+// id domanda-<slug> sul <details>. Solo faqPubblicate(): la stessa funzione genera il FAQPage JSON-LD (Base),
+// quindi pagina e dati strutturati coincidono per costruzione. La prima domanda è aperta.
+// Nessuna CTA e nessun link nelle risposte (G.1). Script: src/scripts/faq.js apre la domanda di un link #domanda-<slug>.
+import Section from './Section.astro';
+import Icon from './Icon.astro';
+import { faq, faqPubblicate } from '../data/pagina';
+
+const gruppi = faqPubblicate();
+---
+
+<Section id={faq.id} mode="golden" zone="bofu" labelledby={`${faq.id}-h2`}>
+  <div class="wrap faq">
+    <header class="faq__head flow" style="--flow:var(--space-4)">
+      <p class="eyebrow">{faq.eyebrow}</p>
+      <h2 id={`${faq.id}-h2`}>{faq.h2}</h2>
+    </header>
+
+    <div class="faq__gruppi">
+      {gruppi.map((g, gi) => (
+        <div class="faq__gruppo">
+          <p class="caps faq__label">{g.titolo}</p>
+          <div class="faq__lista">
+            {g.domande.map((d, di) => (
+              <details class="faq__item" id={faq.idDomanda(d.slug)} open={gi === 0 && di === 0} data-faq>
+                <summary data-evt="faq_open" data-evt-q={d.slug}>
+                  <h3>{d.domanda}</h3>
+                  <Icon name="plus" class="faq__piu" />
+                </summary>
+                <div class="faq__r">
+                  <p>{d.risposta}</p>
+                </div>
+              </details>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</Section>
+
+<script>
+  import '../scripts/faq.js';
+</script>
+
+<style>
+  .faq { display: grid; gap: var(--space-7); }
+  .faq__gruppi { display: grid; gap: var(--space-7); }
+  .faq__label { margin-bottom: var(--space-3); color: var(--muted); }
+  .faq__lista { border-radius: var(--r-2); overflow: hidden; background: var(--surface); }
+  .faq__item + .faq__item { border-top: 1px solid var(--line); }
+  .faq__item { position: relative; scroll-margin-top: var(--space-8); }
+  .faq__item::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 2px; background: var(--amber); opacity: 0; transition: opacity var(--dur-1) var(--ease); }
+  .faq__item[open]::before { opacity: 1; }
+  summary {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4);
+    min-height: var(--tap-lg);
+    padding: var(--space-4) var(--space-4) var(--space-4) var(--space-5);
+    list-style: none;
+    cursor: pointer;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary:focus-visible { outline-offset: -3px; }
+  summary h3 { line-height: 1.25; text-wrap: pretty; }
+  summary:hover h3 { text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: .2em; }
+  .faq__piu { flex: none; margin-top: 2px; color: var(--accent-text); transition: transform var(--dur-1) var(--ease); }
+  [open] > summary .faq__piu { transform: rotate(45deg); }
+  .faq__r { padding: 0 var(--space-5) var(--space-5); color: var(--muted); }
+  .faq__r p { max-width: var(--measure); }
+
+  /* Apertura animata dove il browser la supporta (miglioramento progressivo). */
+  @supports (interpolate-size: allow-keywords) {
+    .faq__item { interpolate-size: allow-keywords; }
+    .faq__item::details-content { height: 0; overflow: clip; transition: height var(--dur-2) var(--ease), content-visibility var(--dur-2) allow-discrete; }
+    .faq__item[open]::details-content { height: auto; }
+  }
+
+  @media (min-width: 768px) {
+    summary { padding: var(--space-5) var(--space-5) var(--space-5) var(--space-6); }
+    summary h3 { font-size: min(var(--fs-h3), 1.625rem); }
+    .faq__r { padding: 0 var(--space-9) var(--space-6) var(--space-6); }
+  }
+  @media (min-width: 1024px) {
+    .faq { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--space-6); }
+    .faq__head { grid-column: 1 / 5; align-self: start; position: sticky; top: var(--space-9); }
+    .faq__gruppi { grid-column: 5 / -1; }
+  }
+</style>

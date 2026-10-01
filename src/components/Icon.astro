@@ -1,0 +1,73 @@
+---
+// Set di icone inline (spec B.5): griglia 24px, tratto 1.5, estremità arrotondate, currentColor.
+// Uso: <Icon name="arrow-down" />            decorativa (aria-hidden)
+//      <Icon name="check" label="Incluso" /> informativa (role="img" + aria-label)
+// Niente croci mediche, stetoscopi, braccia flesse, fuoco, fulmini, emoji.
+export type IconName =
+  | 'arrow-right' | 'arrow-down' | 'chevron-left' | 'chevron-right' | 'plus' | 'check'
+  | 'rings' | 'band' | 'pullup-bar' | 'lungs' | 'shoulders-open' | 'calendar' | 'clock' | 'home'
+  | 'heart-lungs' | 'camera-off' | 'eye-off' | 'circle-check' | 'play' | 'pause'
+  | 'instagram' | 'youtube' | 'curva';
+
+interface Props {
+  name: IconName;
+  size?: number | string;
+  label?: string;
+  class?: string;
+  strokeWidth?: number;
+  [key: `data-${string}`]: unknown;
+}
+
+const { name, size = 24, label, class: className, strokeWidth, ...rest } = Astro.props;
+
+const PATHS: Record<IconName, string> = {
+  'arrow-right': '<path d="M4 12h15M13 6l6 6-6 6"/>',
+  'arrow-down': '<path d="M12 4v15M6 13l6 6 6-6"/>',
+  'chevron-left': '<path d="M15 5l-7 7 7 7"/>',
+  'chevron-right': '<path d="M9 5l7 7-7 7"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  rings: '<path d="M7 2v9.5M17 2v9.5"/><circle cx="7" cy="15.5" r="4"/><circle cx="17" cy="15.5" r="4"/>',
+  band: '<path d="M3 7v10M21 7v10"/><path d="M3 12c3-4 6 4 9 0s6-4 9 0"/>',
+  'pullup-bar': '<path d="M4 3v18M20 3v18M4 9h16"/><path d="M8.5 9v3M15.5 9v3"/>',
+  lungs:
+    '<path d="M12 4v7.5M12 11.5c-.8 1.2-2.2 2-2.2 2M12 11.5c.8 1.2 2.2 2 2.2 2"/><path d="M9 8.5C6 7 3.5 11 3.5 15.5c0 2.4 1.4 3.5 3.3 3.5 2.4 0 3.2-1.4 3.2-3.8V11c0-1-.4-2-1-2.5z"/><path d="M15 8.5c3-1.5 5.5 2.5 5.5 7 0 2.4-1.4 3.5-3.3 3.5-2.4 0-3.2-1.4-3.2-3.8V11c0-1 .4-2 1-2.5z"/>',
+  'shoulders-open':
+    '<circle cx="12" cy="5" r="2.5"/><path d="M7 10h10M12 10v11"/><path d="M5 10H2m0 0 2-2m-2 2 2 2M19 10h3m0 0-2-2m2 2-2 2"/>',
+  calendar: '<rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+  clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  home: '<path d="M4 11l8-7 8 7"/><path d="M6 9.5V20h12V9.5"/><path d="M10 20v-5h4v5"/>',
+  'heart-lungs':
+    '<path d="M12 20s-7.5-4.4-7.5-10A4 4 0 0 1 12 7.4 4 4 0 0 1 19.5 10c0 5.6-7.5 10-7.5 10z"/><path d="M7.5 12h2.2l1.1-2.2 2.2 4.4 1.1-2.2h2.4"/>',
+  'camera-off':
+    '<path d="M3 3l18 18"/><path d="M9 5h6l1.5 2H19a1.5 1.5 0 0 1 1.5 1.5V16M17.5 19H5a1.5 1.5 0 0 1-1.5-1.5v-9A1.5 1.5 0 0 1 5 7h2"/><path d="M9.8 10.2a3 3 0 0 0 4 4"/>',
+  'eye-off':
+    '<path d="M3 3l18 18"/><path d="M10.6 5.1A10 10 0 0 1 12 5c5 0 8.5 4.5 9.5 7a13 13 0 0 1-2.7 3.9M6.6 6.6C4.6 8 3.2 10 2.5 12c1 2.5 4.5 7 9.5 7a9.7 9.7 0 0 0 5.4-1.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',
+  'circle-check': '<circle cx="12" cy="12" r="8.5"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/>',
+  play: '<path d="M8 5.5v13l10.5-6.5z"/>',
+  pause: '<path d="M9 5.5v13M15 5.5v13"/>',
+  instagram:
+    '<rect x="3" y="3" width="18" height="18" rx="5" stroke-width="2"/><circle cx="12" cy="12" r="4.2" stroke-width="2"/><circle cx="17.3" cy="6.7" r="1.2" fill="currentColor" stroke="none"/>',
+  youtube:
+    '<path fill="currentColor" stroke="none" d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>',
+  curva: '<path d="M2 9h5c2.5 0 3 6 5 6s2.5-6 5-6h5"/>',
+};
+
+const a11y = label ? { role: 'img', 'aria-label': label } : { 'aria-hidden': 'true', focusable: 'false' };
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 24 24"
+  width={size}
+  height={size}
+  fill="none"
+  stroke="currentColor"
+  stroke-width={strokeWidth ?? 1.5}
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  class:list={['icon', `icon--${name}`, className]}
+  {...a11y}
+  {...rest}
+  set:html={PATHS[name]}
+/>

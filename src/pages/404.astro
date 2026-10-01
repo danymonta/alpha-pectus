@@ -1,0 +1,72 @@
+---
+// Pagina 404 (spec H). Piattaforma. noindex, stesso header e footer della landing, nessun link DM (G.1).
+// Una frase e una sola strada: tornare alla storia.
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Icon from '../components/Icon.astro';
+import { pagina404 } from '../data/pagina';
+
+// "Questa pagina non esiste. La storia sì.": la seconda frase è la svolta in ambra, come nell'H1 dell'hero.
+const [prima, ...resto] = pagina404.testo.split(/(?<=\.)\s+/);
+const svolta = resto.join(' ');
+---
+
+<Base title={pagina404.titolo} description={pagina404.testo} path="/404/" noindex schema={false}>
+  <Header />
+  <main id="main" class="nonc mode-night grain">
+    <div class="wrap nonc__in">
+      <p class="nonc__num" aria-hidden="true">404</p>
+      <h1 class="nonc__h1">
+        {prima} {svolta && <span class="nonc__svolta">{svolta}</span>}
+      </h1>
+      <svg class="nonc__curva" viewBox="0 0 240 24" aria-hidden="true" focusable="false">
+        <path d="M0 4h78c22 0 26 16 42 16s20-16 42-16h78" />
+      </svg>
+      <a class="btn-outline nonc__btn" href={pagina404.href}>
+        {pagina404.bottone}
+        <Icon name="arrow-right" size={20} />
+      </a>
+    </div>
+  </main>
+  <Footer compatto />
+</Base>
+
+<style>
+  .nonc {
+    min-height: 70svh;
+    display: grid;
+    align-items: center;
+  }
+  .nonc__in {
+    position: relative;
+    z-index: 2;
+    padding-block: var(--space-8) var(--space-9);
+  }
+  /* Numerale vuoto come gli anni del reel: si legge come cifra, non compete con l'H1. */
+  .nonc__num {
+    margin-bottom: var(--space-5);
+    font-family: var(--font-display);
+    font-size: var(--fs-year);
+    font-stretch: 68%;
+    font-weight: 820;
+    letter-spacing: -0.03em;
+    line-height: var(--lh-year);
+    color: transparent;
+    -webkit-text-stroke: 1px var(--line-strong);
+    user-select: none;
+  }
+  .nonc__h1 { max-width: 14ch; }
+  .nonc__svolta {
+    display: block;
+    color: var(--amber);
+  }
+  .nonc__curva {
+    width: 10rem;
+    margin-block: var(--space-7);
+    fill: none;
+    stroke: var(--amber);
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+</style>

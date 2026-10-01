@@ -1,0 +1,140 @@
+---
+// Barre fisse del DM e pannello QR desktop (spec G.3, C.1, G.1, D29, D56). Proprietario: piattaforma.
+// - Mobile (sotto 768px): barra in basso, night al 96%, bottone DM 52px + riga di frizione breve, safe area.
+// - Desktop (1024px e oltre): barra compatta in alto, night all'88% con sfocatura, lockup a sinistra, DM a destra.
+// - Pannello QR (desktop, puntatore fine): unico per pagina, aperto da src/scripts/cta.js su ogni [data-dm].
+//   QR SVG generato in build con il pacchetto qrcode: inchiostro su bone, margine di 4 moduli.
+// Tutto data-nosnippet. Senza JS le barre e il pannello restano nascosti (hidden) e i link vanno diretti a ig.me.
+// Show e hide: src/scripts/sticky.js. Mai focus rubato, mai regioni live.
+import QRCode from 'qrcode';
+import CtaDm from './CtaDm.astro';
+import Lockup from './Lockup.astro';
+import Icon from './Icon.astro';
+import { DM_URL, REF_PREFIX, QR_TESTO, FRIZIONE, SOCIAL } from '../data/site.mjs';
+
+// Il QR è uno solo e statico: ref pe_qr distingue i DM arrivati dal desktop.
+const urlQr = `${DM_URL}?ref=${REF_PREFIX}qr`;
+const svgQr = (await QRCode.toString(urlQr, { type: 'svg', margin: 4, errorCorrectionLevel: 'M' }))
+  .replace('<svg ', '<svg class="qr__svg" aria-hidden="true" focusable="false" ')
+  .replace(/fill="#ffffff"/, 'style="fill:var(--night-text)"')
+  .replace(/stroke="#000000"/, 'style="stroke:var(--ink)"');
+const testoLink = DM_URL.replace(/^https?:\/\//, '');
+// Testi accessibili brevi (da spostare in src/data/pagina.ts).
+const ariaQr = `Codice QR: apre la chat con ${SOCIAL.instagram.handle} su Instagram`;
+const ariaChiudi = 'Chiudi';
+---
+
+<div class="sticky-cta sticky-cta--basso mode-night" data-sticky data-nosnippet hidden>
+  <CtaDm placement="sticky" size="sm" friction="short" inline={false} class="sticky-cta__cta" />
+</div>
+
+<div class="sticky-cta sticky-cta--alto mode-night" data-sticky data-nosnippet hidden>
+  <div class="wrap sticky-cta__in">
+    <Lockup />
+    <CtaDm placement="header" size="sm" friction="none" inline={false} class="sticky-cta__cta" />
+  </div>
+</div>
+
+<div id="qr-dm" class="qr mode-night" popover data-qr data-nosnippet hidden role="dialog" aria-labelledby="qr-dm-testo">
+  <div class="qr__codice" role="img" aria-label={ariaQr} set:html={svgQr} />
+  <div class="qr__corpo">
+    <p id="qr-dm-testo" class="qr__testo">{QR_TESTO}</p>
+    <p class="qr__frizione">{FRIZIONE.short}</p>
+    <a class="qr__link link-text" href={urlQr} data-qr-link>{testoLink}</a>
+  </div>
+  <button class="qr__chiudi" type="button" popovertarget="qr-dm" popovertargetaction="hide" aria-label={ariaChiudi} data-qr-chiudi>
+    <Icon name="plus" size={20} />
+  </button>
+</div>
+
+<script>
+  import '../scripts/sticky.js';
+</script>
+
+<style>
+  .sticky-cta {
+    position: fixed;
+    inset-inline: 0;
+    z-index: 50;
+    background: var(--sticky-bg);
+    transition: transform var(--dur-2) var(--ease);
+  }
+  .sticky-cta--basso {
+    bottom: 0;
+    border-top: 1px solid var(--line);
+    padding: var(--space-3) max(var(--space-4), env(safe-area-inset-right)) calc(var(--space-3) + env(safe-area-inset-bottom)) max(var(--space-4), env(safe-area-inset-left));
+    transform: translateY(calc(100% + 1px));
+  }
+  .sticky-cta--basso > .sticky-cta__cta { gap: var(--space-2); }
+  .sticky-cta--alto {
+    top: 0;
+    display: none;
+    background: var(--header-bar-bg);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+    transform: translateY(calc(-100% - 1px));
+  }
+  .sticky-cta__in {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-5);
+    min-height: calc(var(--bar-desktop-h) - 1px);
+  }
+  .sticky-cta__in > .sticky-cta__cta { width: auto; }
+  .sticky-cta.is-on { transform: none; }
+  @media (min-width: 768px) {
+    .sticky-cta--basso { display: none; }
+  }
+  @media (min-width: 1024px) {
+    .sticky-cta--alto { display: block; }
+  }
+
+  .qr {
+    inset: auto;
+    margin: 0;
+    width: 31rem;
+    padding: var(--space-5);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-3);
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: var(--shadow-sheet);
+  }
+  /* Solo da aperto: un display dell'autore vincerebbe sul display:none del popover chiuso. */
+  .qr:popover-open {
+    display: grid;
+    grid-template-columns: 10rem 1fr;
+    gap: var(--space-5);
+    align-items: center;
+  }
+  .qr__codice {
+    border-radius: var(--r-2);
+    overflow: hidden;
+  }
+  .qr__corpo { padding-right: var(--space-5); }
+  .qr__testo {
+    font-size: var(--fs-body);
+    font-weight: 650;
+    line-height: 1.4;
+  }
+  .qr__frizione {
+    margin-block: var(--space-2) var(--space-1);
+    font-size: var(--fs-small);
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .qr__chiudi {
+    position: absolute;
+    top: var(--space-1);
+    right: var(--space-1);
+    display: grid;
+    place-items: center;
+    width: var(--tap);
+    height: var(--tap);
+    color: var(--muted);
+    transform: rotate(45deg);
+  }
+  .qr__chiudi:hover { color: var(--text); }
+</style>

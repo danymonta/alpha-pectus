@@ -1,0 +1,269 @@
+/* Design token della pagina (spec B.1 a B.7). Mai hex nei componenti: solo queste variabili. */
+
+/* ---------------------------------------------------------------- */
+/* Font (B.2). File istanziati con fontTools e ridotti a latino + accenti italiani. */
+/* ---------------------------------------------------------------- */
+@font-face {
+  font-family: "Archivo";
+  src: url("../assets/fonts/archivo-latin-inst.woff2") format("woff2");
+  font-weight: 400 820;
+  font-stretch: 68% 100%;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Newsreader";
+  src: url("../assets/fonts/newsreader-latin-italic-inst.woff2") format("woff2");
+  font-weight: 400 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Facce di riserva con metriche calcolate con fontTools (media delle larghezze pesata sul copy italiano;
+   Arial = Liberation Sans, metricamente identico; Georgia = metriche capsize). Evitano lo spostamento al cambio font. */
+@font-face {
+  font-family: "Archivo 82 Fallback";
+  src: local("Arial"), local("ArialMT"), local("Liberation Sans"), local("Arimo");
+  font-weight: 100 599;
+  size-adjust: 87.61%;
+  ascent-override: 100.21%;
+  descent-override: 23.97%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Archivo 82 Fallback";
+  src: local("Arial Bold"), local("Arial-BoldMT"), local("Liberation Sans Bold"), local("Arimo Bold");
+  font-weight: 600 900;
+  size-adjust: 85.17%;
+  ascent-override: 103.09%;
+  descent-override: 24.66%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Archivo Fallback";
+  src: local("Arial"), local("ArialMT"), local("Liberation Sans"), local("Arimo");
+  font-weight: 100 599;
+  size-adjust: 97.93%;
+  ascent-override: 89.66%;
+  descent-override: 21.44%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Archivo Fallback";
+  src: local("Arial Bold"), local("Arial-BoldMT"), local("Liberation Sans Bold"), local("Arimo Bold");
+  font-weight: 600 900;
+  size-adjust: 97.1%;
+  ascent-override: 90.42%;
+  descent-override: 21.63%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Newsreader Fallback";
+  src: local("Georgia Italic"), local("Georgia-Italic"), local("Georgia");
+  font-style: italic;
+  font-weight: 100 900;
+  size-adjust: 87.02%;
+  ascent-override: 84.46%;
+  descent-override: 30.45%;
+  line-gap-override: 0%;
+}
+
+:root {
+  /* ---------------- Palette (B.1) ---------------- */
+  /* Night */
+  --night-bg: #0E0D0C;
+  --night-surface: #191715;
+  --night-line: #2E2A26;
+  --night-line-strong: #766E65;
+  --night-text: #F3EEE6;
+  --night-muted: #A89F94;
+  /* Paper */
+  --paper-bg: #F4EFE7;
+  --paper-surface: #FFFCF7;
+  --paper-line: #DCD3C6;
+  --paper-line-strong: #857B6E;
+  --paper-text: #171412;
+  --paper-muted: #5E564D;
+  --amber-ink: #8C4F06;
+  --amber-tint: #FBEBD0;
+  /* Golden */
+  --gold-bg: #1A120B;
+  --gold-surface: #261B11;
+  --gold-line: #3D2D1E;
+  --gold-line-strong: #84694C;
+  --gold-text: #F7EFE4;
+  --gold-muted: #BCAB97;
+  --gold-glow: radial-gradient(60% 40% at 80% 0%, rgb(242 169 59 / .16), transparent 70%);
+  /* Accenti */
+  --amber: #F2A93B;            /* solo riempimento del bottone DM, segmento corrente del reel, focus su scuro */
+  --amber-hover: #F6BD62;
+  --verdict-dark: #EE6A55;
+  --verdict-paper: #AE3526;
+  --success-dark: #7FCB98;
+  --success-paper: #2C7447;
+  --steel-dark: #9DA8B4;
+  --steel-paper: #4A5562;
+  --print-border: #E9E1D5;
+  --phase-1: #FBE6C4;
+  --phase-2: #F7CD86;
+  --phase-3: #F2A93B;
+  /* Testo inchiostro sopra l'ambra (bottone DM, 9.7:1) */
+  --ink: #0E0D0C;
+  /* Velature */
+  --scrim-chip: rgb(14 13 12 / .7);               /* etichette su foto: "2016 · 63 kg" */
+  --scrim-mobile: linear-gradient(to top, rgb(14 13 12 / .88) 0%, rgb(14 13 12 / .8) 35%, transparent 65%);
+  --scrim-desktop: linear-gradient(to right, rgb(14 13 12 / .92) 0%, rgb(14 13 12 / .75) 35%, transparent 62%);
+  --sticky-bg: rgb(25 23 21 / .96);               /* night surface al 96% */
+  --header-bar-bg: rgb(25 23 21 / .88);           /* night surface all'88% */
+  --progress-unseen: rgb(243 238 230 / .4);       /* bone al 40% */
+
+  /* ---------------- Font (B.2) ---------------- */
+  --font-display: "Archivo", "Archivo 82 Fallback", system-ui, sans-serif;
+  --font-sans: "Archivo", "Archivo Fallback", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-voice: "Newsreader", "Newsreader Fallback", Georgia, "Times New Roman", serif;
+
+  /* ---------------- Scala tipografica (B.3) ---------------- */
+  --fs-hero: clamp(2.25rem, 1.5rem + 3.333vw, 4.5rem);
+  --fs-year: clamp(4rem, 2.4rem + 7vw, 8.5rem);
+  --fs-h2: clamp(2rem, 1.35rem + 2.9vw, 3.75rem);
+  --fs-slide: clamp(1.625rem, 1.15rem + 2.1vw, 2.75rem);
+  --fs-h3: clamp(1.375rem, 1.1rem + 1.2vw, 2rem);
+  --fs-lead: clamp(1.1875rem, 1.05rem + 0.6vw, 1.5rem);
+  --fs-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --fs-small: 0.9375rem;
+  --fs-micro: 0.8125rem;
+
+  --lh-hero: 0.98;
+  --lh-h2: 1.04;
+  --lh-year: 0.85;
+  --lh-slide: 1.14;
+  --lh-h3: 1.2;
+  --lh-body: 1.6;
+  --lh-voice: 1.35;
+  --lh-num: 1.4;
+
+  /* ---------------- Spazi, griglia, raggi, ombre (B.4) ---------------- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 128px;
+  --section-pad: clamp(72px, 10vw, 144px);
+  --gutter: clamp(20px, 5vw, 48px);
+  --content-max: 1240px;
+  --measure: 64ch;
+  --r-1: 4px;
+  --r-2: 8px;
+  --r-3: 14px;
+  --r-btn: 6px;
+  --shadow-print: 0 24px 48px rgb(0 0 0 / .55);
+  --shadow-card: 0 12px 32px -16px rgb(23 20 18 / .25);
+  --shadow-sheet: 0 24px 64px -24px rgb(0 0 0 / .6);
+  --tap: 44px;          /* bersaglio minimo */
+  --tap-lg: 48px;       /* controlli del reel e toggle */
+  --btn-h: 56px;        /* bottone DM */
+  --btn-h-sm: 52px;     /* bottone DM nella barra fissa, bottone outline */
+  /* Spazio riservato in fondo pagina su mobile: bordo 1 + padding 12+12 + bottone 52 + gap 8 + frizione breve su due righe
+     (a 390px va a capo). La safe area la aggiunge .riserva-sticky. */
+  --sticky-h: calc(1px + 24px + 52px + 8px + 2 * 1.5 * 0.9375rem);
+  --bar-desktop-h: 72px; /* header e barra fissa desktop (C.1), bordo compreso */
+
+  /* ---------------- Texture (B.5) ---------------- */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --grain-size: 160px;
+  --duotone: grayscale(1) sepia(.22) contrast(1.06) brightness(.94);
+
+  /* ---------------- Movimento (B.7) ---------------- */
+  --dur-1: 160ms;   /* hover, pressione */
+  --dur-2: 280ms;   /* toggle, barra fissa, accordion */
+  --dur-3: 520ms;   /* testo del reel */
+  --ease: cubic-bezier(.22, .8, .26, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-1: .01ms;
+    --dur-2: .01ms;
+    --dur-3: .01ms;
+  }
+}
+
+/* ---------------------------------------------------------------- */
+/* Modalità (B.1, B.6): alias semantici usati da tutti i componenti. */
+/* ---------------------------------------------------------------- */
+.mode-night {
+  --bg: var(--night-bg);
+  --surface: var(--night-surface);
+  --line: var(--night-line);
+  --line-strong: var(--night-line-strong);
+  --text: var(--night-text);
+  --muted: var(--night-muted);
+  --accent-text: var(--amber);
+  --verdict: var(--verdict-dark);
+  --success: var(--success-dark);
+  --steel: var(--steel-dark);
+  --focus: var(--amber);
+  --grain-opacity: .06;
+  color-scheme: dark;
+  background: var(--bg);
+  color: var(--text);
+}
+.mode-paper {
+  --bg: var(--paper-bg);
+  --surface: var(--paper-surface);
+  --line: var(--paper-line);
+  --line-strong: var(--paper-line-strong);
+  --text: var(--paper-text);
+  --muted: var(--paper-muted);
+  --accent-text: var(--amber-ink);
+  --verdict: var(--verdict-paper);
+  --success: var(--success-paper);
+  --steel: var(--steel-paper);
+  --focus: var(--paper-text);
+  --grain-opacity: 0;
+  color-scheme: light;
+  background: var(--bg);
+  color: var(--text);
+}
+.mode-golden {
+  --bg: var(--gold-bg);
+  --surface: var(--gold-surface);
+  --line: var(--gold-line);
+  --line-strong: var(--gold-line-strong);
+  --text: var(--gold-text);
+  --muted: var(--gold-muted);
+  --accent-text: var(--amber);
+  --verdict: var(--verdict-dark);
+  --success: var(--success-dark);
+  --steel: var(--steel-dark);
+  --focus: var(--amber);
+  --grain-opacity: .06;
+  color-scheme: dark;
+  background: var(--gold-glow), var(--bg);
+  color: var(--text);
+}
+/* Foglio di carta appoggiato sul golden (tabella operazione o allenamento, tabella pilastri di Dany). */
+.sheet-paper {
+  --bg: var(--paper-surface);
+  --surface: var(--paper-bg);
+  --line: var(--paper-line);
+  --line-strong: var(--paper-line-strong);
+  --text: var(--paper-text);
+  --muted: var(--paper-muted);
+  --accent-text: var(--amber-ink);
+  --verdict: var(--verdict-paper);
+  --success: var(--success-paper);
+  --steel: var(--steel-paper);
+  --focus: var(--paper-text);
+  --grain-opacity: 0;
+  color-scheme: light;
+  background: var(--paper-surface);
+  color: var(--text);
+  border-radius: var(--r-2);
+  box-shadow: var(--shadow-sheet);
+}

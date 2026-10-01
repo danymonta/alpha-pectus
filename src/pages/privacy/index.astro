@@ -1,0 +1,261 @@
+---
+// Informativa privacy /privacy/ (spec H, G.4, G.5, G.8). Piattaforma. Indicizzabile, in italiano.
+// BOZZA IN ATTESA DI REVISIONE LEGALE (J.4 punto 6, J.5 punto 16). I dati aziendali vengono da AZIENDA
+// (src/data/site.mjs): finché sono vuoti la pagina mostra "da completare: ..." ben visibile, e
+// scripts/check-copy.mjs lo segnala come avviso (errore con LANCIO=1).
+// Le parti su statistiche e pixel seguono la configurazione reale (ANALYTICS, PIXEL_ID).
+// Nessun link DM qui (G.1). Testo da spostare in un file dati quando il legale lo approva.
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import Consenso from '../../components/Consenso.astro';
+import Icon from '../../components/Icon.astro';
+import { AZIENDA, ANALYTICS, PIXEL_ID, SOCIAL, SITE_UPDATED } from '../../data/site.mjs';
+import { pagina404, footer } from '../../data/pagina';
+import { dataIt } from '../../lib/testo';
+
+const statistiche = Boolean(ANALYTICS.plausibleDomain);
+const pixel = Boolean(PIXEL_ID);
+const ig = SOCIAL.instagram.handle;
+---
+
+<Base
+  title="Informativa privacy | Percorso Alpha Pectus"
+  description="Come pectus.percorsoalpha.com tratta i dati: statistiche senza cookie, nessun tracciamento pubblicitario senza consenso, i messaggi su Instagram, i dati sulla salute e i tuoi diritti."
+  path="/privacy/"
+  schema={false}
+>
+  <Header />
+  <main id="main" class="privacy mode-night grain">
+    <div class="wrap privacy__wrap">
+      <article class="privacy__foglio sheet-paper" aria-labelledby="privacy-h1">
+        <header class="privacy__testa">
+          <p class="eyebrow">Percorso Alpha Pectus</p>
+          <h1 id="privacy-h1" class="privacy__h1">Informativa privacy</h1>
+          <p class="t-lead">
+            Questa pagina spiega quali dati tratta pectus.percorsoalpha.com, perché, per quanto tempo e quali diritti
+            hai. In breve: nessun cookie di profilazione, nessun dato sul tuo corpo raccolto dal sito, e i dati sulla
+            salute solo in chat, con il tuo consenso esplicito.
+          </p>
+          <p class="privacy__avviso" role="note">
+            Testo in attesa di revisione legale: può ancora cambiare. La data dell'ultimo aggiornamento è in fondo.
+          </p>
+        </header>
+
+        <section class="privacy__blocco" aria-labelledby="titolare">
+          <h2 id="titolare" class="privacy__h2">Chi tratta i tuoi dati</h2>
+          <p>
+            Il titolare del trattamento è Percorso Alpha,
+            {AZIENDA.ragioneSociale || <span class="privacy__manca">da completare: ragione sociale e sede</span>},
+            P.IVA {AZIENDA.partitaIva || <span class="privacy__manca">da completare: partita IVA</span>}.
+            Per qualsiasi domanda sui tuoi dati puoi scrivere a
+            {AZIENDA.email ? <a href={`mailto:${AZIENDA.email}`}>{AZIENDA.email}</a> : <span class="privacy__manca">da completare: email</span>}.
+          </p>
+        </section>
+
+        <section class="privacy__blocco" aria-labelledby="visita">
+          <h2 id="visita" class="privacy__h2">Quando visiti il sito</h2>
+          {
+            statistiche ? (
+              <p>
+                <strong>Statistiche senza cookie.</strong> Per capire quali parti della pagina sono utili usiamo
+                Plausible Analytics, un servizio con server nell'Unione europea che non usa cookie, non conserva
+                l'indirizzo IP e non segue le persone da un sito all'altro. Contiamo le visite, la provenienza (per
+                esempio un link da Instagram o da YouTube), il tipo di dispositivo e alcune azioni sulla pagina, come
+                aprire una domanda o toccare il bottone per scrivermi. Sono dati aggregati: non dicono chi sei.
+              </p>
+            ) : (
+              <p>
+                <strong>Statistiche.</strong> Oggi il sito non usa strumenti di statistica. Se li attiveremo, saranno
+                senza cookie e con server nell'Unione europea, e questa informativa verrà aggiornata prima.
+              </p>
+            )
+          }
+          <p>
+            <strong>Niente sul tuo corpo.</strong> Il sito non chiede e non registra informazioni sul tuo petto, sui
+            sintomi o su testi che scrivi.
+          </p>
+          <p>
+            <strong>Server.</strong> Il sito è ospitato da Netlify, che per consegnare le pagine tratta dati tecnici
+            come l'indirizzo IP e il tipo di browser nei registri del server, per il tempo necessario alla sicurezza
+            del servizio. Netlify agisce come responsabile del trattamento.
+          </p>
+          <p>
+            <strong>Nessuna richiesta a terzi.</strong> Caratteri, immagini e script arrivano dal nostro dominio:
+            aprendo la pagina il tuo browser non contatta Google né altri servizi esterni.
+          </p>
+          <p>
+            <strong>Il link per scrivermi.</strong> Il bottone apre Instagram con un codice nel link (per esempio
+            pe_offerta_ig-bio) che dice da quale punto della pagina e da quale canale arrivi. Non contiene dati
+            personali. Quando lo tocchi, la parola PETTO viene copiata negli appunti del telefono, così puoi
+            incollarla in chat: il sito non legge i tuoi appunti.
+          </p>
+          <p class="privacy__base">
+            Base giuridica: il legittimo interesse a far funzionare il sito e a misurarne l'uso in forma aggregata
+            (art. 6, par. 1, lett. f del GDPR).
+          </p>
+        </section>
+
+        <section class="privacy__blocco" aria-labelledby="pixel">
+          <h2 id="pixel" class="privacy__h2">Pixel di Meta e consenso</h2>
+          {
+            pixel ? (
+              <>
+                <p>
+                  Con il tuo consenso usiamo il pixel di Meta per misurare quali inserzioni portano visite e contatti.
+                  Il pixel si carica solo dopo che tocchi Accetta nell'avviso in basso. Se rifiuti, o chiudi l'avviso,
+                  non parte nessuna richiesta verso Meta e la pagina funziona uguale.
+                </p>
+                <p>
+                  Il pixel invia a Meta Platforms Ireland solo la visita alla pagina e il tocco sul bottone per
+                  scrivermi. La tua scelta resta salvata nel browser per 6 mesi come preferenza tecnica, e puoi
+                  cambiarla quando vuoi con {footer.preferenzeCookie} in fondo alla pagina.
+                </p>
+                <p class="privacy__base">
+                  Base giuridica: il tuo consenso (art. 6, par. 1, lett. a del GDPR), che puoi revocare in ogni momento.
+                </p>
+              </>
+            ) : (
+              <p>
+                Oggi il sito non usa il pixel di Meta né altri strumenti pubblicitari, e non installa cookie di
+                profilazione. Se un giorno li attiveremo, partiranno solo dopo il tuo consenso esplicito, chiesto con un
+                avviso con i bottoni Accetta e Rifiuta, e questa informativa verrà aggiornata prima.
+              </p>
+            )
+          }
+        </section>
+
+        <section class="privacy__blocco" aria-labelledby="instagram">
+          <h2 id="instagram" class="privacy__h2">Quando mi scrivi su Instagram</h2>
+          <p>
+            La conversazione avviene su Instagram, un servizio di Meta Platforms Ireland, che tratta i dati del tuo
+            account secondo la propria informativa.
+          </p>
+          <p>
+            I messaggi li leggiamo io o il mio team, per risponderti, capire il tuo caso e, se ha senso, fissare una
+            chiamata. Le prime risposte possono partire da uno strumento di risposta automatica
+            (<span class="privacy__manca">da completare: nome dello strumento</span>), che agisce come responsabile
+            del trattamento.
+          </p>
+          <p>
+            <strong>Dati sulla salute.</strong> Le informazioni sul tuo petto, sui sintomi e le foto sono dati
+            particolari (art. 9 del GDPR). Te le chiediamo solo in chat, solo dopo il tuo consenso esplicito, e solo
+            per valutare se il percorso fa per te. Per scrivermi non serve mandare foto.
+          </p>
+          <p class="privacy__base">
+            Base giuridica: le misure precontrattuali che chiedi tu scrivendomi (art. 6, par. 1, lett. b del GDPR) e,
+            per i dati sulla salute, il tuo consenso esplicito (art. 9, par. 2, lett. a del GDPR).
+          </p>
+        </section>
+
+        <section class="privacy__blocco" aria-labelledby="durata">
+          <h2 id="durata" class="privacy__h2">Per quanto tempo</h2>
+          <ul class="privacy__lista">
+            {statistiche && <li>Statistiche: solo in forma aggregata, senza dati che ti identificano.</li>}
+            <li>
+              Messaggi: per il tempo necessario a risponderti. Se inizi il percorso, per la sua durata e per gli
+              obblighi di legge, per esempio quelli fiscali.
+            </li>
+            <li>Dati sulla salute: li cancelliamo quando non servono più, o prima se ce lo chiedi.</li>
+            {pixel && <li>Scelta sul pixel di Meta: 6 mesi, nel tuo browser.</li>}
+          </ul>
+        </section>
+
+        <section class="privacy__blocco" aria-labelledby="diritti">
+          <h2 id="diritti" class="privacy__h2">I tuoi diritti</h2>
+          <p>
+            Puoi chiedere in ogni momento di accedere ai tuoi dati, di rettificarli o cancellarli, di limitarne il
+            trattamento, di opporti, di riceverli in un formato leggibile e di revocare il consenso. La revoca non
+            cambia la liceità di quanto fatto prima.
+          </p>
+          <p>
+            Scrivi a {AZIENDA.email ? <a href={`mailto:${AZIENDA.email}`}>{AZIENDA.email}</a> : <span class="privacy__manca">da completare: email</span>},
+            oppure in DM su Instagram a {ig}. Se pensi che i tuoi dati siano trattati in modo non corretto, puoi fare
+            reclamo al Garante per la protezione dei dati personali (garanteprivacy.it).
+          </p>
+        </section>
+
+        <footer class="privacy__piede">
+          <p class="t-small t-muted">
+            Ultimo aggiornamento: <time datetime={SITE_UPDATED}>{dataIt(SITE_UPDATED)}</time>. Se cambiano gli
+            strumenti usati, aggiorniamo questa pagina e la data.
+          </p>
+          <a class="btn-outline privacy__torna" href={pagina404.href}>
+            {pagina404.bottone}
+            <Icon name="arrow-right" size={20} />
+          </a>
+        </footer>
+      </article>
+    </div>
+  </main>
+  <Footer compatto />
+  <Consenso />
+</Base>
+
+<style>
+  .privacy__wrap {
+    position: relative;
+    z-index: 2;
+    padding-block: var(--space-6) var(--section-pad);
+  }
+  .privacy__foglio {
+    max-width: 50rem;
+    margin-inline: auto;
+    padding: var(--space-6) var(--space-5);
+    border-radius: var(--r-2);
+    box-shadow: var(--shadow-sheet);
+    background: var(--bg);
+    color: var(--text);
+  }
+  .privacy__testa > * + * { margin-top: var(--space-4); }
+  .privacy__h1 { font-size: var(--fs-h2); line-height: var(--lh-h2); }
+  .privacy__avviso {
+    padding: var(--space-3) var(--space-4);
+    border-left: 3px solid var(--steel);
+    background: var(--surface);
+    font-size: var(--fs-small);
+    line-height: 1.5;
+    color: var(--text);
+  }
+  .privacy__blocco {
+    margin-top: var(--space-7);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--line);
+    max-width: var(--measure);
+  }
+  .privacy__blocco > * + * { margin-top: var(--space-4); }
+  .privacy__h2 {
+    font-family: var(--font-sans);
+    font-size: var(--fs-h3);
+    font-stretch: 100%;
+    font-weight: 680;
+    letter-spacing: -0.01em;
+    line-height: var(--lh-h3);
+  }
+  .privacy__base { font-size: var(--fs-small); line-height: 1.5; color: var(--muted); }
+  .privacy__lista { padding-left: 1.2em; }
+  .privacy__lista li + li { margin-top: var(--space-2); }
+  .privacy__lista li::marker { color: var(--accent-text); }
+  .privacy__manca {
+    padding: 0 .3em;
+    border: 1px dashed var(--verdict);
+    border-radius: var(--r-1);
+    background: var(--amber-tint);
+    color: var(--verdict);
+    font-weight: 650;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+  .privacy__foglio a:not(.btn-outline) { color: var(--accent-text); }
+  .privacy__piede {
+    display: grid;
+    gap: var(--space-5);
+    justify-items: start;
+    margin-top: var(--space-7);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--line);
+  }
+  @media (min-width: 768px) {
+    .privacy__foglio { padding: var(--space-8) var(--space-8); }
+  }
+</style>

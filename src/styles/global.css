@@ -1,0 +1,311 @@
+/* Base, tipografia e utility condivise. Stili dei componenti: nel <style> di ogni .astro, solo token. */
+
+/* ---------------- Reset essenziale ---------------- */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  scroll-padding-top: var(--space-5);
+}
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+/* Da 1024px la barra fissa in alto copre il bordo superiore: le ancore atterrano sotto di lei. */
+@media (min-width: 1024px) {
+  html { scroll-padding-top: calc(var(--bar-desktop-h) + var(--space-5)); }
+}
+body {
+  min-height: 100svh;
+  background: var(--night-bg);
+  color: var(--night-text);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  font-weight: 400;
+  line-height: var(--lh-body);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+}
+img, picture, video, svg { display: block; max-width: 100%; }
+img, video { height: auto; }
+input, button, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; padding: 0; }
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: .18em; }
+p, li, dd, figcaption, blockquote { overflow-wrap: break-word; }
+ul[role="list"], ol[role="list"] { list-style: none; padding: 0; }
+table { border-collapse: collapse; }
+[hidden] { display: none !important; }
+
+/* ---------------- Tipografia di base (B.3) ---------------- */
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  text-wrap: balance;
+  font-variant-numeric: lining-nums;
+}
+h1, .t-hero {
+  font-size: var(--fs-hero);
+  font-stretch: 82%;
+  font-weight: 760;
+  letter-spacing: -0.025em;
+  line-height: var(--lh-hero);
+}
+h2, .t-h2 {
+  font-size: var(--fs-h2);
+  font-stretch: 82%;
+  font-weight: 760;
+  letter-spacing: -0.02em;
+  line-height: var(--lh-h2);
+}
+h3, .t-h3 {
+  font-family: var(--font-sans);
+  font-size: var(--fs-h3);
+  font-stretch: 100%;
+  font-weight: 680;
+  letter-spacing: -0.01em;
+  line-height: var(--lh-h3);
+}
+@media (max-width: 479.98px) {
+  h3, .t-h3 { font-size: 1.1875rem; }
+}
+h4 {
+  font-family: var(--font-sans);
+  font-size: var(--fs-lead);
+  font-weight: 680;
+  line-height: var(--lh-h3);
+}
+p, li, dd { text-wrap: pretty; }
+strong, b { font-weight: 650; }
+.t-year {
+  font-family: var(--font-display);
+  font-size: var(--fs-year);
+  font-stretch: 68%;
+  font-weight: 820;
+  letter-spacing: -0.03em;
+  line-height: var(--lh-year);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.t-slide {
+  font-family: var(--font-sans);
+  font-size: var(--fs-slide);
+  font-stretch: 92%;
+  font-weight: 640;
+  letter-spacing: -0.01em;
+  line-height: var(--lh-slide);
+  max-width: 20ch;
+}
+.t-lead { font-size: var(--fs-lead); line-height: 1.45; }
+.t-body { font-size: var(--fs-body); line-height: var(--lh-body); }
+.t-small { font-size: var(--fs-small); line-height: 1.5; }
+.t-micro { font-size: var(--fs-micro); line-height: 1.35; }
+.t-muted { color: var(--muted); }
+/* Voce del pensiero: solo Newsreader corsivo, mai per enfasi altrove (B.2). */
+.t-voice {
+  font-family: var(--font-voice);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--fs-lead);
+  line-height: var(--lh-voice);
+  letter-spacing: 0;
+}
+.t-voice-strong { font-family: var(--font-voice); font-style: italic; font-weight: 500; line-height: var(--lh-voice); }
+.t-num { font-variant-numeric: tabular-nums lining-nums; font-weight: 500; line-height: var(--lh-num); }
+.measure { max-width: var(--measure); }
+@media (max-width: 479.98px) {
+  p, li, dd { hyphens: auto; -webkit-hyphens: auto; }
+  h1, h2, h3, h4, .t-slide, .t-year { hyphens: manual; }
+}
+
+/* Eyebrow: sempre un <p>, mai un titolo. Unico maiuscolo della pagina (le unità restano minuscole). */
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--fs-micro);
+  font-stretch: 100%;
+  font-weight: 620;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  color: var(--accent-text);
+}
+.eyebrow--muted { color: var(--muted); }
+.caps {
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  font-size: var(--fs-micro);
+  font-weight: 620;
+}
+
+/* ---------------- Layout (B.4) ---------------- */
+.wrap {
+  width: 100%;
+  max-width: calc(var(--content-max) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: max(var(--gutter), env(safe-area-inset-left)) max(var(--gutter), env(safe-area-inset-right));
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: var(--space-4);
+}
+@media (min-width: 1024px) {
+  .grid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--space-6); }
+}
+.section {
+  position: relative;
+  padding-block: var(--section-pad);
+}
+/* Spaziatura verticale tra i figli: --flow sovrascrivibile. */
+.flow > * + * { margin-block-start: var(--flow, var(--space-5)); }
+
+/* ---------------- Grana (B.5) ---------------- */
+.grain { position: relative; isolation: isolate; }
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: var(--grain);
+  background-size: var(--grain-size);
+  mix-blend-mode: overlay;
+  opacity: var(--grain-opacity, .06);
+}
+.grain--print { --grain-opacity: .1; }
+
+/* ---------------- Accessibilità ---------------- */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+:focus-visible {
+  outline: 2px solid var(--focus, var(--amber));
+  outline-offset: 3px;
+}
+:focus:not(:focus-visible) { outline: none; }
+
+/* ---------------- Bottoni ---------------- */
+/* Outline: navigazione (Guarda la mia storia, Continua), summary dei <details>. Mai ambra piena. */
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  min-height: var(--btn-h-sm);
+  padding: 0 var(--space-5);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-btn);
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: .01em;
+  line-height: 1;
+  text-decoration: none;
+  transition: border-color var(--dur-1) var(--ease), background-color var(--dur-1) var(--ease), transform var(--dur-1) var(--ease);
+}
+.btn-outline:hover { border-color: var(--text); }
+.btn-outline:active { transform: translateY(1px); }
+.btn-outline--full { width: 100%; }
+summary.btn-outline { list-style: none; cursor: pointer; }
+summary.btn-outline::-webkit-details-marker { display: none; }
+
+/* Link testuale semplice con freccia (scroll link, "Rivedi dall'inizio"). */
+.link-text {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  color: var(--text);
+  font-weight: 650;
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-underline-offset: .25em;
+}
+.link-text:hover { text-decoration-color: currentColor; }
+
+/* Bottone DM (G.1): l'unico elemento con riempimento ambra della pagina. Inchiostro su ambra, 9.7:1. */
+.btn-dm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: var(--btn-h);
+  padding: 0 var(--space-5);
+  border-radius: var(--r-btn);
+  background: var(--amber);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-stretch: 100%;
+  font-weight: 700;
+  letter-spacing: .01em;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color var(--dur-1) var(--ease), transform var(--dur-1) var(--ease);
+}
+.btn-dm:hover { background: var(--amber-hover); }
+.btn-dm:active { transform: translateY(1px); }
+.btn-dm:focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
+.btn-dm__glyph { flex: none; width: 20px; height: 20px; }
+.btn-dm__chip {
+  display: inline-block;
+  padding: 3px 6px;
+  border: 1px solid var(--ink);
+  border-radius: 3px;
+  letter-spacing: .06em;
+  line-height: 1;
+}
+.btn-dm--sm { min-height: var(--btn-h-sm); }
+.btn-dm--lg { min-height: 64px; font-size: 1.0625rem; }
+/* Telefoni stretti: l'etichetta non va mai a capo, quindi si stringono padding e spazi (360px: colonna di 320px). */
+@media (max-width: 389.98px) {
+  .btn-dm { gap: 6px; padding-inline: var(--space-3); }
+  .btn-dm--lg { font-size: 1rem; }
+}
+@media (max-width: 359.98px) {
+  .btn-dm__glyph { display: none; }
+}
+@media (min-width: 768px) {
+  .btn-dm { width: auto; min-width: 22rem; }
+}
+
+/* Link DM testuale dell'hero: testo bone, sottolineatura ambra 2px. */
+.link-dm {
+  color: var(--text);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: var(--amber);
+  text-decoration-thickness: 2px;
+  text-underline-offset: .28em;
+  padding-block: var(--space-2);
+}
+.link-dm:hover { text-decoration-color: var(--amber-hover); }
+
+/* ---------------- Movimento ridotto (B.7) ---------------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------------- Barra fissa mobile: spazio riservato in fondo (D56, G.3) ---------------- */
+@media (max-width: 767.98px) {
+  .riserva-sticky { padding-bottom: calc(var(--sticky-h) + env(safe-area-inset-bottom)); }
+}

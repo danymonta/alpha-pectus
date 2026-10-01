@@ -1,0 +1,124 @@
+---
+// L'offerta #offerta (spec C.15, G.1, G.2, G.5). Proprietario: engineer "bofu".
+// Golden, un solo pannello (--gold-surface, raggio --r-3, --gold-glow). Ordine dentro il pannello:
+// H2, sub, voci incluse, beneficio, H3 #cosa-succede (3 passi numerati), rassicurazioni (3 righe con icone),
+// riga del prezzo, CTA 4 (ref=pe_offerta) con frizione completa e riga di riserva. Nessun lead-in.
+// I passi arrivano dai dati già filtrati dalle conferme (automazione, tempi di risposta, chiamata):
+// qui si rende solo quello che c'è. Niente scarsità, niente conto alla rovescia, niente garanzie.
+import Section from './Section.astro';
+import Icon, { type IconName } from './Icon.astro';
+import CtaDm from './CtaDm.astro';
+import { offerta as o } from '../data/pagina';
+import { KEYWORD } from '../data/site.mjs';
+
+// "Scrivi PETTO in DM" -> la parola chiave con lo stesso chip del bottone (bordo, non riempimento).
+const pezzi = (s: string) => s.split(new RegExp(`(${KEYWORD})`));
+const passi = o.cosaSuccede.passi.filter(Boolean);
+const inclusi = o.inclusi.filter(Boolean);
+---
+
+<Section id={o.id} mode="golden" zone="bofu" labelledby={`${o.id}-h2`} data-evt-zone="offerta" data-sticky-hide>
+  <div class="wrap">
+    <div class="offerta">
+      <div class="offerta__a">
+        <p class="eyebrow">{o.eyebrow}</p>
+        <h2 id={`${o.id}-h2`}>{o.h2}</h2>
+        <p class="offerta__sub t-lead">{o.sub}</p>
+        {inclusi.length > 0 && (
+          <ul role="list" class="offerta__inc">
+            {inclusi.map((v) => (
+              <li>
+                <Icon name="check" class="offerta__si" />
+                <span>{v}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+        <p class="offerta__ben">
+          {o.beneficio.testo} <strong>{o.beneficio.forte}</strong>
+        </p>
+      </div>
+
+      <div class="offerta__b">
+        {passi.length > 0 && (
+          <div class="offerta__passi">
+            <h3 id={o.cosaSuccede.id}>{o.cosaSuccede.h3}</h3>
+            <ol role="list">
+              {passi.map((s, i) => (
+                <li>
+                  <span class="offerta__n" aria-hidden="true">{i + 1}</span>
+                  <p>
+                    <span class="visually-hidden">{i + 1}. </span>
+                    {pezzi(s).map((x) => (x === KEYWORD ? <span class="offerta__kw">{x}</span> : x))}
+                  </p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
+        <ul role="list" class="offerta__ras">
+          {o.rassicurazioni.map((r) => (
+            <li>
+              <Icon name={r.icona as IconName} class="offerta__ico" />
+              <span>{r.testo}</span>
+            </li>
+          ))}
+        </ul>
+        <p class="offerta__prezzo">{o.prezzo}</p>
+        <CtaDm placement={o.cta.placement} friction="full+fallback" />
+      </div>
+    </div>
+  </div>
+</Section>
+
+<style>
+  .offerta {
+    display: grid;
+    gap: var(--space-7);
+    /* Mobile: il pannello va a filo dello schermo, così il bottone DM ha tutta la larghezza. */
+    margin-inline: calc(-1 * var(--gutter));
+    padding: var(--space-7) var(--space-4);
+    border-block: 1px solid var(--line);
+    background: var(--gold-glow), var(--surface);
+    box-shadow: var(--shadow-sheet);
+  }
+  .offerta__a, .offerta__b { display: grid; gap: var(--space-5); align-content: start; }
+  .offerta__a h2 { margin-top: calc(-1 * var(--space-2)); }
+  .offerta__sub { color: var(--muted); }
+  .offerta__inc { display: grid; gap: var(--space-3); padding-block: var(--space-5); border-block: 1px solid var(--line); }
+  .offerta__inc li, .offerta__ras li { display: flex; gap: var(--space-3); }
+  .offerta__si { flex: none; margin-top: .15em; color: var(--success); }
+  .offerta__ben { font-size: var(--fs-lead); line-height: 1.45; }
+  .offerta__ben strong { display: block; margin-top: var(--space-2); }
+
+  .offerta__passi ol { display: grid; gap: var(--space-5); margin-top: var(--space-5); }
+  .offerta__passi li { position: relative; display: flex; gap: var(--space-4); }
+  /* Linea che unisce i numeri: il percorso dal DM alla chiamata. */
+  .offerta__passi li:not(:last-child)::before { content: ""; position: absolute; left: 19px; top: 44px; bottom: calc(-1 * var(--space-5) + 4px); width: 1px; background: var(--line-strong); }
+  .offerta__n {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--accent-text);
+    border-radius: 50%;
+    color: var(--accent-text);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .offerta__passi p { padding-top: 7px; }
+  .offerta__kw { padding: 1px 5px; border: 1px solid currentColor; border-radius: 3px; font-weight: 700; letter-spacing: .06em; }
+
+  .offerta__ras { display: grid; gap: var(--space-3); padding: var(--space-5) 0; border-block: 1px solid var(--line); font-size: var(--fs-small); }
+  .offerta__ico { flex: none; color: var(--accent-text); }
+  .offerta__prezzo { color: var(--muted); max-width: 46ch; }
+
+  @media (min-width: 768px) {
+    .offerta { margin-inline: 0; padding: var(--space-8) var(--space-7); border: 1px solid var(--line); border-radius: var(--r-3); }
+  }
+  @media (min-width: 1024px) {
+    .offerta { grid-template-columns: 1fr 1fr; column-gap: var(--space-9); padding: var(--space-9) var(--space-8); }
+    .offerta__a { position: sticky; top: var(--space-9); align-self: start; }
+  }
+</style>

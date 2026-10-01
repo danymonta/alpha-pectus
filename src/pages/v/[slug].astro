@@ -1,0 +1,20 @@
+---
+// Una pagina statica per variante hero: /v/<slug>/ (spec D3). Stesso <head> della root, canonical sulla root,
+// esclusa dalla sitemap (astro.config.mjs). Le inserzioni puntano sempre qui, mai a /?v=.
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import Pagina from '../../components/Pagina.astro';
+import { DEFAULT, SLUG_VARIANTI, getVariante, validaVarianti } from '../../data/hero-varianti.mjs';
+import { violazioni } from '../../lib/regole-copy.mjs';
+
+export const getStaticPaths = (() => {
+  validaVarianti(violazioni);
+  return SLUG_VARIANTI.filter((s) => s !== DEFAULT).map((slug) => ({ params: { slug } }));
+}) satisfies GetStaticPaths;
+
+const variante = getVariante(Astro.params.slug);
+---
+
+<Base variante={variante.slug} path="/">
+  <Pagina variante={variante} />
+</Base>

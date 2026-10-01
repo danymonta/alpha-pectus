@@ -1,0 +1,79 @@
+---
+// Diagramma master del torso, vista frontale (spec C.8, art director 8.6). Proprietario: engineer "metodo".
+// Un solo disegno: la classe torso-diagram--<regione> accende la zona del pilastro.
+//   postura: spalle e trapezio, frecce di apertura
+//   petto:   tre zone (alta, centrale, bassa), la centrale più intensa
+//   respiro: gabbia toracica, archi di espansione
+//   addome:  addome e bordo delle costole
+// L'avvallamento al centro resta uguale in tutte e quattro le varianti: lo sterno non si muove.
+// Decorativo (aria-hidden): titolo e "Cosa fa" del pilastro dicono già cosa mostra.
+// Uso: <TorsoDiagram regione="petto" />
+import type { RegioneTorso } from '../data/pagina';
+
+interface Props {
+  regione: RegioneTorso;
+}
+const { regione } = Astro.props;
+
+// Metà sinistra; la destra è la stessa, specchiata sull'asse x = 120.
+const MEZZO = [
+  // Zone (solo riempimento)
+  ['z sp', 'M66 46C52 50 44 62 44 78C44 92 50 100 60 104L66 101C65 86 66 66 70 52ZM108 30C96 38 80 42 66 46L70 52C84 46 100 42 114 43L112 32Z'],
+  ['z pe', 'M114 43C100 42 84 46 70 52C68 58 67 63 67 68C82 64 100 64 114 66Z'],
+  ['z pe pe2', 'M114 66C100 64 82 64 67 68C66 76 66 84 66 90C82 86 100 88 114 92Z'],
+  ['z pe', 'M114 92C100 88 82 86 66 90C66 94 66 98 66 101C78 116 98 122 114 116Z'],
+  ['z re', 'M66 101C78 116 98 122 114 116L120 126C110 138 96 152 80 160C76 150 70 126 66 101Z'],
+  ['z ad', 'M120 126C110 138 96 152 80 160C80 170 80 176 79 182C81 200 78 220 76 240H120Z'],
+  // Linee interne
+  ['i', 'M114 43C100 40 84 44 70 52C66 66 65 86 66 101C78 116 98 122 114 116M110 127C98 133 86 133 72 125M104 146C101 170 101 200 104 234M104 172H120M103 196H120'],
+  ['i cm', 'M120 126C110 138 96 152 80 160'],
+  ['x pz', 'M114 66C100 64 82 64 67 68M114 92C100 88 82 86 66 90'],
+  // Contorno
+  ['o', 'M108 6V30C96 38 80 42 66 46C52 50 44 62 44 78C44 92 50 100 60 104L66 101C70 128 76 156 79 182C81 200 78 220 76 240'],
+  // Segni del pilastro
+  ['x xsp', 'M40 64L21 58M27 53L21 58L26 64'],
+  ['x xre', 'M58 116C50 130 50 148 60 162M47 108C35 126 35 152 49 170'],
+];
+---
+
+<svg
+  class:list={['torso-diagram', `torso-diagram--${regione}`]}
+  viewBox="14 0 212 244"
+  aria-hidden="true"
+  focusable="false"
+  fill="none"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <ellipse class="torso-diagram__dip" cx="120" cy="104" rx="8" ry="15" />
+  <path class="torso-diagram__i" d="M120 40V122M120 132V236M117 214a3 3 0 1 0 6 0a3 3 0 1 0-6 0" />
+  {
+    ['', 'matrix(-1 0 0 1 240 0)'].map((t) => (
+      <g transform={t || undefined}>
+        {MEZZO.map(([c, d]) => (
+          <path class={c.split(' ').map((k) => `torso-diagram__${k}`).join(' ')} d={d} />
+        ))}
+      </g>
+    ))
+  }
+</svg>
+
+<style>
+  .torso-diagram { width: 100%; height: auto; overflow: visible; }
+  .torso-diagram path, .torso-diagram ellipse { vector-effect: non-scaling-stroke; }
+  .torso-diagram__z { fill: var(--amber); fill-opacity: 0; }
+  .torso-diagram__o { stroke: var(--text); stroke-width: 1.5; }
+  .torso-diagram__i { stroke: var(--line-strong); }
+  .torso-diagram__x { stroke: var(--accent-text); stroke-width: 1.5; visibility: hidden; }
+  .torso-diagram__dip { fill: var(--line); stroke: var(--line-strong); stroke-dasharray: 2 3; }
+  .torso-diagram--postura .torso-diagram__sp,
+  .torso-diagram--respiro .torso-diagram__re,
+  .torso-diagram--addome .torso-diagram__ad { fill-opacity: .35; }
+  .torso-diagram--petto .torso-diagram__pe { fill-opacity: .25; }
+  .torso-diagram--petto .torso-diagram__pe2 { fill-opacity: .55; }
+  .torso-diagram--addome .torso-diagram__cm { stroke: var(--accent-text); stroke-width: 2; }
+  .torso-diagram__pz { stroke-width: 1; stroke-dasharray: 3 3; }
+  .torso-diagram--postura .torso-diagram__xsp,
+  .torso-diagram--petto .torso-diagram__pz,
+  .torso-diagram--respiro .torso-diagram__xre { visibility: visible; }
+</style>

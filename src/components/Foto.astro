@@ -1,0 +1,200 @@
+---
+// Risolutore degli slot foto (spec E.1, E.2). Dany mette un file in src/assets/foto/ con il nome dello slot
+// (qualsiasi tra jpg, jpeg, png, webp, avif) e la build genera AVIF (q55), WebP (q72) e JPG/PNG di riserva.
+// File mancante: in sviluppo il "ciak" segnaposto (nome file, rapporto, lato minimo, regia);
+// in produzione niente. Prima di renderizzare, i componenti chiedono hasFoto(slot) (src/lib/foto.ts)
+// per passare al ripiego tipografico.
+//
+// Uso:
+//   <Foto slot="hero-reel" sizes="(min-width: 1024px) 40vw, 62vw" loading="eager" fetchpriority="high"
+//         widths={[360, 480, 720, 960, 1200]} class="hero__still" />
+//   <Foto slot="storia-03-scuola" sizes="(min-width:1024px) 30vw, 70vw" ratio="libero" imgClass="print__img" />
+import { getImage } from 'astro:assets';
+import { getFoto, dimensioniFoto, infoSlot, normalizzaSlot } from '../lib/foto';
+import Icon from './Icon.astro';
+
+interface Props {
+  /** Nome dello slot (file senza estensione). Accetta anche il nome con .jpg. */
+  slot: string;
+  /** Alt: default dal registro. Passa alt="" solo per immagini decorative. */
+  alt?: string;
+  sizes?: string;
+  widths?: number[];
+  loading?: 'lazy' | 'eager';
+  fetchpriority?: 'high' | 'low' | 'auto';
+  decoding?: 'async' | 'sync' | 'auto';
+  /** Rapporto: '4:5', '1:1', '16:9', 'libero' (originale). Default dal registro. */
+  ratio?: string;
+  /** object-position. Default dal registro. */
+  focus?: string;
+  fit?: 'cover' | 'contain';
+  /** Classe sul <picture> (e sul segnaposto). */
+  class?: string;
+  /** Classe sull'<img>. */
+  imgClass?: string;
+  /** false = in sviluppo non mostrare il segnaposto (il chiamante gestisce l'assenza). */
+  segnaposto?: boolean;
+  [key: `data-${string}`]: unknown;
+}
+
+const {
+  slot,
+  sizes = '100vw',
+  widths = [360, 480, 720, 960, 1200, 1600],
+  loading = 'lazy',
+  fetchpriority,
+  decoding = loading === 'eager' ? 'sync' : 'async',
+  fit = 'cover',
+  class: className,
+  imgClass,
+  segnaposto = true,
+  ...rest
+} = Astro.props;
+
+const nome = normalizzaSlot(slot);
+const info = infoSlot(nome);
+const meta = getFoto(nome);
+// Proprietà lette da una copia: leggerle dall'originale lo pubblicherebbe con gli EXIF.
+const dim = dimensioniFoto(nome);
+const alt = Astro.props.alt ?? info?.alt ?? '';
+const ratio = Astro.props.ratio ?? info?.ratio ?? 'libero';
+const focus = Astro.props.focus ?? info?.focus ?? '50% 50%';
+const cid = Object.fromEntries(Object.entries(rest).filter(([k]) => k.startsWith('data-astro-cid')));
+const dataAttr = Object.fromEntries(Object.entries(rest).filter(([k]) => !k.startsWith('data-astro-cid')));
+// scopedStyleStrategy 'class': la classe di scope del genitore (astro-xxxx) arriva dentro `class`.
+// La ripetiamo sull'<img> perché i selettori del genitore su imgClass continuino a corrispondere.
+const scope = String(className ?? '').split(/\s+/).filter((c) => /^astro-[a-z0-9]+$/.test(c));
+
+if (Astro.props.alt === undefined && !info) {
+  console.warn(`[foto] slot "${nome}" non è nel registro src/data/foto.ts: passa un alt esplicito.`);
+}
+
+/** '4:5' -> [4, 5]; 'libero' -> null */
+const parseRatio = (r: string): [number, number] | null => {
+  const m = r.match(/^(\d+(?:\.\d+)?)[:/](\d+(?:\.\d+)?)$/);
+  return m ? [Number(m[1]), Number(m[2])] : null;
+};
+const rr = parseRatio(ratio);
+
+let render: null | {
+  avif: string;
+  webp: string;
+  fallbackSrc: string;
+  w: number;
+  h: number;
+} = null;
+
+if (meta && dim) {
+  const usabili = widths.filter((w) => w <= dim.width);
+  const larghezze = usabili.length ? usabili : [dim.width];
+  const maxW = Math.max(...larghezze);
+  const h = rr ? Math.round((maxW * rr[1]) / rr[0]) : Math.round((maxW * dim.height) / dim.width);
+  const comune = { src: meta, widths: larghezze, width: maxW, layout: 'none' as const, sizes };
+  const fallbackFormat = dim.format === 'png' ? 'png' : 'jpg';
+  const [avif, webp, fb] = await Promise.all([
+    getImage({ ...comune, format: 'avif', quality: 55 }),
+    getImage({ ...comune, format: 'webp', quality: 72 }),
+    // Ripiego JPG/PNG: una sola larghezza. Ogni browser di destinazione usa le <source> AVIF o WebP,
+    // quindi un srcset completo qui costava circa 1 KB gzip di HTML per pagina senza servire a nessuno.
+    getImage({ src: meta, width: Math.min(maxW, 960), format: fallbackFormat, quality: 78 }),
+  ]);
+  render = {
+    avif: avif.srcSet.attribute,
+    webp: webp.srcSet.attribute,
+    fallbackSrc: fb.src,
+    w: maxW,
+    h,
+  };
+}
+
+const stileImg = [
+  rr ? `aspect-ratio:${rr[0]}/${rr[1]}` : '',
+  `object-fit:${fit}`,
+  `object-position:${focus}`,
+]
+  .filter(Boolean)
+  .join(';');
+const mostraSegnaposto = !meta && segnaposto && import.meta.env.DEV;
+---
+
+{
+  render && (
+    <picture class={className} data-foto={nome} {...cid} {...dataAttr}>
+      <source type="image/avif" srcset={render.avif} sizes={sizes} />
+      <source type="image/webp" srcset={render.webp} sizes={sizes} />
+      <img
+        src={render.fallbackSrc}
+        width={render.w}
+        height={render.h}
+        alt={alt}
+        loading={loading}
+        decoding={decoding}
+        fetchpriority={fetchpriority}
+        class:list={['foto__img', imgClass, ...scope]}
+        style={stileImg}
+        {...cid}
+      />
+    </picture>
+  )
+}
+{
+  mostraSegnaposto && (
+    <div
+      class:list={['foto-slate', 'grain', className]}
+      style={rr ? `aspect-ratio:${rr[0]}/${rr[1]}` : 'aspect-ratio:4/5'}
+      data-foto-mancante={nome}
+      role="img"
+      aria-label={`Segnaposto: ${nome}`}
+      {...cid}
+    >
+      <Icon name="curva" size={32} />
+      <p class="foto-slate__riga foto-slate__file">{nome}.jpg</p>
+      <p class="foto-slate__riga">
+        {info ? `${info.ratio} · min ${info.min} · ${info.priorita}` : 'slot fuori registro'}
+      </p>
+      {info && <p class="foto-slate__riga foto-slate__regia">{info.regia}</p>}
+    </div>
+  )
+}
+
+<style>
+  .foto__img {
+    width: 100%;
+    height: auto;
+  }
+  .foto-slate {
+    --grain-opacity: .06;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: var(--space-2);
+    width: 100%;
+    padding: var(--space-6) var(--space-5);
+    background: var(--night-surface);
+    color: var(--night-muted);
+    outline: 1px dashed var(--night-line-strong);
+    outline-offset: -12px;
+    text-align: center;
+    overflow: hidden;
+  }
+  .foto-slate__riga {
+    position: relative;
+    z-index: 2;
+    font-size: var(--fs-micro);
+    font-weight: 620;
+    letter-spacing: .08em;
+    line-height: 1.35;
+    text-transform: uppercase;
+    max-width: 34ch;
+  }
+  .foto-slate__file {
+    color: var(--night-text);
+    text-transform: none;
+    letter-spacing: .02em;
+  }
+  .foto-slate__regia {
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 400;
+  }
+</style>

@@ -1,0 +1,60 @@
+---
+// Corpo della landing, identico su / e su /v/<slug>/. Proprietario: fondazione.
+// Ordine delle sezioni e divisori: spec C.0, B.6. Non cambiare l'ordine senza la spec.
+import Header from './Header.astro';
+import Hero from './Hero.astro';
+import Reel from './Reel.astro';
+import Pensiero from './Pensiero.astro';
+import Curva from './Curva.astro';
+import Ponte from './Ponte.astro';
+import Postura from './Postura.astro';
+import Errore from './Errore.astro';
+import Metodo from './Metodo.astro';
+import Percorso from './Percorso.astro';
+import Attrezzatura from './Attrezzatura.astro';
+import CasoDany from './CasoDany.astro';
+import Casi from './Casi.astro';
+import Confronto from './Confronto.astro';
+import PerChi from './PerChi.astro';
+import Offerta from './Offerta.astro';
+import Faq from './Faq.astro';
+import Finale from './Finale.astro';
+import Footer from './Footer.astro';
+import StickyCta from './StickyCta.astro';
+import Consenso from './Consenso.astro';
+// Avviso in build sulle foto P0 mancanti (effetto collaterale del modulo).
+import '../lib/foto';
+import { casiPubblicati } from '../data/casi';
+
+interface Props {
+  variante: { slug: string; h1: string; turn: string; sub: string; skipLabel: string; storiaH2?: string };
+}
+const { variante } = Astro.props;
+// Validazione in build dei casi: un caso con pubblica: true non in regola ferma la build (spec E.4).
+casiPubblicati();
+---
+
+<Header />
+<main id="main">
+  <Hero variante={variante} />
+  <Reel variante={variante} />
+  <Pensiero />
+  <Curva da="night" a="paper" profondita="forte" />
+  <Ponte />
+  <Postura />
+  <Errore />
+  <Metodo />
+  <Percorso />
+  <Attrezzatura />
+  <Curva da="paper" a="golden" profondita="media" />
+  <CasoDany />
+  <Casi />
+  <Confronto />
+  <PerChi />
+  <Offerta />
+  <Faq />
+  <Finale />
+</main>
+<Footer />
+<StickyCta />
+<Consenso />

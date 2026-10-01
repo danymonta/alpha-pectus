@@ -1,0 +1,167 @@
+---
+// Attrezzatura #attrezzatura (spec C.10). Proprietario: engineer "metodo".
+// Foto dall'alto (1:1) con tre marcatori numerati in HTML, posizionati in percentuale dai dati;
+// lo scontrino (HTML, numeri tabulari, puntini di guida, bordo a zig zag) si sovrappone al fondo della foto di 40px.
+// Senza foto (produzione): solo lo scontrino, e la lista usa le icone al posto dei numeri.
+// In sviluppo la foto mancante mostra il ciak segnaposto di <Foto>, per vedere dove andrà.
+// Poi la CTA 1 (ref=pe_metodo) con lead-in e frizione completa. Il divisore la curva verso il golden è in Pagina.astro.
+import Section from './Section.astro';
+import Foto from './Foto.astro';
+import Icon, { type IconName } from './Icon.astro';
+import CtaDm from './CtaDm.astro';
+import { hasFoto } from '../lib/foto';
+import { euro } from '../lib/testo';
+import { attrezzatura as a } from '../data/pagina';
+
+const conFoto = hasFoto(a.foto) || import.meta.env.DEV;
+const { scontrino: s } = a;
+const ICONE: IconName[] = ['rings', 'band', 'pullup-bar'];
+---
+
+<Section id={a.id} mode="paper" zone="mofu" labelledby={`${a.id}-h2`}>
+  <div class:list={['wrap attrezzatura', { 'attrezzatura--solo': !conFoto }]}>
+    <header class="attrezzatura__head flow" style="--flow:var(--space-4)">
+      <p class="eyebrow">{a.eyebrow}</p>
+      <h2 id={`${a.id}-h2`}>{a.h2}</h2>
+    </header>
+
+    <div class="attrezzatura__vis">
+      {
+        conFoto && (
+          <div class="attrezzatura__foto">
+            <Foto slot={a.foto} ratio="1:1" sizes="(min-width: 1024px) 560px, 100vw" />
+            {a.oggetti.map((o) => (
+              <span class="attrezzatura__pin" style={`left:${o.marker.x};top:${o.marker.y}`} aria-hidden="true">
+                {o.n}
+              </span>
+            ))}
+          </div>
+        )
+      }
+      <div class="attrezzatura__ombra">
+        <div class="attrezzatura__ric">
+          <Icon name="curva" class="attrezzatura__logo" size={28} />
+          <table>
+            <caption class="caps">{s.titolo}</caption>
+            <tbody>
+              {
+                s.righe.map((r) => (
+                  <tr>
+                    <th scope="row">
+                      <span>{r.voce}</span>
+                    </th>
+                    <td>
+                      <span>{euro(r.prezzo)}</span>
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+            <tfoot>
+              <tr>
+                <th scope="row">{s.totale.etichetta}</th>
+                <td>{euro(s.totale.prezzo)}</td>
+              </tr>
+            </tfoot>
+          </table>
+          <p class="t-small t-muted">{s.nota}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="attrezzatura__testo">
+      <ol class="attrezzatura__lista" role="list">
+        {
+          a.oggetti.map((o, i) => (
+            <li>
+              {conFoto ? (
+                <span class="attrezzatura__n" aria-hidden="true">
+                  {o.n}
+                </span>
+              ) : (
+                <Icon name={ICONE[i] ?? 'check'} class="attrezzatura__ico" size={28} />
+              )}
+              <p>
+                <strong>{o.forte}</strong> {o.testo}
+              </p>
+            </li>
+          ))
+        }
+      </ol>
+      <p class="attrezzatura__sotto">{a.sotto}</p>
+      <CtaDm placement={a.cta.placement} leadIn={a.cta.leadIn} class="attrezzatura__cta" />
+    </div>
+  </div>
+</Section>
+
+<style>
+  .attrezzatura { display: grid; row-gap: var(--space-7); }
+  .attrezzatura__foto { position: relative; border-radius: var(--r-2); overflow: hidden; }
+  .attrezzatura__pin, .attrezzatura__n {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--surface);
+    color: var(--text);
+    font-size: var(--fs-small);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    box-shadow: 0 0 0 1px var(--line-strong);
+  }
+  .attrezzatura__pin { position: absolute; translate: -50% -50%; box-shadow: 0 0 0 2px var(--text), var(--shadow-card); }
+
+  /* Scontrino: ombra sul contenitore (drop-shadow segue il bordo a zig zag della maschera). */
+  .attrezzatura__ombra {
+    position: relative;
+    max-width: 24rem;
+    filter: drop-shadow(0 10px 14px color-mix(in srgb, var(--text) 18%, transparent));
+  }
+  .attrezzatura__foto + .attrezzatura__ombra { margin: -40px auto 0; width: calc(100% - 2 * var(--space-5)); }
+  .attrezzatura__ric {
+    --z: 9px;
+    display: grid;
+    justify-items: center;
+    gap: var(--space-3);
+    padding: var(--space-5) var(--space-5) calc(var(--space-5) + var(--z));
+    background: var(--surface);
+    border-radius: var(--r-1) var(--r-1) 0 0;
+    font-variant-numeric: tabular-nums lining-nums;
+    line-height: var(--lh-num);
+    mask: linear-gradient(var(--ink) 0 0) top / 100% calc(100% - var(--z)) no-repeat,
+      conic-gradient(from -45deg at bottom, transparent, var(--ink) 1deg 89deg, transparent 90deg) bottom / calc(2 * var(--z)) var(--z) repeat-x;
+  }
+  .attrezzatura__logo { color: var(--accent-text); }
+  .attrezzatura__ric table { width: 100%; }
+  .attrezzatura__ric caption { padding-bottom: var(--space-3); color: var(--muted); }
+  .attrezzatura__ric th, .attrezzatura__ric td { padding: var(--space-2) 0; font-weight: 500; text-align: left; }
+  .attrezzatura__ric td { text-align: right; white-space: nowrap; }
+  /* Puntini di guida: una riga di punti sulla linea di base, coperta dal testo. */
+  .attrezzatura__ric tbody th {
+    background: radial-gradient(circle, var(--line-strong) 1px, transparent 1.5px) left calc(100% - .7em) / 6px 6px repeat-x;
+  }
+  .attrezzatura__ric tbody span { padding-right: .4em; background: var(--surface); }
+  .attrezzatura__ric td { padding-left: .4em; }
+  .attrezzatura__ric tfoot :is(th, td) { padding-top: var(--space-3); border-top: 1px dashed var(--text); font-size: var(--fs-lead); font-weight: 700; }
+  .attrezzatura__ric p { justify-self: start; }
+
+  .attrezzatura__testo { display: grid; gap: var(--space-6); align-content: start; }
+  .attrezzatura__lista { display: grid; gap: var(--space-4); }
+  .attrezzatura__lista li { display: flex; gap: var(--space-4); align-items: start; }
+  .attrezzatura__n { margin-top: -.1rem; }
+  .attrezzatura__ico { flex: none; color: var(--accent-text); }
+  .attrezzatura__sotto { padding-top: var(--space-5); border-top: 1px solid var(--line); }
+  .attrezzatura__cta { margin-top: var(--space-3); }
+
+  @media (min-width: 1024px) {
+    .attrezzatura { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--space-6); }
+    .attrezzatura__head { grid-column: 1 / 9; }
+    .attrezzatura__vis { grid-column: 1 / 7; }
+    .attrezzatura__testo { grid-column: 8 / -1; }
+    .attrezzatura--solo .attrezzatura__vis { grid-column: 1 / 6; }
+    .attrezzatura__ombra { max-width: 28rem; font-size: var(--fs-lead); }
+    .attrezzatura--solo .attrezzatura__testo { grid-column: 7 / -1; }
+  }
+</style>

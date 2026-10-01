@@ -1,0 +1,61 @@
+---
+// Il pensiero #il-pensiero (spec C.4). Night, nessuna foto, nessuna CTA (D17).
+// Scene in Archivo, la voce del pensiero in Newsreader corsivo, chiusura a --fs-h2,
+// poi solo il link di scorrimento verso #cosa-ho-capito. Il divisorio la curva 48/28 lo rende Pagina.
+import Section from './Section.astro';
+import Icon from './Icon.astro';
+import { pensiero } from '../data/pagina';
+
+const [isolamento, conferma] = pensiero.isolamento;
+---
+
+<Section id={pensiero.id} mode="night" zone="tofu" labelledby={`${pensiero.id}-h2`} class="grain">
+  <div class="wrap grid">
+    <div class="pensiero__col pensiero__p" style="--g:var(--space-8)">
+      <header class="pensiero__p" style="--g:var(--space-4)">
+        <p class="eyebrow">{pensiero.eyebrow}</p>
+        <h2 id={`${pensiero.id}-h2`}>{pensiero.h2}</h2>
+      </header>
+
+      <div class="pensiero__scene pensiero__p" style="--g:var(--space-3)">
+        {pensiero.scene.map((s) => <p>{s}</p>)}
+      </div>
+
+      <p class="t-voice pensiero__h3">{pensiero.pensieroRiga}</p>
+
+      <figure class="pensiero__cit pensiero__p" style="--g:var(--space-4)">
+        <blockquote class="t-voice-strong pensiero__h3">
+          <p>“{pensiero.citazione.testo}”</p>
+        </blockquote>
+        <figcaption class="t-voice t-muted">{pensiero.citazione.autore}</figcaption>
+      </figure>
+
+      <div class="pensiero__isola pensiero__p" style="--g:var(--space-5)">
+        <p class="t-muted">{isolamento}</p>
+        {conferma && <p class="t-lead"><strong>{conferma}</strong></p>}
+      </div>
+
+      <p class="t-h2 pensiero__fine">{pensiero.chiusura}</p>
+
+      <p>
+        <a class="link-text" href={pensiero.scrollLink.href}>
+          {pensiero.scrollLink.label}
+          <Icon name="arrow-down" size={20} />
+        </a>
+      </p>
+    </div>
+  </div>
+</Section>
+
+<style>
+  .pensiero__p { display: grid; align-content: start; gap: var(--g); }
+  .pensiero__col { position: relative; z-index: 2; grid-column: 1 / -1; }
+  .pensiero__scene { padding-left: var(--space-5); border-left: 1px solid var(--line-strong); max-width: 46ch; }
+  .pensiero__h3 { font-size: var(--fs-h3); }
+  .pensiero__cit { max-width: 30ch; }
+  .pensiero__isola { max-width: 44ch; }
+  .pensiero__fine { max-width: 17ch; }
+  @media (min-width: 1024px) {
+    .pensiero__col { grid-column: 2 / 10; }
+  }
+</style>

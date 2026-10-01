@@ -1,0 +1,12 @@
+---
+// Misurazione senza cookie (spec G.4). Piattaforma. Incluso da Base.astro in fondo al <body> di ogni pagina.
+// Lo script esiste solo se ANALYTICS.plausibleDomain (src/data/site.mjs) è impostato: senza dominio la pagina
+// non carica nulla e window.paTrack resta indefinito (i componenti lo chiamano sempre con ?.).
+// In sviluppo lo script c'è sempre e scrive gli eventi in console.
+import { ANALYTICS } from '../data/site.mjs';
+import AnalyticsScript from './AnalyticsScript.astro';
+
+const attivo = Boolean(ANALYTICS.plausibleDomain) || import.meta.env.DEV;
+---
+
+{attivo && <AnalyticsScript />}

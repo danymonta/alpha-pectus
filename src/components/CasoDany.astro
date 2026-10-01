@@ -1,0 +1,251 @@
+---
+// Il mio caso #il-mio-caso (spec C.11, D38 a D40, E.1). Proprietario: engineer "proof".
+// Un fascicolo di prove, non una seconda storia: niente duotone, niente velature, linee sottili, date, numeri tabulari.
+// Ordine: testa, comparatore (H3), fatti, "Anno per anno" (H3, solo con almeno 3 foto datate), scheda <dl>,
+// "Cosa ho fatto, pilastro per pilastro" (H3, foglio di carta, solo righe confermate), riquadro di onestà.
+// Foto mancanti in produzione: il blocco del comparatore sparisce (anche l'H3), il resto resta e si legge
+// comunque come un caso studio. In sviluppo i ciak segnaposto mostrano dove andranno le foto.
+// Nessuna CTA qui: la domanda successiva è "solo tu?", e risponde #casi.
+import Section from './Section.astro';
+import Foto from './Foto.astro';
+import Icon from './Icon.astro';
+import Comparatore from './Comparatore.astro';
+import { hasFoto, listaFoto, infoSlot } from '../lib/foto';
+import { ilMioCaso as m } from '../data/pagina';
+import { CASO_DANY } from '../data/casi';
+
+const DEV = import.meta.env.DEV;
+const { foto: f, scheda, cronologia } = CASO_DANY;
+const cm = m.comparatore;
+// In sviluppo ogni slot "c'è" (ciak segnaposto); in produzione solo i file veri.
+const c = (slot: string) => hasFoto(slot) || DEV;
+
+/* ---- Comparatore: serve la coppia frontale 2016 e oggi (E.1: senza coppia il blocco si nasconde). ---- */
+const tq2016 = c(f.treQuarti2016);
+const viste = [
+  {
+    id: 'fronte' as const,
+    label: cm.schede.fronte,
+    prima: { slot: f.fronte2016, etichetta: cm.etichette.prima },
+    dopo: { slot: f.fronteOggi, etichetta: cm.etichette.oggi },
+    dopoAnno: c(f.fronte2019) ? { slot: f.fronte2019, etichetta: cm.etichette.dopoUnAnno } : null,
+  },
+  ...(c(f.treQuartiOggi)
+    ? [
+        {
+          id: 'tre-quarti' as const,
+          label: cm.schede.treQuarti,
+          prima: tq2016 ? { slot: f.treQuarti2016, etichetta: cm.etichette.prima } : null,
+          dopo: { slot: f.treQuartiOggi, etichetta: cm.etichette.oggi },
+          nota: tq2016 ? null : cm.soloFrontale2016,
+        },
+      ]
+    : []),
+  ...(c(f.profiloOggi)
+    ? [
+        {
+          id: 'profilo' as const,
+          label: cm.schede.profilo,
+          prima: null,
+          dopo: { slot: f.profiloOggi, etichetta: cm.etichette.oggi },
+          nota: tq2016 ? null : cm.soloFrontale2016,
+        },
+      ]
+    : []),
+];
+const conProva = c(f.fronte2016) && c(f.fronteOggi);
+
+/* ---- Anno per anno: foto pectus-dany-anno-YYYY, minimo 3 (in sviluppo: ciak per gli anni della cronologia). ---- */
+const perAnno = new Map(cronologia.filter((r) => r.anno).map((r) => [r.anno, r]));
+let anni = listaFoto(f.prefissoAnno)
+  .map((slot) => ({ slot, anno: Number(slot.slice(f.prefissoAnno.length)) }))
+  .filter((a) => Number.isInteger(a.anno) && a.anno > 1990);
+if (DEV && anni.length < m.annoPerAnno.minimoFoto) {
+  anni = cronologia.filter((r) => r.anno).map((r) => ({ slot: `${f.prefissoAnno}${r.anno}`, anno: r.anno as number }));
+}
+const conAnni = anni.length >= m.annoPerAnno.minimoFoto;
+const altAnno = (slot: string, anno: number) => {
+  const kg = perAnno.get(anno)?.kg;
+  const t = infoSlot(slot)?.alt ?? '';
+  return (kg ? t.replace('{kg}', String(kg)) : t.replace(/,? ?\{kg\} kg/, '')).replace('{anno}', String(anno));
+};
+
+/* ---- Tabella dei pilastri: solo righe confermate; la colonna "Da quando" esce solo se ha valori. ---- */
+const righe = m.pilastri.righe;
+const conDaQuando = righe.some((r) => r.daQuando);
+const colonne = conDaQuando ? m.pilastri.colonne : m.pilastri.colonne.slice(0, 2);
+---
+
+<Section id={m.id} mode="golden" zone="bofu" labelledby={`${m.id}-h2`} data-evt-zone="casi" class="caso grain">
+  <div class:list={['wrap caso__w', { 'caso__w--prova': conProva }]}>
+    <header class="caso__testa">
+      <p class="eyebrow">{m.eyebrow}</p>
+      <h2 id={`${m.id}-h2`}>{m.h2}</h2>
+      <p class="t-lead">{m.lead}</p>
+    </header>
+
+    {
+      conProva && (
+        <div class="caso__prova">
+          <h3>{cm.h3}</h3>
+          <Comparatore
+            uid="dany"
+            viste={viste}
+            toggleDopo={cm.dopo}
+            sliderAria={cm.sliderAria}
+            valoreTesto={`${cm.etichette.prima.split(' ')[0]} al {n} percento`}
+            annotazioni={cm.annotazioni}
+            didascalia={[cm.didascalia, cm.nessunRitocco].filter((x): x is string => !!x)}
+            legende={{ vista: 'Vista', dopo: 'Confronta il 2016 con' }}
+            sizes="(min-width: 1280px) 600px, (min-width: 1024px) 46vw, 100vw"
+          />
+        </div>
+      )
+    }
+
+    <ul class="caso__fatti" role="list">
+      {
+        m.fatti.map((x) => (
+          <li>
+            <span class="caso__v">{x.valore}</span> <span class="caso__t">{x.testo}</span>
+          </li>
+        ))
+      }
+    </ul>
+
+    {
+      conAnni && (
+        <div class="caso__anni">
+          <h3>{m.annoPerAnno.h3}</h3>
+          <ol class="caso__provini" role="list">
+            {anni.map((a) => (
+              <li>
+                <figure>
+                  <Foto slot={a.slot} alt={altAnno(a.slot, a.anno)} ratio="4:5" sizes="(min-width: 1024px) 180px, 31vw" widths={[240, 360, 480]} />
+                  <figcaption>
+                    <time datetime={String(a.anno)}>{perAnno.get(a.anno)?.etichetta ?? a.anno}</time>
+                  </figcaption>
+                </figure>
+              </li>
+            ))}
+          </ol>
+          <ol class="caso__crono" role="list">
+            {cronologia.map((r) => (
+              <li>
+                {r.anno ? <time datetime={String(r.anno)}>{r.etichetta}</time> : <span>{r.etichetta}</span>}
+                {r.testo && <p>{r.testo}</p>}
+              </li>
+            ))}
+          </ol>
+        </div>
+      )
+    }
+
+    {
+      scheda.length > 0 && (
+        <dl class="caso__scheda">
+          {scheda.map((r) => (
+            <div>
+              <dt>{r.etichetta}</dt>
+              <dd>{r.valore}</dd>
+            </div>
+          ))}
+        </dl>
+      )
+    }
+
+    {
+      righe.length > 0 && (
+        <div class="caso__pilastri sheet-paper">
+          <h3 id={`${m.id}-pilastri`}>{m.pilastri.h3}</h3>
+          <table aria-labelledby={`${m.id}-pilastri`}>
+            <thead>
+              <tr>
+                {colonne.map((t) => (
+                  <th scope="col">{t}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {righe.map((r) => (
+                <tr>
+                  <th scope="row">{r.pilastro}</th>
+                  <td>{r.fatto}</td>
+                  {conDaQuando && <td>{r.daQuando}</td>}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )
+    }
+
+    <div class="caso__onesta">
+      <Icon name="curva" size={32} class="caso__curva" />
+      <p>{m.onesta}</p>
+    </div>
+  </div>
+</Section>
+
+<style>
+  .caso__w { display: grid; gap: var(--space-8); position: relative; z-index: 2; }
+  .caso__testa { display: grid; gap: var(--space-4); }
+  .caso__testa .t-lead { max-width: 46ch; color: var(--muted); }
+  .caso__prova, .caso__anni { display: grid; gap: var(--space-5); align-content: start; }
+
+  .caso__fatti { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5) var(--space-4); }
+  .caso__fatti li { display: grid; gap: var(--space-1); padding-top: var(--space-3); border-top: 1px solid var(--line-strong); }
+  .caso__fatti li:last-child:nth-child(odd) { grid-column: 1 / -1; }
+  .caso__v {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 1.6rem + 1.5vw, 2.75rem);
+    font-stretch: 82%;
+    font-weight: 760;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+  .caso__t, .caso__scheda dt, .caso__provini figcaption, .caso__crono :is(time, span) {
+    font-size: var(--fs-small);
+    line-height: 1.4;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .caso__provini { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3) var(--space-2); }
+  .caso__provini figure { display: grid; gap: var(--space-2); }
+  .caso__provini picture, .caso__provini .foto-slate { border-radius: var(--r-1); overflow: hidden; }
+  .caso__crono { display: grid; gap: var(--space-4); padding-left: var(--space-4); border-left: 1px solid var(--line-strong); }
+  .caso__crono :is(time, span) { color: var(--accent-text); font-weight: 650; }
+
+  .caso__scheda { padding: var(--space-2) var(--space-5); border-radius: var(--r-2); background: var(--surface); }
+  .caso__scheda div { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: var(--space-4); padding-block: var(--space-3); }
+  .caso__scheda div + div { border-top: 1px solid var(--line); }
+  .caso__scheda dt { font-size: var(--fs-micro); font-weight: 620; letter-spacing: .14em; text-transform: uppercase; padding-top: .2em; }
+  .caso__scheda div:first-child dd { font-weight: 650; }
+
+  .caso__pilastri { padding: var(--space-5); display: grid; gap: var(--space-4); max-width: 46rem; }
+  .caso__pilastri table { width: 100%; font-size: var(--fs-small); line-height: 1.5; }
+  .caso__pilastri :is(th, td) { padding: var(--space-3) var(--space-3) var(--space-3) 0; text-align: left; vertical-align: top; border-top: 1px solid var(--line-strong); }
+  .caso__pilastri thead th { border: 0; color: var(--muted); font-weight: 620; }
+  .caso__pilastri tbody th { color: var(--accent-text); font-weight: 680; }
+
+  .caso__onesta { display: grid; gap: var(--space-4); padding: var(--space-6) var(--space-5); border: 1px solid var(--line-strong); border-radius: var(--r-2); }
+  .caso__onesta p { font-size: var(--fs-lead); line-height: 1.45; font-weight: 500; }
+  .caso__curva { color: var(--accent-text); }
+
+  @media (min-width: 1024px) {
+    .caso__w { grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--space-8) var(--space-6); grid-auto-flow: row dense; align-items: start; }
+    .caso__fatti, .caso__anni, .caso__pilastri { grid-column: 1 / -1; }
+    .caso__testa { grid-column: 1 / 10; }
+    .caso__w--prova { grid-template-rows: repeat(4, auto) 1fr; }
+    .caso__prova { grid-column: 1 / 7; grid-row: 2 / 6; }
+    .caso__w--prova > :is(.caso__fatti, .caso__scheda, .caso__onesta) { grid-column: 8 / -1; }
+    .caso__w:not(.caso__w--prova) .caso__fatti { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .caso__w:not(.caso__w--prova) .caso__fatti li { grid-column: auto; }
+    .caso__scheda { grid-column: 1 / 7; }
+    .caso__onesta { grid-column: 8 / -1; }
+    .caso__provini { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); }
+    .caso__crono { grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: var(--space-5); padding: var(--space-4) 0 0; border: 0; border-top: 1px solid var(--line-strong); }
+  }
+</style>

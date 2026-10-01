@@ -1,0 +1,118 @@
+---
+// Casi clienti #casi (spec C.12, D41, G.1 CTA 2, G.7 punto 5). Proprietario: engineer "proof".
+// Ordine: testa con la paura vera, fascia dei numeri (dati interni, datati), card in evidenza
+// ("Stesso petto, stesso metodo."), griglia (1 colonna mobile, 3 desktop), oltre le prime 3 un <details>
+// "Altri casi" già nell'HTML, poi le ricomposizioni senza pectus sotto il loro sottotitolo, le righe finali e la CTA 2.
+// Produzione: solo casiPubblicati() (pubblica: true e tutti i requisiti). Sviluppo: anche casiInAttesa() come segnaposto.
+// Senza casi pubblicati la sezione resta: testa, numeri, riga "Nessuna misura è garantita." e CTA 2.
+// Aggiungere un cliente: un oggetto in CASI (src/data/casi.ts) e le foto con i nomi del modello. Niente da toccare qui.
+import Section from './Section.astro';
+import Icon from './Icon.astro';
+import CtaDm from './CtaDm.astro';
+import CasoCard from './CasoCard.astro';
+import { casiSezione as s } from '../data/pagina';
+import { casiPubblicati, casiInAttesa, type Caso } from '../data/casi';
+import { rich } from '../lib/testo';
+
+const tutti = import.meta.env.DEV ? [...casiPubblicati(), ...casiInAttesa()] : casiPubblicati();
+const pectus = tutti.filter((c) => c.pectusConfermato);
+const altri = tutti.filter((c) => !c.pectusConfermato);
+const n = s.cardVisibili;
+const gruppi: { casi: Caso[]; secondario: boolean }[] = [
+  { casi: pectus, secondario: false },
+  { casi: altri, secondario: true },
+].filter((g) => g.casi.length);
+---
+
+<Section id={s.id} mode="golden" zone="bofu" labelledby={`${s.id}-h2`} class="casi grain">
+  <div class="wrap casi__w">
+    <header class="casi__testa">
+      <p class="eyebrow">{s.eyebrow}</p>
+      <h2 id={`${s.id}-h2`}>{s.h2}</h2>
+      {s.intro.map((p, i) => <p class:list={['t-lead', { casi__forte: i === s.intro.length - 1 }]}>{p}</p>)}
+    </header>
+
+    <div class="casi__stat">
+      {s.statBand.righe.map((r) => <p><Fragment set:html={rich(r)} /></p>)}
+      <p class="casi__nota">
+        {s.statBand.notaPrima} <time datetime={s.statBand.dataStat}>{s.statBand.dataStatTesto}</time>.
+      </p>
+    </div>
+
+    {
+      gruppi.map((g) => {
+        const sec = g.secondario;
+        const card = (c: Caso, i: number) => (
+          <CasoCard
+            caso={c}
+            livello={sec ? 4 : 3}
+            variante={sec ? 'secondaria' : i === 0 ? 'guida' : 'normale'}
+            occhiello={!sec && i === 0 ? s.featuredH : undefined}
+          />
+        );
+        return (
+          <div class:list={['casi__gruppo', { 'casi__gruppo--sec': sec }]}>
+            {sec && <h3>{s.sottotitoloNonPectus}</h3>}
+            <div class="casi__griglia">{g.casi.slice(0, n).map(card)}</div>
+            {g.casi.length > n && (
+              <details class="casi__altri">
+                <summary class="btn-outline" data-evt="casi_altri_open">
+                  {s.altriCasi} <Icon name="plus" size={20} class="casi__piu" />
+                </summary>
+                <div class="casi__griglia">{g.casi.slice(n).map((c, i) => card(c, i + n))}</div>
+              </details>
+            )}
+          </div>
+        );
+      })
+    }
+
+    <div class="casi__chiusura">
+      <div class="casi__sotto">
+        {s.sotto.slice(tutti.length ? 0 : 1).map((p) => <p>{p}</p>)}
+      </div>
+      <CtaDm placement={s.cta.placement} leadIn={s.cta.leadIn} />
+    </div>
+  </div>
+</Section>
+
+<style>
+  .casi__w { display: grid; gap: var(--space-8); position: relative; z-index: 2; }
+  .casi__testa { display: grid; gap: var(--space-4); }
+  .casi__testa .t-lead { max-width: 40ch; color: var(--muted); }
+  .casi__testa .casi__forte { color: var(--text); font-weight: 650; }
+
+  .casi__stat { display: grid; gap: var(--space-5); }
+  .casi__stat p:not(.casi__nota) { padding-top: var(--space-3); border-top: 1px solid var(--line-strong); max-width: 30ch; line-height: 1.45; }
+  .casi__stat :global(strong) {
+    display: block;
+    margin-bottom: var(--space-2);
+    color: var(--accent-text);
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 1.6rem + 1.5vw, 3rem);
+    font-stretch: 82%;
+    font-weight: 760;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .casi__nota { font-size: var(--fs-small); color: var(--muted); }
+
+  .casi__gruppo { display: grid; gap: var(--space-5); }
+  .casi__griglia { display: grid; gap: var(--space-5); }
+  .casi__altri { display: grid; gap: var(--space-5); }
+  .casi__altri[open] summary { margin-bottom: var(--space-5); }
+  .casi__piu { transition: rotate var(--dur-2) var(--ease); }
+  .casi__altri[open] .casi__piu { rotate: 45deg; }
+
+  .casi__chiusura { display: grid; gap: var(--space-7); }
+  .casi__sotto { display: grid; gap: var(--space-2); max-width: 52ch; padding-top: var(--space-4); border-top: 1px solid var(--line); font-size: var(--fs-small); color: var(--muted); }
+
+  @media (min-width: 1024px) {
+    .casi__w { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--space-6); }
+    .casi__gruppo, .casi__chiusura { grid-column: 1 / -1; }
+    .casi__testa { grid-column: 1 / 7; }
+    .casi__stat { grid-column: 8 / -1; align-self: end; }
+    .casi__griglia { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-6); }
+    .casi__chiusura { grid-template-columns: 5fr 7fr; align-items: end; column-gap: var(--space-6); }
+  }
+</style>
