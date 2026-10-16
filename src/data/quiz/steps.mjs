@@ -105,7 +105,7 @@ export const STEPS = [
     o('st_info', 'Sto solo raccogliendo informazioni', { urg: 0 }),
   ] },
   { id: 'trigger', index: 16, chapter: 3, type: 'single', question: 'Cosa ti ha spinto a cercare una soluzione adesso?', options: [
-    o('tg_story', 'Ho visto la storia di una persona con il mio stesso problema', { urg: 7 }),
+    o('tg_story', 'Ho visto la tua storia e ho il tuo stesso problema', { urg: 7 }),
     o('tg_event', 'Un evento vicino: estate, vacanza, cerimonia', { urg: 10 }),
     o('tg_relation', 'Una relazione nuova o una persona importante', { urg: 8 }),
     o('tg_photo', 'Mi sono visto in una foto o in un video', { urg: 7 }),
