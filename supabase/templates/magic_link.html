@@ -2,7 +2,7 @@
   <h2 style="margin:0 0 12px">Accesso ai lead del quiz</h2>
   <p style="margin:0 0 20px;line-height:1.5">Clicca il pulsante per entrare. Il link vale poco tempo e si usa una volta sola.</p>
   <p style="margin:0 0 24px">
-    <a href="{{ .SiteURL }}/quiz-leads/?token_hash={{ .TokenHash }}&type=email"
+    <a href="{{ .RedirectTo }}?token_hash={{ .TokenHash }}&type=email"
        style="display:inline-block;background:#780000;color:#fff;text-decoration:none;padding:14px 22px;border-radius:6px;font-weight:bold">Entra nei lead</a>
   </p>
   <p style="margin:0 0 8px;line-height:1.5">Se il link non si apre (per esempio dal telefono), inserisci questo codice nella pagina di accesso:</p>
