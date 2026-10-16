@@ -1,4 +1,5 @@
-// Copy del quiz Pecto Scavato (spec sezioni 7, 10, 11, 12). Testi definitivi: non riscrivere.
+// Copy del quiz Petto Scavato (spec sezioni 7, 10, 11, 12). Testi definitivi: non riscrivere.
+// Parola chiave: "petto scavato" nel titolo (variante A) e "Petto Scavato" al posto di "Pecto Scavato" in tutto il copy visibile.
 // Scostamenti dalla specifica, tutti per rispettare src/lib/regole-copy.mjs (regole di copy del sito):
 //   - "Mi vergogno a iniziare" / "La vergogna ti ha tenuto fermo" -> "Mi imbarazza iniziare" / "L'imbarazzo ti ha tenuto fermo"
 //   - "Correggere l'esecuzione con feedback video settimanale" -> "Perfezionare l'esecuzione con feedback video settimanale"
@@ -11,8 +12,8 @@
 // Regole: niente emoji, trattini lunghi o medi, punti esclamativi. Accenti sempre corretti.
 
 export const LANDING = {
-  eyebrow: 'QUIZ PECTO SCAVATO',
-  titleA: 'Il tuo petto si può migliorare. Scopri da dove iniziare.',
+  eyebrow: 'QUIZ PETTO SCAVATO',
+  titleA: 'Il tuo petto scavato si può migliorare. Scopri da dove iniziare.',
   titleB: 'Pectus excavatum: smetti di nasconderlo, inizia a costruirlo.',
   subtitle: '17 domande, 3 minuti. Ricevi il tuo profilo, una stima dei tempi realistici e il piano di allenamento a corpo libero adatto al tuo petto.',
   cta: 'Inizia il quiz',
@@ -241,6 +242,6 @@ export const WHATSAPP_MESSAGE = 'Ciao Dany, sono {nome}. Ho fatto il quiz sul pe
 
 // Email di servizio (12.2): E1 al completamento, M1 se il filtro medico è stop.
 export const EMAILS = {
-  E1: { subject: 'Il tuo profilo Pecto Scavato', body: '{nome}, il tuo profilo è {profilo}. Trovi il riepilogo e la stima dei tempi qui: {link}. Se vuoi parlarne con me, prenota la call di valutazione. Dany' },
+  E1: { subject: 'Il tuo profilo Petto Scavato', body: '{nome}, il tuo profilo è {profilo}. Trovi il riepilogo e la stima dei tempi qui: {link}. Se vuoi parlarne con me, prenota la call di valutazione. Dany' },
   M1: { subject: 'Prima la tua sicurezza', body: '{nome}, dalle tue risposte emerge che prima conviene una valutazione medica. Trovi il riepilogo qui: {link}. Quando hai il via libera, rispondi a questa mail e riprendiamo. Dany' },
 };

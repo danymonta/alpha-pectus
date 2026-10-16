@@ -1,4 +1,4 @@
-# Quiz Pecto Scavato e portale dei lead
+# Quiz Petto Scavato e portale dei lead
 
 Costruito sulla specifica `quiz-funnel-pectus-spec.md`, dentro il sito esistente (Astro). Ospitabile su Vercel o su Cloudflare Pages. Tema chiaro con il rosso del brand `#780000`.
 

@@ -1,4 +1,4 @@
-/* Quiz Pecto Scavato: tema chiaro. Solo token del sito (tokens.css): carta calda, inchiostro, rosso brand #780000. */
+/* Quiz Petto Scavato: tema chiaro. Solo token del sito (tokens.css): carta calda, inchiostro, rosso brand #780000. */
 .qpage { min-height: 100svh; background: var(--bg); color: var(--text); }
 .qbar { border-bottom: 1px solid var(--line); background: var(--surface); }
 .qbar__in { display: flex; align-items: center; min-height: 56px; }

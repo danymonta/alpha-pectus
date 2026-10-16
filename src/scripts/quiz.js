@@ -1,4 +1,4 @@
-// Quiz Pecto Scavato (/quiz/): landing, 17 passi, transizioni tra capitoli, gate. Spec sezioni 7, 8, 10, 14.
+// Quiz Petto Scavato (/quiz/): landing, 17 passi, transizioni tra capitoli, gate. Spec sezioni 7, 8, 10, 14.
 // Le risposte restano in sessionStorage fino al gate: niente viene inviato al server prima dei consensi (14.1).
 // Gli eventi di analisi portano solo indici di passo, mai il contenuto delle risposte.
 import { STEPS } from '../data/quiz/steps.mjs';
