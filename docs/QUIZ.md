@@ -72,11 +72,11 @@ Consiglio un progetto **dedicato**: le impostazioni di accesso valgono per tutto
 
 1. Crea il progetto su supabase.com (regione UE).
 2. SQL Editor: incolla ed esegui `supabase/migrations/20261016000000_quiz_leads.sql`.
-3. **Authentication, Sign In / Providers**: lascia attivo *Email*, disattiva *Allow new users to sign up* e *Confirm email*.
-4. **Authentication, URL Configuration**: Site URL `https://pectus.percorsoalpha.com`.
-5. **Authentication, Email Templates, Magic Link**: oggetto `Il tuo link di accesso ai lead Pectus`, corpo = contenuto di `supabase/templates/magic_link.html`.
-6. **Authentication, SMTP Settings**: SMTP personalizzato. Quello di default manda poche mail all'ora e solo ai membri del team. Con Resend: host `smtp.resend.com`, porta `465`, utente `resend`, password = la chiave API, mittente = `MAIL_FROM`.
-7. Crea il tuo utente: `SUPABASE_URL=https://xxxx.supabase.co SUPABASE_SERVICE_KEY=<service_role> node scripts/crea-proprietario.mjs danielemontagnolo@gmail.com` (oppure Authentication, Users, Add user con *Auto confirm*).
+3. **Authentication, Sign In / Providers**: lascia attivo *Email*, spegni *Allow new users to sign up* e lascia spenta *Allow anonymous sign-ins*.
+4. **Authentication, URL Configuration**: Site URL `https://pectus.percorsoalpha.com/quiz-leads/` (con la parte finale: è dove porta il link della mail). In *Redirect URLs* aggiungi `https://pectus.percorsoalpha.com/quiz-leads/**`.
+5. **Authentication, Users, Add user, Create new user**: email `danielemontagnolo@gmail.com`, una password lunga e casuale che non userai mai, *Auto Confirm User* attivo.
+
+Con la posta predefinita di Supabase la mail di accesso ha il testo standard e contiene solo il link (il codice a 6 cifre compare solo con il testo personalizzato). Basta per te: arriva solo agli indirizzi del tuo team Supabase ed è limitata a poche mail all'ora. Se vuoi il testo personalizzato, il codice o più persone con accesso, collega un SMTP (**Authentication, Emails, SMTP Settings**; con Resend: host `smtp.resend.com`, porta `465`, utente `resend`, password = la chiave API) e poi incolla `supabase/templates/magic_link.html` in *Email Templates, Magic link or OTP*; in quel caso il Site URL può restare `https://pectus.percorsoalpha.com`.
 
 ### 2. Cloudflare Pages (Impostazioni, Variabili e segreti)
 

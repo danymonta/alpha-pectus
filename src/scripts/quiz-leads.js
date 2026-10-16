@@ -96,10 +96,10 @@ if (radice) {
 
   const mostraCodice = (email) => {
     const codice = h('input', { class: 'lg-in', type: 'text', inputmode: 'numeric', autocomplete: 'one-time-code', maxlength: '8', placeholder: 'codice a 6 cifre', 'aria-label': 'Codice' });
-    const msg = h('p', { class: 'lg-msg lg-msg--ok', role: 'status' }, 'Se l’email è autorizzata, ti ho mandato un link. Aprilo da questo dispositivo o da un altro.');
+    const msg = h('p', { class: 'lg-msg lg-msg--ok', role: 'status' }, 'Se l’email è autorizzata, ti ho mandato un link. Aprilo da questo dispositivo o da un altro. Può metterci un minuto: controlla anche spam e promozioni.');
     const entra = h('button', { class: 'lg-btn lg-btn--pieno', type: 'submit' }, 'Entra con il codice');
     const indietro = h('button', { class: 'lg-link', type: 'button', onclick: () => mostraLogin() }, 'Cambia email');
-    const form = h('form', { class: 'lg-box', novalidate: true }, h('h1', {}, 'Controlla la posta'), msg, h('p', {}, 'Se il link non si apre, scrivi qui il codice che trovi nella mail.'), codice, entra, indietro);
+    const form = h('form', { class: 'lg-box', novalidate: true }, h('h1', {}, 'Controlla la posta'), msg, h('p', {}, 'Se la mail contiene anche un codice, puoi scriverlo qui al posto del link.'), codice, entra, indietro);
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       entra.disabled = true;
@@ -268,7 +268,22 @@ if (radice) {
       vista.replaceChildren(h('div', { class: 'lg-box' }, h('h1', {}, 'Non configurato'), h('p', {}, 'Mancano PUBLIC_SUPABASE_URL e PUBLIC_SUPABASE_ANON_KEY nella build.')));
       return;
     }
-    // Arrivo dal link della mail: ?token_hash=...&type=email. Funziona anche se la mail si apre su un altro dispositivo.
+    // Arrivo dal link predefinito di Supabase: i token sono nell'hash (#access_token=...&refresh_token=...),
+    // oppure un errore (#error_code=otp_expired). Funziona anche se la mail si apre su un altro dispositivo.
+    const hash = new URLSearchParams(location.hash.slice(1));
+    if (hash.get('error_code') || hash.get('error')) {
+      history.replaceState({}, '', location.pathname);
+      return mostraLogin('Il link non è valido o è scaduto. Richiedine uno nuovo.');
+    }
+    if (hash.get('access_token')) {
+      history.replaceState({}, '', location.pathname);
+      vista.replaceChildren(h('p', { class: 'lg-vuoto' }, 'Verifico il link…'));
+      const res = await fetch(`${URL_SB}/auth/v1/user`, { headers: { apikey: CHIAVE_SB, Authorization: `Bearer ${hash.get('access_token')}` } });
+      const user = res.ok ? await res.json().catch(() => null) : null;
+      if (user?.email && salvaSessione({ access_token: hash.get('access_token'), refresh_token: hash.get('refresh_token'), expires_in: Number(hash.get('expires_in')) || 3600, user })) return avvia();
+      return mostraLogin('Il link non è valido o è scaduto. Richiedine uno nuovo.');
+    }
+    // Arrivo dal link con il testo personalizzato della mail: ?token_hash=...&type=email.
     const q = new URLSearchParams(location.search);
     const th = q.get('token_hash');
     if (th) {
