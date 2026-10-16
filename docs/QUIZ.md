@@ -37,7 +37,7 @@ I segnaposto si vedono in pagina come "Da completare". Il controllo di lancio li
 - Il tuo numero WhatsApp: `WHATSAPP_NUMERO` in `src/data/site.mjs` (formato internazionale, solo cifre, es. `393331234567`).
 - Link del calendario di prenotazione: `CALENDARIO_URL` (Cal.com o simile). Senza, il passo successivo è WhatsApp.
 - Guida PDF "I primi 3 passi per il tuo petto" (route `nurture`) e guida "Come parlare con il medico" (da far rivedere a un medico).
-- Cookie Policy, Termini, ragione sociale e partita IVA (`AZIENDA` in `src/data/site.mjs`). La Privacy Policy va aggiornata con il quiz e con Supabase come fornitore.
+- Dati dell'attività (ragione sociale, partita IVA, email: `AZIENDA` in `src/data/site.mjs`) e revisione legale della pagina `/privacy/`, che ora descrive anche il quiz, Supabase come fornitore, i tempi di conservazione e come chiedere la cancellazione. Le pagine del quiz mostrano solo il link alla privacy e l'avvertenza medica.
 
 ## Scostamenti dalla specifica
 
@@ -50,14 +50,14 @@ Testi che la specifica non dava e ho scritto io (da confermare): schermata di us
 
 Stack: la specifica propone Vite e React; qui è Astro e JavaScript puro, come il resto del sito, con hosting su Vercel (o Cloudflare Pages). Test con `node --test` invece di Vitest. Il CRM è il portale `/quiz-leads/` su Supabase (non Notion). Il webhook n8n è facoltativo.
 
-Non ancora fatto (Fase 2 della specifica): sequenze email E2-E5, M2 e promemoria call, Conversions API di Meta, dashboard di funnel, webhook del calendario, verifica via email della cancellazione.
+Non ancora fatto (Fase 2 della specifica): sequenze email E2-E5, M2 e promemoria call, Conversions API di Meta, dashboard di funnel, webhook del calendario. La cancellazione dei dati si chiede per email (come scritto in `/privacy/`) e si esegue dal pulsante Elimina del portale.
 
 ## Sicurezza di `/quiz-leads/`
 
 Il controllo non è nella pagina (che è una cornice vuota) ma nel database:
 
 - **Nessuna registrazione**: in Supabase le iscrizioni sono chiuse e l'unico utente esistente sei tu. Chi chiede un link con un'altra email vede la stessa schermata, ma nessuna mail parte.
-- **La tabella è chiusa**: Row Level Security attiva, nessun permesso a `anon`. Solo la tua email legge (`is_quiz_owner()` nella migrazione). Puoi modificare solo stato, note e prossimo contatto, ed eliminare un lead (cancellazione richiesta dall'interessato); non puoi alterare i suoi dati.
+- **La tabella è chiusa**: Row Level Security attiva, nessun permesso a `anon`. Solo la tua email legge (`is_quiz_owner()` nella migrazione). Puoi modificare solo stato, note e prossimo contatto, ed eliminare un lead (cancellazione richiesta dall'interessato per email); non puoi alterare i suoi dati.
 - **Il link vale una volta** e per poco tempo. In alternativa c'è un codice a 6 cifre.
 - **Le scritture** passano solo dalle Functions, con una chiave segreta mai presente nel browser.
 - La pagina è `noindex`, fuori dalla sitemap, senza cache e non incorniciabile (`public/_headers`).
