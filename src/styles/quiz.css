@@ -45,7 +45,7 @@
 .ql-faq details[open] summary::after { content: '\2212'; }
 .ql-faq p { padding: 0 var(--space-4) var(--space-4); color: var(--muted); line-height: 1.55; }
 .qfoot { padding-block: var(--space-7); border-top: 1px solid var(--line); font-size: var(--fs-small); color: var(--muted); display: grid; gap: var(--space-3); }
-.qfoot a, .qfoot button.qlink { color: var(--text); text-decoration: underline; text-underline-offset: .2em; }
+.qfoot a { color: var(--text); text-decoration: underline; text-underline-offset: .2em; }
 .qfoot__links { display: flex; flex-wrap: wrap; gap: var(--space-4); }
 .qlink { background: none; border: 0; padding: 0; font: inherit; cursor: pointer; }
 
@@ -131,5 +131,3 @@
 .qr-alt { font-size: var(--fs-small); }
 .qr-alt a, .qr-alt button { color: var(--text); text-decoration: underline; text-underline-offset: .2em; }
 .qr-disc { font-size: var(--fs-micro); color: var(--muted); }
-.qr-erase { display: grid; gap: var(--space-3); }
-.qr-erase input { min-height: 48px; padding: 0 var(--space-4); border: 1px solid var(--line-strong); border-radius: var(--r-2); background: var(--bg); color: var(--text); }

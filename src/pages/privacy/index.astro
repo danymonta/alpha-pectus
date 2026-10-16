@@ -98,8 +98,9 @@ const descrizione = statistiche
             )
           }
           <p>
-            <strong>Niente sul tuo corpo.</strong> Il sito non chiede e non registra informazioni sul tuo petto, sui
-            sintomi o su testi che scrivi.
+            <strong>Niente sul tuo corpo, se non lo scegli tu.</strong> Le pagine del sito non chiedono e non registrano
+            informazioni sul tuo petto, sui sintomi o su testi che scrivi. Lo fanno solo il quiz e il form di
+            candidatura, e solo quando li compili.
           </p>
           <p>
             <strong>Server.</strong> Il sito è ospitato da {host}, che per consegnare le pagine tratta dati tecnici
@@ -187,6 +188,44 @@ const descrizione = statistiche
           </p>
         </section>
 
+        <section class="privacy__blocco" aria-labelledby="quiz">
+          <h2 id="quiz" class="privacy__h2">Quando fai il quiz</h2>
+          <p>
+            Il quiz raccoglie le risposte alle domande (età, tipo di petto, segni di postura, sintomi, storia medica,
+            allenamento, tentativi già fatti, tempo a disposizione, investimenti passati, tempi e motivi per iniziare)
+            e, alla fine, il tuo nome, la tua email, il tuo numero WhatsApp e, se vuoi, il tuo profilo Instagram.
+          </p>
+          <p>
+            <strong>Prima di lasciare i contatti non viene inviato niente.</strong> Mentre rispondi, le risposte restano
+            solo nel tuo browser. Partono verso di noi quando premi il pulsante finale, dopo aver dato i consensi.
+          </p>
+          <p>
+            Usiamo le risposte per creare il tuo profilo e la stima dei tempi, e per preparare una eventuale call con
+            Dany. Ti scriviamo su email o WhatsApp solo se hai acconsentito. Non le usiamo per altro, non le cediamo e
+            non le inviamo a piattaforme pubblicitarie.
+          </p>
+          <p>
+            Per gestirle usiamo servizi che agiscono come responsabili del trattamento: Supabase, che conserva i dati
+            in un database in Irlanda (Unione europea), {host}, che ospita il sito, e Resend, che invia le email. Possono
+            trattare i dati anche fuori dall'Unione europea, con le garanzie previste dal GDPR (clausole contrattuali
+            standard).
+          </p>
+          <p>
+            <strong>Dati sulla salute.</strong> Le risposte sul petto, sui sintomi e sulla storia medica sono dati
+            particolari (art. 9 del GDPR). Le trattiamo solo con il tuo consenso esplicito, che dai con una casella
+            separata, e che puoi revocare in qualsiasi momento. Il quiz non è una diagnosi.
+          </p>
+          <p>
+            <strong>Solo adulti.</strong> Il quiz è per chi ha almeno 18 anni: se indichi meno di 18 anni non salviamo
+            nessuna risposta.
+          </p>
+          <p class="privacy__base">
+            Base giuridica: il tuo consenso (art. 6, par. 1, lett. a del GDPR) e, per i dati sulla salute, il tuo
+            consenso esplicito (art. 9, par. 2, lett. a del GDPR). Le comunicazioni commerciali su email e WhatsApp hanno
+            due consensi facoltativi e separati.
+          </p>
+        </section>
+
         <section class="privacy__blocco" aria-labelledby="durata">
           <h2 id="durata" class="privacy__h2">Per quanto tempo</h2>
           <ul class="privacy__lista">
@@ -194,6 +233,10 @@ const descrizione = statistiche
             <li>
               Candidature: fino a 12 mesi dall'invio, poi le cancelliamo. Se inizi il percorso, per la sua durata e
               per gli obblighi di legge, per esempio quelli fiscali.
+            </li>
+            <li>
+              Quiz: fino a 12 mesi dal completamento. Se il risultato ti ha indicato di sentire prima un medico e non ci
+              scrivi, 6 mesi.
             </li>
             <li>Dati sulla salute: li cancelliamo quando non servono più, o prima se ce lo chiedi.</li>
             {pixel && <li>Scelta sul pixel di Meta: 6 mesi, nel tuo browser.</li>}
@@ -206,6 +249,10 @@ const descrizione = statistiche
             Puoi chiedere in ogni momento di accedere ai tuoi dati, di rettificarli o cancellarli, di limitarne il
             trattamento, di opporti, di riceverli in un formato leggibile e di revocare il consenso. La revoca non
             cambia la liceità di quanto fatto prima.
+          </p>
+          <p>
+            <strong>Per cancellare i dati del quiz o della candidatura</strong> basta scrivere all'indirizzo qui sotto
+            dall'email che hai usato: li cancelliamo entro 30 giorni e ti confermiamo quando è fatto.
           </p>
           <p>
             {

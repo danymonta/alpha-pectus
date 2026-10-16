@@ -72,7 +72,7 @@ export const SOCIAL = {
 export const PERCORSO_ALPHA_URL = 'https://percorsoalpha.com/';
 
 // Chi ospita il sito: lo nomina la pagina privacy.
-export const HOSTING = { nome: 'Cloudflare' }; // 'Netlify' se si torna su Netlify
+export const HOSTING = { nome: 'Vercel' }; // 'Cloudflare' o 'Netlify' se si cambia hosting
 
 // Dati aziendali: vuoti finché Dany non li conferma (spec H.11, J.5 punto 16).
 // Una stringa vuota non viene mai mostrata né messa nel JSON-LD.

@@ -86,7 +86,6 @@ export const LANDING = {
   ],
   footer: {
     disclaimer: 'Questo quiz ha scopo informativo ed educativo. Non costituisce diagnosi, consulto medico o promessa di risultato. In caso di sintomi o dubbi, rivolgiti a un medico.',
-    erasure: 'Richiedi la cancellazione dei tuoi dati',
   },
 };
 
