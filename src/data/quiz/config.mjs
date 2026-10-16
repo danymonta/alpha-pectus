@@ -1,4 +1,4 @@
-// Configurazione del quiz Pecto Scavato (spec sezioni 6, 8, 9). Pesi, soglie e tempi vivono qui: [DA VALIDARE] con Dany.
+// Configurazione del quiz Petto Scavato (spec sezioni 6, 8, 9). Pesi, soglie e tempi vivono qui: [DA VALIDARE] con Dany.
 // JS puro, nessuna dipendenza: lo importano la pagina, lo script e le Functions.
 
 export const QUIZ_VERSION = 'pectus-it-1.0.0';
