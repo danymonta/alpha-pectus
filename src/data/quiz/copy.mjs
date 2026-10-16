@@ -3,6 +3,7 @@
 //   - "Mi vergogno a iniziare" / "La vergogna ti ha tenuto fermo" -> "Mi imbarazza iniziare" / "L'imbarazzo ti ha tenuto fermo"
 //   - "Correggere l'esecuzione con feedback video settimanale" -> "Perfezionare l'esecuzione con feedback video settimanale"
 //   - "non correggono la postura che accentua l'incavo" -> "non riequilibrano la postura che accentua l'incavo"
+//   - "Ho visto la storia di una persona con il mio stesso problema" -> "Ho visto la tua storia e ho il tuo stesso problema" (parla direttamente a Dany)
 // Testi scritti qui perché mancano nella specifica (da confermare): EXIT, NOTE_MEDICAL_NEVER_LABEL, etichette CTA WhatsApp,
 // messaggio di errore, avvisi del gate, testi dello specchio per trigger.
 // Regole: niente emoji, trattini lunghi o medi, punti esclamativi. Accenti sempre corretti.
@@ -142,7 +143,7 @@ export const MIRROR = {
   triggerSentence: 'Hai deciso di agire adesso perché: {x}.',
   // Forma discorsiva dei trigger: scritta qui, la specifica non la dà.
   trigger: {
-    tg_story: 'hai visto la storia di una persona con il tuo stesso problema',
+    tg_story: 'hai visto la storia di Dany e ti sei riconosciuto',
     tg_event: "hai un evento vicino, come l'estate, una vacanza o una cerimonia",
     tg_relation: 'c\'è una relazione nuova o una persona importante',
     tg_photo: 'ti sei visto in una foto o in un video',
