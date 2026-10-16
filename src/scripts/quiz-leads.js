@@ -86,7 +86,8 @@ if (radice) {
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) { msg.className = 'lg-msg lg-msg--err'; msg.textContent = 'Scrivi un indirizzo email valido.'; return; }
       invia.disabled = true;
       // Solo l'utente già esistente può accedere (registrazioni chiuse). Messaggio identico per tutti, giusto o sbagliato.
-      await auth('otp', { email: v, create_user: false });
+      // redirect_to: il link della mail riporta a questa stessa pagina (dominio vero, anteprima o locale). Supabase lo accetta solo se è nell'elenco dei Redirect URLs, altrimenti usa il Site URL.
+      await auth(`otp?redirect_to=${encodeURIComponent(`${location.origin}/quiz-leads/`)}`, { email: v, create_user: false });
       invia.disabled = false;
       mostraCodice(v);
     });
