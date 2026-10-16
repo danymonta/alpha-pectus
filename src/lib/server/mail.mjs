@@ -27,9 +27,9 @@ export function frame(paragraphs, { link, linkLabel } = {}) {
 
 /** Avviso a Dany per ogni nuovo lead. */
 export function leadNotification(lead, result, answerLines, siteUrl) {
-  const head = `[Quiz ${result.route}] ${lead.firstName}, punteggio ${result.scores.total}`;
+  const head = `[Quiz ${result.route}] ${lead.fullName}, punteggio ${result.scores.total}`;
   const rows = [
-    ['Nome', lead.firstName], ['Email', lead.email], ['WhatsApp', lead.whatsapp], ['Instagram', lead.instagram ?? ''],
+    ['Nome e cognome', lead.fullName], ['Email', lead.email], ['WhatsApp', lead.whatsapp], ['Instagram', lead.instagram ?? ''],
     ['Route', result.route], ['Temperatura', result.temperature], ['Punteggio', String(result.scores.total)],
     ['Profilo', result.profile], ['Livello medico', result.medicalLevel], ['Tempi (settimane)', result.range ? result.range.join('-') : 'n.d.'],
     ...answerLines,

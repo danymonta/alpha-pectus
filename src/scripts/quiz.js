@@ -6,6 +6,7 @@ import { CHAPTERS, QUIZ_VERSION } from '../data/quiz/config.mjs';
 import { LANDING, QUIZ_UI, GATE } from '../data/quiz/copy.mjs';
 import { firstUnanswered } from '../data/quiz/scoring.mjs';
 import { normalizeWhatsapp, emailSuggestion } from '../lib/server/lead.mjs';
+import { PAESI, bandiera, numeroCompleto, riconosciPrefisso } from '../data/quiz/paesi.mjs';
 import { h, ICON_BACK, ICON_CHECK, track } from './dom.js';
 
 const root = document.querySelector('[data-quiz]');
@@ -203,15 +204,60 @@ if (root) {
       return h('div', { class: 'qz-field', 'data-field': key }, h('label', { for: `g-${key}` }, label), i, e);
     };
     const consents = GATE.consents.map((c) => {
-      const k = `c_${c.key}`; // prefisso: il consenso WhatsApp non deve confondersi con il numero
+      const k = `c_${c.key}`;
       const cb = h('input', { type: 'checkbox', name: k, id: `g-${k}` });
       cb.checked = Boolean(g[k]);
       cb.addEventListener('change', () => { g[k] = cb.checked; save(); });
       const e = h('p', { class: 'qz-err', id: `e-${k}`, role: 'alert', hidden: true });
       err[k] = e;
       return h('div', { class: 'qz-field', 'data-field': k },
-        h('label', { class: 'qz-check', for: `g-${k}` }, cb, h('span', {}, c.text, c.key === 'privacy' ? [' ', h('a', { href: '/privacy/', target: '_blank', rel: 'noopener' }, 'Leggi l’informativa')] : null)), e);
+        h('label', { class: 'qz-check', for: `g-${k}` }, cb, h('span', {}, c.text, c.key === 'healthData' ? [' ', h('a', { href: '/privacy/', target: '_blank', rel: 'noopener' }, 'Leggi l’informativa')] : null)), e);
     });
+
+    // Campo WhatsApp con prefisso e bandiera (SVG: niente emoji). Si può anche scrivere il numero con +41 o 0041: il paese si riconosce da solo.
+    const phone = () => {
+      let code = PAESI.some((p) => p.code === g.wacode) ? g.wacode : 'IT';
+      const dialo = () => PAESI.find((p) => p.code === code);
+      const flag = h('span', { class: 'qz-flag', html: bandiera(code) });
+      const dial = h('span', { class: 'qz-dial' }, `+${dialo().dial}`);
+      const btnCc = h('button', { type: 'button', class: 'qz-cc', 'aria-haspopup': 'listbox', 'aria-expanded': 'false', 'aria-label': `${GATE.fields.prefix}: ${dialo().nome} +${dialo().dial}` }, flag, dial, h('span', { class: 'qz-caret', html: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>' }));
+      const list = h('ul', { class: 'qz-cc__list', role: 'listbox', 'aria-label': GATE.fields.prefix, hidden: true });
+      const input = h('input', { type: 'tel', name: 'whatsapp', id: 'g-whatsapp', autocomplete: 'tel-national', inputmode: 'tel', maxlength: '20', value: g.whatsapp ?? '', 'aria-describedby': 'e-whatsapp' });
+      const e = h('p', { class: 'qz-err', id: 'e-whatsapp', role: 'alert', hidden: true });
+      err.whatsapp = e;
+      const scegli = (c) => {
+        code = c; g.wacode = c; save();
+        flag.innerHTML = bandiera(c); dial.textContent = `+${dialo().dial}`;
+        btnCc.setAttribute('aria-label', `${GATE.fields.prefix}: ${dialo().nome} +${dialo().dial}`);
+        chiudi(); input.focus();
+      };
+      const items = PAESI.map((p) => {
+        const li = h('li', { role: 'option', tabindex: '-1', 'aria-selected': String(p.code === code), 'data-code': p.code }, h('span', { class: 'qz-flag', html: bandiera(p.code) }), h('span', { class: 'qz-cc__nome' }, p.nome), h('span', { class: 'qz-cc__dial' }, `+${p.dial}`));
+        li.addEventListener('click', () => scegli(p.code));
+        li.addEventListener('keydown', (ev) => {
+          const i = items.indexOf(li);
+          if (ev.key === 'ArrowDown') { ev.preventDefault(); items[Math.min(i + 1, items.length - 1)].focus(); }
+          else if (ev.key === 'ArrowUp') { ev.preventDefault(); (items[i - 1] ?? btnCc).focus(); }
+          else if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); scegli(p.code); }
+          else if (ev.key === 'Escape') { chiudi(); btnCc.focus(); }
+        });
+        return li;
+      });
+      items.forEach((li) => list.append(li));
+      function apri() { list.hidden = false; btnCc.setAttribute('aria-expanded', 'true'); items.forEach((li) => li.setAttribute('aria-selected', String(li.dataset.code === code))); (items.find((li) => li.dataset.code === code) ?? items[0]).focus(); }
+      function chiudi() { list.hidden = true; btnCc.setAttribute('aria-expanded', 'false'); }
+      btnCc.addEventListener('click', () => (list.hidden ? apri() : chiudi()));
+      btnCc.addEventListener('keydown', (ev) => { if (ev.key === 'ArrowDown') { ev.preventDefault(); apri(); } });
+      document.addEventListener('click', (ev) => { if (!wrap.contains(ev.target)) chiudi(); });
+      input.addEventListener('input', () => {
+        const r = riconosciPrefisso(input.value);
+        if (r) { input.value = r.resto; code = r.code; g.wacode = code; flag.innerHTML = bandiera(code); dial.textContent = `+${dialo().dial}`; }
+        g.whatsapp = input.value; save();
+      });
+      const wrap = h('div', { class: 'qz-phone' }, h('div', { class: 'qz-cc__wrap' }, btnCc, list), input);
+      return { node: h('div', { class: 'qz-field', 'data-field': 'whatsapp' }, h('label', { for: 'g-whatsapp' }, GATE.fields.whatsapp), wrap, e), valore: () => numeroCompleto(code, input.value) };
+    };
+    const tel = phone();
     const trap = h('input', { type: 'text', name: 'sito', tabindex: '-1', autocomplete: 'off' });
     let tsToken = '';
     const tsBox = h('div', { class: 'qz-ts' });
@@ -219,9 +265,9 @@ if (root) {
     const btn = h('button', { type: 'submit', class: 'qz-btn' }, GATE.button);
 
     const form = h('form', { class: 'qz-form', novalidate: true },
-      input('firstName', 'text', GATE.fields.firstName, 'given-name', { maxlength: '40' }),
+      input('fullName', 'text', GATE.fields.fullName, 'name', { maxlength: '80' }),
       input('email', 'email', GATE.fields.email, 'email', { maxlength: '120', inputmode: 'email' }),
-      input('whatsapp', 'tel', GATE.fields.whatsapp, 'tel', { maxlength: '24', placeholder: '+39' }),
+      tel.node,
       input('instagram', 'text', GATE.fields.instagram, 'off', { maxlength: '40', placeholder: '@' }),
       ...consents,
       h('div', { class: 'qz-hp', 'aria-hidden': 'true' }, h('label', {}, 'Lascia vuoto ', trap)),
@@ -234,22 +280,21 @@ if (root) {
       form.querySelectorAll('.is-err').forEach((x) => x.classList.remove('is-err'));
       netErr.hidden = true;
       const bad = [];
-      const name = (g.firstName ?? '').trim();
-      if (name.length < 2 || name.length > 40) bad.push(fail('firstName', GATE.errors.firstName));
+      const name = (g.fullName ?? '').trim().replace(/\s+/g, ' ');
+      if (name.length < 3 || name.length > 80 || !/^\S+\s+\S+/.test(name)) bad.push(fail('fullName', GATE.errors.fullName));
       const email = (g.email ?? '').trim();
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) bad.push(fail('email', GATE.errors.email));
       else { const sug = emailSuggestion(email); if (sug && !form.dataset.typoSeen) { form.dataset.typoSeen = '1'; bad.push(fail('email', GATE.errors.emailTypo.replace('{suggestion}', sug))); } }
-      const wa = normalizeWhatsapp(g.whatsapp);
+      const wa = normalizeWhatsapp(tel.valore());
       if (!wa) bad.push(fail('whatsapp', GATE.errors.whatsapp));
-      if (!g.c_privacy) bad.push(fail('c_privacy', GATE.errors.privacy));
       if (!g.c_healthData) bad.push(fail('c_healthData', GATE.errors.healthData));
       if (bad.length) return form.querySelector(`[name="${bad[0]}"]`)?.focus();
 
       btn.disabled = true;
       const payload = {
         schemaVersion: 1, quizVersion: QUIZ_VERSION, sessionId: st.sid, startedAt: st.startedAt,
-        contact: { firstName: name, email, whatsapp: wa, instagram: g.instagram || null },
-        consents: { privacy: true, healthData: true, marketingEmail: Boolean(g.c_marketingEmail), whatsapp: Boolean(g.c_whatsapp) },
+        contact: { fullName: name, email, whatsapp: wa, instagram: g.instagram || null },
+        consents: { privacy: true, healthData: true, marketingEmail: Boolean(g.c_contact), whatsapp: Boolean(g.c_contact) }, // un solo consenso facoltativo per email e WhatsApp
         answers: st.answers, attribution: st.attribution, sito: trap.value, turnstile: tsToken,
         client: { locale: 'it', tz: Intl.DateTimeFormat().resolvedOptions().timeZone },
       };
@@ -270,7 +315,7 @@ if (root) {
     });
 
     announce(GATE.title);
-    show(header(N, () => history.back()), h('div', { class: 'qz-q' }, h('h2', { class: 'qz-q__h', 'data-focus': true }, GATE.title), h('p', { class: 'qz-q__help' }, GATE.subtitle), form));
+    show(header(N, () => history.back()), h('div', { class: 'qz-q' }, h('h2', { class: 'qz-q__h', 'data-focus': true }, GATE.title), form));
     loadTurnstile(tsBox, (tok) => (tsToken = tok));
   };
 

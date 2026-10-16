@@ -11,7 +11,7 @@ Costruito sulla specifica `quiz-funnel-pectus-spec.md`, dentro il sito esistente
 ## Come funziona
 
 1. Le risposte restano **solo nel browser** (`sessionStorage`) fino al gate: prima dei consensi non parte niente verso il server. Gli eventi di analisi portano solo l'indice del passo, mai il contenuto delle risposte.
-2. Al gate la persona lascia nome, email, WhatsApp e i consensi (privacy e dati sulla salute obbligatori; email marketing e WhatsApp facoltativi). `POST /api/lead` valida, **ricalcola tutto sul server**, salva il lead su Supabase con versione, data e hash dell'IP dei consensi, e restituisce un token firmato.
+2. Al gate la persona lascia nome e cognome, email, WhatsApp (con prefisso internazionale e bandiera) e due consensi: uno obbligatorio per i dati sulla salute (con la presa visione dell'informativa), uno facoltativo per essere contattata su email e WhatsApp. `POST /api/lead` valida, **ricalcola tutto sul server**, salva il lead su Supabase con versione, data e hash dell'IP dei consensi, e restituisce un token firmato.
 3. Il browser va su `/risultato/?t=...`. Il risultato dipende dalla route:
    - `hot_call` e `warm_call`: prenotare la call (se `CALENDARIO_URL` è impostato) oppure scrivere a Dany su WhatsApp con il messaggio già pronto (`wa.me`, funziona con un WhatsApp normale);
    - `nurture`: guida (segnaposto finché non c'è il PDF);

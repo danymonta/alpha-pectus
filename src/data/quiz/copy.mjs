@@ -3,6 +3,8 @@
 //   - "Mi vergogno a iniziare" / "La vergogna ti ha tenuto fermo" -> "Mi imbarazza iniziare" / "L'imbarazzo ti ha tenuto fermo"
 //   - "Correggere l'esecuzione con feedback video settimanale" -> "Perfezionare l'esecuzione con feedback video settimanale"
 //   - "non correggono la postura che accentua l'incavo" -> "non riequilibrano la postura che accentua l'incavo"
+//   - Gate: quattro caselle ridotte a due (salute con informativa, obbligatoria; contatto email e WhatsApp, facoltativa).
+//   - Gate: tolta la frase "Dove vuoi riceverlo?" (il profilo si vede subito dopo); "Nome di battesimo" diventa "Nome e cognome".
 //   - "Ho visto la storia di una persona con il mio stesso problema" -> "Ho visto la tua storia e ho il tuo stesso problema" (parla direttamente a Dany)
 // Testi scritti qui perché mancano nella specifica (da confermare): EXIT, NOTE_MEDICAL_NEVER_LABEL, etichette CTA WhatsApp,
 // messaggio di errore, avvisi del gate, testi dello specchio per trigger.
@@ -104,23 +106,21 @@ export const QUIZ_UI = {
 
 export const GATE = {
   title: 'Il tuo profilo è pronto.',
-  subtitle: 'Dove vuoi riceverlo?',
-  fields: { firstName: 'Nome di battesimo', email: 'Email', whatsapp: 'WhatsApp', instagram: 'Instagram (facoltativo)' },
+  fields: { fullName: 'Nome e cognome', email: 'Email', whatsapp: 'WhatsApp', prefix: 'Prefisso internazionale', instagram: 'Instagram (facoltativo)' },
+  // Due sole caselle. Obbligatoria: consenso esplicito sui dati sulla salute (art. 9 GDPR), con presa visione dell'informativa.
+  // Facoltativa: contatto su email e WhatsApp, anche commerciale. La specifica ne prevedeva quattro.
   consents: [
-    { key: 'privacy', required: true, text: "Ho letto l'Informativa Privacy." },
-    { key: 'healthData', required: true, text: 'Acconsento al trattamento delle mie risposte relative alla salute del petto, necessarie per creare il mio profilo e la stima. So che non sono una diagnosi.' },
-    { key: 'marketingEmail', required: false, text: 'Acconsento a ricevere comunicazioni informative e commerciali da Percorso Alpha via email.' },
-    { key: 'whatsapp', required: false, text: 'Acconsento a essere contattato su WhatsApp da Dany o dal suo team.' },
+    { key: 'healthData', required: true, text: "Acconsento al trattamento delle mie risposte relative alla salute del petto, necessarie per creare il mio profilo e la stima. So che non sono una diagnosi e ho letto l'Informativa Privacy." },
+    { key: 'contact', required: false, text: 'Acconsento a essere contattato da Percorso Alpha via email e WhatsApp, anche per comunicazioni commerciali.' },
   ],
   button: 'Mostra il mio profilo',
   trust: 'Niente spam. Le tue risposte sulla salute non vengono condivise con piattaforme pubblicitarie.',
   // Scritti per il gate: la specifica non li dà.
   errors: {
-    firstName: 'Scrivi il tuo nome (da 2 a 40 caratteri).',
+    fullName: 'Scrivi nome e cognome.',
     email: 'Scrivi un indirizzo email valido.',
     emailTypo: 'Controlla l’indirizzo: intendevi {suggestion}?',
-    whatsapp: 'Scrivi un numero WhatsApp valido, con il prefisso (per esempio +39 333 1234567).',
-    privacy: 'Serve il tuo consenso per continuare.',
+    whatsapp: 'Scrivi un numero WhatsApp valido.',
     healthData: 'Serve il tuo consenso per creare il tuo profilo.',
     network: 'Non siamo riusciti a inviare i dati. Le tue risposte sono al sicuro su questo dispositivo: riprova tra un momento.',
   },
