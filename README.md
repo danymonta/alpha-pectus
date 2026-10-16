@@ -6,3 +6,4 @@ Sito statico costruito con Astro. Deploy su Cloudflare Pages (alternativa: Netli
 
 - Guida operativa (messa online, dominio, foto, ads, conferme): [GUIDA.md](GUIDA.md)
 - Piano SEO e GEO: [docs/ROADMAP-SEO.md](docs/ROADMAP-SEO.md)
+- Quiz del petto e portale dei lead (`/quiz/`, `/quiz-leads/`): [docs/QUIZ.md](docs/QUIZ.md)

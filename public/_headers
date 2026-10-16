@@ -7,6 +7,23 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
 
+# Area privata dei lead e quiz: mai indicizzate, mai in cache, mai dentro un iframe.
+/quiz-leads/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+  X-Frame-Options: DENY
+  Referrer-Policy: no-referrer
+
+/quiz-leads
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+  X-Frame-Options: DENY
+  Referrer-Policy: no-referrer
+
+/api/quiz
+  Cache-Control: no-store
+  X-Robots-Tag: noindex
+
 # File con hash nel nome: non cambiano mai.
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
