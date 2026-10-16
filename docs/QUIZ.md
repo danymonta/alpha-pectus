@@ -1,6 +1,6 @@
 # Quiz Pecto Scavato e portale dei lead
 
-Costruito sulla specifica `quiz-funnel-pectus-spec.md`, dentro il sito esistente (Astro su Cloudflare Pages), senza cambiare dominio né hosting. Tema chiaro con il rosso del brand `#780000`.
+Costruito sulla specifica `quiz-funnel-pectus-spec.md`, dentro il sito esistente (Astro). Ospitabile su Vercel o su Cloudflare Pages. Tema chiaro con il rosso del brand `#780000`.
 
 | Indirizzo | Cosa è | Chi ci arriva |
 |---|---|---|
@@ -48,7 +48,7 @@ Per rispettare le regole di copy del sito (`src/lib/regole-copy.mjs`, che ferma 
 
 Testi che la specifica non dava e ho scritto io (da confermare): schermata di uscita sotto i 18 anni, errori del gate, forma discorsiva dei trigger nello "specchio", etichetta del bottone WhatsApp ("Scrivi a Dany su WhatsApp"), parafrasi dei sintomi nel riquadro medico.
 
-Stack: la specifica propone Vite, React e Vercel; qui è Astro, JavaScript puro e Cloudflare Pages, come il resto del sito. Test con `node --test` invece di Vitest. Il CRM è il portale `/quiz-leads/` su Supabase (non Notion). Il webhook n8n è facoltativo.
+Stack: la specifica propone Vite e React; qui è Astro e JavaScript puro, come il resto del sito, con hosting su Vercel (o Cloudflare Pages). Test con `node --test` invece di Vitest. Il CRM è il portale `/quiz-leads/` su Supabase (non Notion). Il webhook n8n è facoltativo.
 
 Non ancora fatto (Fase 2 della specifica): sequenze email E2-E5, M2 e promemoria call, Conversions API di Meta, dashboard di funnel, webhook del calendario, verifica via email della cancellazione.
 
@@ -78,24 +78,31 @@ Consiglio un progetto **dedicato**: le impostazioni di accesso valgono per tutto
 
 Con la posta predefinita di Supabase la mail di accesso ha il testo standard e contiene solo il link (il codice a 6 cifre compare solo con il testo personalizzato). Basta per te: arriva solo agli indirizzi del tuo team Supabase ed è limitata a poche mail all'ora. Se vuoi il testo personalizzato, il codice o più persone con accesso, collega un SMTP (**Authentication, Emails, SMTP Settings**; con Resend: host `smtp.resend.com`, porta `465`, utente `resend`, password = la chiave API) e poi incolla `supabase/templates/magic_link.html` in *Email Templates, Magic link or OTP*; in quel caso il Site URL può restare `https://pectus.percorsoalpha.com`.
 
-### 2. Cloudflare Pages (Impostazioni, Variabili e segreti)
+### 2. Vercel (consigliato) o Cloudflare Pages
+
+Il sito è pronto per entrambi: `vercel.json` (generato da `public/_headers`, `public/_redirects` e dalle varianti hero con `npm run vercel-config`) e `api/` per Vercel, `functions/` e `public/_*` per Cloudflare. Le funzioni sono le stesse: `api/*.js` richiama `functions/api/*.js`.
+
+**Variabili d'ambiente** (Vercel: Project, Settings, Environment Variables, per *Production* e *Preview*; Cloudflare: Impostazioni, Variabili e segreti):
 
 | Variabile | Valore | Note |
 |---|---|---|
-| `SUPABASE_URL` | `https://xxxx.supabase.co` | testo |
+| `SUPABASE_URL` | `https://xxxx.supabase.co` | |
 | `SUPABASE_SERVICE_KEY` | chiave `service_role` | **segreto**, mai in git |
 | `TOKEN_SECRET` | stringa casuale lunga | **segreto**, firma i link dei risultati |
 | `PUBLIC_SUPABASE_URL` | lo stesso URL | serve in build |
 | `PUBLIC_SUPABASE_ANON_KEY` | chiave `anon` | serve in build, pubblica per natura |
-| `RESEND_API_KEY`, `MAIL_FROM`, `MAIL_DANY` | già presenti (candidatura) | email al lead e avviso a te |
-| `TURNSTILE_SECRET` e `PUBLIC_TURNSTILE_SITE_KEY` | da Cloudflare, Turnstile | facoltative: verifica anti bot al gate |
-| `N8N_WEBHOOK_URL`, `N8N_HMAC_SECRET` | facoltative | inoltro firmato dei lead a n8n |
+| `RESEND_API_KEY`, `MAIL_FROM`, `MAIL_DANY` | già usate dalla candidatura | email al lead e avviso a te |
+| `SHEETS_URL`, `SHEETS_TOKEN` | già usate dalla candidatura | foglio Google dei lead |
+| `TURNSTILE_SECRET`, `PUBLIC_TURNSTILE_SITE_KEY` | da Cloudflare Turnstile | facoltative |
+| `N8N_WEBHOOK_URL`, `N8N_HMAC_SECRET` | facoltative | |
 
-Poi in Cloudflare, Sicurezza, Regole di limitazione: un limite di richieste per IP su `/api/lead` e `/api/result`.
+Su Vercel il dominio si collega in *Settings, Domains*; il DNS resta su Netsons (un CNAME `pectus`). Per tornare a Cloudflare basta rimettere il vecchio CNAME. Le anteprime di Vercel (`*.vercel.app` e i rami diversi da `main`) sono `noindex`.
+
+Poi imposta un limite di richieste per IP su `/api/lead` e `/api/result` (Vercel: Firewall, Rate limiting; Cloudflare: Regole di limitazione).
 
 ### 3. Pubblica
 
-Unisci il ramo `feature/quiz-leads` in `main`: Cloudflare ricostruisce. Prova con un lead vero, entra su `/quiz-leads/` e controlla che compaia. Prima di fare traffico: controllo di lancio (`LANCIO=1 npm run check`), revisione legale dei testi e revisione medica del testo "stop".
+Prova prima sull'indirizzo `*.vercel.app` del ramo: quiz completo, portale, candidatura, link brevi e `?v=postura`. Poi unisci il ramo `feature/quiz-leads` in `main` e collega il dominio. Prima di fare traffico: controllo di lancio (`LANCIO=1 npm run check`), revisione legale dei testi e revisione medica del testo "stop".
 
 ## In locale
 

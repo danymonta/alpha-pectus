@@ -1,0 +1,263 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "astro",
+  "buildCommand": "npm run build && npm run check",
+  "outputDirectory": "dist",
+  "regions": [
+    "dub1"
+  ],
+  "redirects": [
+    {
+      "source": "/ig",
+      "destination": "/?utm_source=instagram&utm_medium=bio&utm_campaign=pectus&utm_content=bio",
+      "statusCode": 302
+    },
+    {
+      "source": "/ig/",
+      "destination": "/?utm_source=instagram&utm_medium=bio&utm_campaign=pectus&utm_content=bio",
+      "statusCode": 302
+    },
+    {
+      "source": "/s/:splat*",
+      "destination": "/?utm_source=instagram&utm_medium=story&utm_campaign=pectus&utm_content=:splat*",
+      "statusCode": 302
+    },
+    {
+      "source": "/dm",
+      "destination": "/?utm_source=instagram&utm_medium=dm&utm_campaign=pectus&utm_content=manuale",
+      "statusCode": 302
+    },
+    {
+      "source": "/dm/",
+      "destination": "/?utm_source=instagram&utm_medium=dm&utm_campaign=pectus&utm_content=manuale",
+      "statusCode": 302
+    },
+    {
+      "source": "/mc/:splat*",
+      "destination": "/?utm_source=instagram&utm_medium=dm_auto&utm_campaign=pectus&utm_content=:splat*",
+      "statusCode": 302
+    },
+    {
+      "source": "/yt",
+      "destination": "/?utm_source=youtube&utm_medium=channel&utm_campaign=pectus&utm_content=about",
+      "statusCode": 302
+    },
+    {
+      "source": "/yt/",
+      "destination": "/?utm_source=youtube&utm_medium=channel&utm_campaign=pectus&utm_content=about",
+      "statusCode": 302
+    },
+    {
+      "source": "/yt/:splat*",
+      "destination": "/?utm_source=youtube&utm_medium=description&utm_campaign=pectus&utm_content=:splat*",
+      "statusCode": 302
+    },
+    {
+      "source": "/specchio",
+      "destination": "/?utm_source=instagram&utm_medium=story&utm_campaign=pectus&utm_content=specchio#specchio",
+      "statusCode": 302
+    },
+    {
+      "source": "/specchio/",
+      "destination": "/?utm_source=instagram&utm_medium=story&utm_campaign=pectus&utm_content=specchio#specchio",
+      "statusCode": 302
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/pa/api/event",
+      "destination": "https://plausible.io/api/event"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "v",
+          "value": "postura"
+        }
+      ],
+      "destination": "/v/postura/"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "v",
+          "value": "storia"
+        }
+      ],
+      "destination": "/v/storia/"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "v",
+          "value": "tardi"
+        }
+      ],
+      "destination": "/v/tardi/"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "v",
+          "value": "spalle"
+        }
+      ],
+      "destination": "/v/spalle/"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        }
+      ]
+    },
+    {
+      "source": "/quiz-leads/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
+        }
+      ]
+    },
+    {
+      "source": "/quiz-leads",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
+        }
+      ]
+    },
+    {
+      "source": "/api/quiz",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    },
+    {
+      "source": "/_astro/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/_astro/noindex-(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    },
+    {
+      "source": "/llms.txt",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        }
+      ]
+    },
+    {
+      "source": "/robots.txt",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        }
+      ]
+    },
+    {
+      "source": "/manifest.webmanifest",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/manifest+json; charset=utf-8"
+        }
+      ]
+    },
+    {
+      "source": "/video/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": ".*\\.vercel\\.app"
+        }
+      ],
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    }
+  ]
+}

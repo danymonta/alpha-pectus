@@ -59,7 +59,8 @@ export const onRequestPost = async ({ request, env, waitUntil }) => {
   } catch {
     return json({ ok: false }, 400);
   }
-  const ip = request.headers.get('cf-connecting-ip') ?? '';
+  // Cloudflare: cf-connecting-ip. Vercel: x-real-ip o primo valore di x-forwarded-for.
+  const ip = request.headers.get('cf-connecting-ip') ?? request.headers.get('x-real-ip') ?? (request.headers.get('x-forwarded-for') ?? '').split(',')[0].trim();
 
   // Spam: risposta identica a un invio vero, ma senza salvare niente.
   const aperto = Date.parse(body?.startedAt);
