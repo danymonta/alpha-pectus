@@ -1,39 +1,49 @@
--- Lead del quiz (/quiz/). Le scritture arrivano SOLO dalla Function Cloudflare con la chiave service role
--- (functions/api/quiz.js). La lettura e l'aggiornamento di "contattato" e "note" li può fare solo il proprietario,
--- loggato con link o codice via email su /quiz-leads/. Tutti gli altri (anon e altri utenti) non vedono niente.
+-- Lead del quiz Pecto Scavato. Un lead nasce solo al gate (dopo i consensi): prima le risposte restano nel browser.
+-- Le scritture arrivano SOLO dalle Functions Cloudflare con la chiave service role (functions/api/lead.js).
+-- Il proprietario, loggato su /quiz-leads/ con link o codice via email, può leggere, aggiornare stato, note e
+-- prossimo contatto, ed eliminare un lead (cancellazione richiesta dall'interessato). Tutti gli altri non vedono niente.
 
 create table if not exists public.quiz_leads (
   id uuid primary key default gen_random_uuid(),
   session_id uuid not null unique,
+  token_id text not null unique,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
 
-  last_step text,
-  completed boolean not null default false,
-  completed_at timestamptz,
+  quiz_version text,
+  duration_sec integer,
 
-  name text,
-  surname text,
-  email text,
-  phone text,
-  consent_at timestamptz,
+  first_name text not null,
+  email text not null,
+  whatsapp text not null,
+  instagram text,
+  consents jsonb not null,
 
-  answers jsonb not null default '{}'::jsonb,
-  result jsonb,
-  fit text,
+  answers jsonb not null,
+  result jsonb not null,
+  route text not null,
+  temperature text,
+  score integer,
+  profile text,
+  medical_level text,
 
+  status text not null default 'nuovo'
+    check (status in ('nuovo', 'contattato', 'call prenotata', 'call fatta', 'cliente', 'perso', 'medico prima')),
+  notes text,
+  next_contact_at date,
+
+  clicked_book boolean not null default false,
+  book_at timestamptz,
   clicked_whatsapp boolean not null default false,
   whatsapp_at timestamptz,
-  contacted_at timestamptz,
-  notes text,
 
-  source jsonb,
+  attribution jsonb,
   referrer text,
   user_agent text
 );
 
 create index if not exists quiz_leads_created_idx on public.quiz_leads (created_at desc);
-create index if not exists quiz_leads_completed_idx on public.quiz_leads (completed, created_at desc);
+create index if not exists quiz_leads_email_idx on public.quiz_leads (lower(email));
 
 create or replace function public.quiz_leads_touch() returns trigger
 language plpgsql as $$
@@ -54,8 +64,8 @@ $$;
 
 alter table public.quiz_leads enable row level security;
 revoke all on public.quiz_leads from anon, authenticated;
-grant select on public.quiz_leads to authenticated;
-grant update (contacted_at, notes) on public.quiz_leads to authenticated;
+grant select, delete on public.quiz_leads to authenticated;
+grant update (status, notes, next_contact_at) on public.quiz_leads to authenticated;
 
 drop policy if exists quiz_leads_owner_select on public.quiz_leads;
 create policy quiz_leads_owner_select on public.quiz_leads
@@ -64,3 +74,7 @@ create policy quiz_leads_owner_select on public.quiz_leads
 drop policy if exists quiz_leads_owner_update on public.quiz_leads;
 create policy quiz_leads_owner_update on public.quiz_leads
   for update to authenticated using (public.is_quiz_owner()) with check (public.is_quiz_owner());
+
+drop policy if exists quiz_leads_owner_delete on public.quiz_leads;
+create policy quiz_leads_owner_delete on public.quiz_leads
+  for delete to authenticated using (public.is_quiz_owner());

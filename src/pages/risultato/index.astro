@@ -1,0 +1,24 @@
+---
+// Pagina risultato del quiz (/risultato/?t=<token>, spec 11). Il token firmato arriva da /api/lead e si riapre dalle email.
+// Contenuto personalizzato da src/scripts/risultato.js, che chiede i dati a /api/result. Noindex.
+import Base from '../../layouts/Base.astro';
+import QuizFooter from '../../components/QuizFooter.astro';
+import '../../styles/quiz.css';
+import { WHATSAPP_NUMERO, CALENDARIO_URL } from '../../data/site.mjs';
+---
+
+<Base title="Il tuo profilo | Percorso Alpha" description="Il tuo profilo Pecto Scavato." path="/risultato/" noindex schema={false} bodyClass="qpage mode-paper">
+  <header class="qbar">
+    <div class="qwrap qwrap--wide qbar__in">
+      <p class="qlock"><span>Percorso Alpha</span><i></i><em>Pectus</em></p>
+    </div>
+  </header>
+  <main id="main" class="qr" data-result data-wa={WHATSAPP_NUMERO} data-cal={CALENDARIO_URL}>
+    <div class="qwrap" data-out><p class="ql-micro" role="status">Carico il tuo profilo…</p></div>
+  </main>
+  <QuizFooter />
+</Base>
+
+<script>
+  import '../../scripts/risultato.js';
+</script>

@@ -114,3 +114,5 @@ export const BRAND = {
 // Vuoto = il bottone finale del quiz porta alla candidatura invece che a WhatsApp.
 export const WHATSAPP_NUMERO = '';
 export const QUIZ_URL = '/quiz/';
+// Link di prenotazione della call di valutazione (Cal.com o simile). Vuoto = il risultato propone WhatsApp al posto del calendario.
+export const CALENDARIO_URL = '';

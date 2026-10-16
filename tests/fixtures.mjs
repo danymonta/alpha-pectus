@@ -1,0 +1,12 @@
+// Fixture F1-F5 della spec 9.7, con i valori attesi tali e quali.
+const F1 = { age: 'age_25_34', goal: 'goal_shirtless', weight: 'w_max', avoid: ['av_beach', 'av_intimacy', 'av_photo'], severity: 'sev_mod', shape: 'sh_central', build: 'bd_avg', posture: ['po_shoulders'], symptoms: ['sy_none'], medical: 'md_ok', experience: 'ex_gym_noresult', tried: ['tr_gym', 'tr_online'], sessions: 'se_3', spend: 'sp_200_1000', start: 'st_now', trigger: 'tg_event', blocker: 'bl_shame' };
+export const FIXTURES = {
+  F1: { answers: F1, expect: { scores: { imp: 23, fit: 20, com: 10, cap: 16, urg: 20, total: 89 }, temperature: 'hot', medicalLevel: 'none', profileWeights: { n: 8, f: 5, p: 1 }, profile: 'hidden', weeks: 24, range: [19, 30], route: 'hot_call' } },
+  F2: { answers: { age: 'age_18_24', goal: 'goal_comfort', weight: 'w_little', avoid: ['av_none'], severity: 'sev_mild', shape: 'sh_unknown', build: 'bd_lean', posture: ['po_none'], symptoms: ['sy_none'], medical: 'md_never', experience: 'ex_never', tried: ['tr_none'], sessions: 'se_1', spend: 'sp_0', start: 'st_info', trigger: 'tg_curious', blocker: 'bl_cost' },
+    expect: { scores: { imp: 5, fit: 15, com: 1, cap: 2, urg: 2, total: 25 }, temperature: 'cold', medicalLevel: 'none', profileWeights: { n: 5, f: 1, p: 0 }, profile: 'hidden', weeks: 28, range: [22, 35], route: 'nurture' } },
+  F3: { answers: { ...F1, symptoms: ['sy_pain'], medical: 'md_never' },
+    expect: { scores: { imp: 23, fit: 20, com: 10, cap: 16, urg: 20, total: 89 }, temperature: 'hot', medicalLevel: 'stop', profileWeights: { n: 8, f: 5, p: 1 }, profile: 'prudent', weeks: null, range: null, route: 'medical_first' } },
+  F4: { answers: { ...F1, age: 'age_u18' }, expect: { route: 'blocked' } },
+  F5: { answers: { age: 'age_35_44', goal: 'goal_posture', weight: 'w_lot', avoid: ['av_locker', 'av_clothes'], severity: 'sev_marked', shape: 'sh_asym', build: 'bd_over', posture: ['po_shoulders', 'po_back', 'po_scapula'], symptoms: ['sy_breath'], medical: 'md_surgery_advised', experience: 'ex_home_irregular', tried: ['tr_online', 'tr_medical'], sessions: 'se_2', spend: 'sp_lt200', start: 'st_30d', trigger: 'tg_tired', blocker: 'bl_fear' },
+    expect: { scores: { imp: 15, fit: 17, com: 6, cap: 8, urg: 15, total: 61 }, temperature: 'warm', medicalLevel: 'caution', profileWeights: { n: 3, f: 2, p: 7 }, profile: 'posture', weeks: 36, range: [29, 45], route: 'warm_call' } },
+};

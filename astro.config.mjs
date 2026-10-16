@@ -13,7 +13,7 @@ export default defineConfig({
   build: { format: 'directory', inlineStylesheets: 'always' },
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/v/') && !page.includes('/404') && !page.includes('/candidatura') && !page.includes('/grazie') && !page.includes('/quiz'),
+      filter: (page) => !page.includes('/v/') && !page.includes('/404') && !page.includes('/candidatura') && !page.includes('/grazie') && !page.includes('/quiz') && !page.includes('/risultato'),
       lastmod: new Date(SITE_UPDATED),
     }),
   ],
