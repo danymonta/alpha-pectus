@@ -108,3 +108,11 @@ export const BRAND = {
   logoSvg: '/brand/percorso-alpha-logo.svg',
   ritratto: '/brand/dany-montagnolo-ritratto.jpg',
 };
+
+// Quiz (/quiz/): il bottone finale apre una chat WhatsApp verso questo numero con il messaggio già scritto (wa.me).
+// Funziona anche con un WhatsApp normale, senza Business. Formato internazionale, solo cifre (es. '393331234567').
+// Vuoto = il bottone finale del quiz porta alla candidatura invece che a WhatsApp.
+export const WHATSAPP_NUMERO = '393779928819';
+export const QUIZ_URL = '/quiz/';
+// Link di prenotazione della call di valutazione (Cal.com o simile). Vuoto = il risultato propone WhatsApp al posto del calendario.
+export const CALENDARIO_URL = '';

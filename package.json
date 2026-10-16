@@ -11,10 +11,13 @@
     "build": "astro build && node scripts/piattaforma.mjs",
     "preview": "astro preview",
     "check": "node scripts/check-copy.mjs",
-    "budget": "node scripts/budget.mjs"
+    "budget": "node scripts/budget.mjs",
+    "test": "node --test tests/",
+    "vercel-config": "node scripts/vercel-config.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
+    "@vercel/functions": "^3.10.1",
     "astro": "^7.3.5",
     "sharp": "^0.35.5"
   },

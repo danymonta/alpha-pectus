@@ -1,0 +1,146 @@
+---
+// Quiz Pecto Scavato: landing (spec 7) e quiz a passi (spec 8, 10) nella stessa pagina, tema chiaro.
+// Il quiz parte dal pulsante "Inizia il quiz" e naviga con ?step=N (script: src/scripts/quiz.js).
+// Il risultato sta in /risultato/?t=<token>. Fuori dalla sitemap e noindex finché non si decide la messa online (spec 15.5).
+// Asset reali da fornire (foto di Dany, prima e dopo, casi cliente): segnaposto con "Da completare".
+import Base from '../../layouts/Base.astro';
+import QuizFooter from '../../components/QuizFooter.astro';
+import '../../styles/quiz.css';
+import { LANDING } from '../../data/quiz/copy.mjs';
+
+const L = LANDING;
+const turnstile = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
+---
+
+<Base
+  title="Quiz Pecto Scavato | Percorso Alpha"
+  description="17 domande, 3 minuti: il tuo profilo, una stima dei tempi realistici e il piano di allenamento a corpo libero adatto al tuo petto."
+  path="/quiz/"
+  noindex
+  schema={false}
+  bodyClass="qpage mode-paper"
+>
+  <header class="qbar">
+    <div class="qwrap qwrap--wide qbar__in">
+      <p class="qlock"><span>Percorso Alpha</span><i></i><em>Pectus</em></p>
+    </div>
+  </header>
+
+  <main id="main" data-quiz data-turnstile={turnstile}>
+    <p class="visually-hidden" role="status" aria-live="polite" data-live></p>
+
+    <div data-landing>
+      <section class="ql-hero">
+        <div class="qwrap qwrap--wide ql-hero__grid">
+          <div>
+            <p class="ql-eyebrow">{L.eyebrow}</p>
+            <h1 class="ql-h1" data-title>{L.titleA}</h1>
+            <p class="ql-sub">{L.subtitle}</p>
+            <div class="ql-cta">
+              <button type="button" class="qz-btn" data-start>{L.cta}</button>
+              <p class="ql-micro" data-nosnippet>{L.micro}</p>
+            </div>
+          </div>
+          <div class="qph qph--photo" role="img" aria-label="Segnaposto per la foto di Dany">
+            <span>Da completare: foto reale di Dany a torso nudo, luce naturale, nessun filtro, con autorizzazione d'uso.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="ql-sec ql-sec--tint">
+        <div class="qwrap">
+          <h2 class="ql-h2">{L.recognize.title}</h2>
+          <ul class="ql-list">{L.recognize.items.map((t) => <li>{t}</li>)}</ul>
+          <p class="ql-closing">{L.recognize.closing}</p>
+        </div>
+      </section>
+
+      <section class="ql-sec">
+        <div class="qwrap">
+          <h2 class="ql-h2">{L.mechanism.title}</h2>
+          {L.mechanism.paragraphs.map((t) => <p class="ql-p">{t}</p>)}
+        </div>
+      </section>
+
+      <section class="ql-sec ql-sec--tint">
+        <div class="qwrap">
+          <h2 class="ql-h2">{L.story.title}</h2>
+          {L.story.paragraphs.map((t) => <p class="ql-p">{t}</p>)}
+          <div class="ql-case__pair" style="margin-top:var(--space-5)">
+            <div class="qph qph--ba"><span>Da completare: foto prima di Dany, con data</span></div>
+            <div class="qph qph--ba"><span>Da completare: foto dopo di Dany, con data</span></div>
+          </div>
+          <div class="qph" style="margin-top:var(--space-4);min-height:6rem"><span>{L.story.placeholder}</span></div>
+        </div>
+      </section>
+
+      <section class="ql-sec">
+        <div class="qwrap">
+          <h2 class="ql-h2">{L.receive.title}</h2>
+          <div class="ql-cards">{L.receive.cards.map((c) => <article class="ql-card"><h3>{c.title}</h3><p>{c.text}</p></article>)}</div>
+        </div>
+      </section>
+
+      <section class="ql-sec ql-sec--tint">
+        <div class="qwrap">
+          <h2 class="ql-h2">{L.clarity.title}</h2>
+          <p class="ql-p">{L.clarity.text}</p>
+        </div>
+      </section>
+
+      <section class="ql-sec">
+        <div class="qwrap qwrap--wide">
+          <h2 class="ql-h2">{L.proof.title}</h2>
+          <div class="ql-proof">
+            {Array.from({ length: L.proof.cases }).map(() => (
+              <div class="ql-case">
+                <div class="ql-case__pair">
+                  <div class="qph qph--ba"><span>Da completare: prima</span></div>
+                  <div class="qph qph--ba"><span>Da completare: dopo</span></div>
+                </div>
+                <p class="ql-micro">Da completare: mesi di percorso e una frase dell'interessato, solo con consenso scritto. Caso individuale.</p>
+              </div>
+            ))}
+          </div>
+          <p class="ql-micro" style="margin-top:var(--space-4)">{L.proof.placeholder}</p>
+        </div>
+      </section>
+
+      <section class="ql-sec ql-sec--tint">
+        <div class="qwrap qwrap--wide ql-two">
+          <div class="ql-box">
+            <h3>{L.forWho.title}</h3>
+            <ul>{L.forWho.yes.map((t) => <li>{t}</li>)}</ul>
+          </div>
+          <div class="ql-box ql-box--no">
+            <h3>{L.forWho.noTitle}</h3>
+            <ul>{L.forWho.no.map((t) => <li>{t}</li>)}</ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="ql-sec">
+        <div class="qwrap">
+          <h2 class="ql-h2">Domande frequenti</h2>
+          <div class="ql-faq">
+            {L.faq.map((f) => <details><summary>{f.q}</summary><p>{f.a}</p></details>)}
+          </div>
+          <div class="ql-cta" style="margin-top:var(--space-6)">
+            <button type="button" class="qz-btn" data-start>{L.cta}</button>
+            <p class="ql-micro">{L.micro}</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="qz" data-stage hidden>
+      <div class="qwrap" data-stage-in></div>
+    </section>
+  </main>
+
+  <QuizFooter />
+</Base>
+
+<script>
+  import '../../scripts/quiz.js';
+</script>

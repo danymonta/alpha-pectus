@@ -38,7 +38,9 @@ const canonical = new URL(path, SITE_URL).href;
 const env = process.env;
 const anteprimaNetlify = env.CONTEXT === 'deploy-preview' || env.CONTEXT === 'branch-deploy';
 const anteprimaCloudflare = env.CF_PAGES === '1' && (env.CF_PAGES_BRANCH ?? '') !== (env.RAMO_PRODUZIONE || 'main');
-const anteprima = anteprimaNetlify || anteprimaCloudflare;
+// Vercel: tutto ciò che non è produzione (anteprime dei rami) è noindex.
+const anteprimaVercel = env.VERCEL === '1' && env.VERCEL_ENV !== 'production';
+const anteprima = anteprimaNetlify || anteprimaCloudflare || anteprimaVercel;
 const robots =
   noindex || anteprima
     ? 'noindex, nofollow'

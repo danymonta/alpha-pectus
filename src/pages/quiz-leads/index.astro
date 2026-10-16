@@ -1,0 +1,83 @@
+---
+// Portale privato dei lead del quiz (/quiz-leads/). Accesso solo per il proprietario: inserisce l'email, riceve un
+// link (o un codice a 6 cifre) e entra. Lo controlla Supabase: l'unico utente esistente è il proprietario e la
+// tabella quiz_leads la può leggere solo lui (RLS, supabase/migrations). Pagina noindex, fuori dalla sitemap.
+import Base from '../../layouts/Base.astro';
+
+const url = import.meta.env.PUBLIC_SUPABASE_URL ?? '';
+const chiave = import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? '';
+---
+
+<Base title="Lead del quiz | Percorso Alpha Pectus" description="Area riservata." path="/quiz-leads/" noindex schema={false} bodyClass="leads-body">
+  <main id="main" class="leads mode-golden" data-leads data-url={url} data-key={chiave}>
+    <noscript><p class="leads__msg">Serve JavaScript per usare quest’area.</p></noscript>
+    <div data-vista></div>
+  </main>
+</Base>
+
+<script>
+  import '../../scripts/quiz-leads.js';
+</script>
+
+<style is:global>
+  .leads { min-height: 100svh; padding: var(--space-5) var(--space-4) var(--space-8); }
+  .lg-box { max-width: 26rem; margin: 12svh auto 0; display: grid; gap: var(--space-4); padding: var(--space-6); border: 1px solid var(--line); border-radius: var(--r-3); background: var(--surface); }
+  .lg-box h1 { font-family: var(--font-display); font-stretch: 82%; font-weight: 760; font-size: var(--fs-h3); line-height: var(--lh-h3); }
+  .lg-box p { color: var(--muted); font-size: var(--fs-small); line-height: 1.5; }
+  .lg-box label { display: grid; gap: var(--space-2); font-weight: 650; }
+  .lg-in { width: 100%; min-height: 52px; padding: var(--space-3) var(--space-4); border: 1px solid var(--line-strong); border-radius: var(--r-2); background: var(--bg); color: var(--text); font: inherit; font-size: 1rem; font-weight: 400; }
+  .lg-in:focus { border-color: var(--amber); outline: none; }
+  .lg-msg { font-size: var(--fs-small); }
+  .lg-msg--ok { color: var(--success); }
+  .lg-msg--err { color: var(--verdict); font-weight: 650; }
+  .lg-link { justify-self: start; min-height: var(--tap); color: var(--muted); font-size: var(--fs-small); text-decoration: underline; }
+
+  .lg-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-5); }
+  .lg-top h1 { font-family: var(--font-display); font-stretch: 82%; font-weight: 760; font-size: var(--fs-h3); line-height: var(--lh-h3); }
+  .lg-top__dx { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); font-size: var(--fs-small); color: var(--muted); }
+  .lg-btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); min-height: 44px; padding: 0 var(--space-4); border: 1px solid var(--line-strong); border-radius: var(--r-btn); color: var(--text); font-weight: 650; font-size: var(--fs-small); background: transparent; }
+  .lg-btn:hover { border-color: var(--text); }
+  .lg-btn--pieno { background: var(--brand); border-color: var(--brand-edge); }
+  .lg-btn--pieno:hover { background: var(--brand-hover); }
+  .lg-btn:focus-visible, .lg-in:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .lg-btn[disabled] { opacity: .5; cursor: not-allowed; }
+
+  .lg-stat { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); margin-bottom: var(--space-5); }
+  .lg-stat > div { padding: var(--space-4); border: 1px solid var(--line); border-radius: var(--r-2); background: var(--surface); }
+  .lg-stat b { display: block; font-family: var(--font-display); font-size: 2rem; font-weight: 800; line-height: 1.1; }
+  .lg-stat span { font-size: var(--fs-micro); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+
+  .lg-filtri { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-bottom: var(--space-4); }
+  .lg-filtri .lg-in { min-height: 44px; width: auto; flex: 1 1 14rem; }
+  .lg-filtri select.lg-in { flex: 0 1 12rem; }
+  .lg-chk { display: inline-flex; align-items: center; gap: var(--space-2); min-height: 44px; font-size: var(--fs-small); color: var(--muted); }
+  .lg-chk input { width: 18px; height: 18px; accent-color: var(--brand); }
+
+  .lg-scroll { overflow: auto; max-height: 72svh; border: 1px solid var(--line); border-radius: var(--r-2); }
+  .lg-tab { width: 100%; min-width: 1200px; font-size: var(--fs-small); border-collapse: separate; border-spacing: 0; }
+  .lg-tab th { position: sticky; top: 0; z-index: 2; padding: var(--space-3); text-align: left; white-space: nowrap; background: var(--surface); border-bottom: 1px solid var(--line-strong); font-size: var(--fs-micro); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .lg-tab td { padding: var(--space-3); vertical-align: top; border-bottom: 1px solid var(--line); line-height: 1.4; }
+  .lg-tab tr:hover td { background: rgb(255 255 255 / .03); }
+  .lg-tab td.n { white-space: nowrap; }
+  .lg-tab td.w { min-width: 15rem; max-width: 22rem; color: var(--muted); }
+  .lg-tab th.fisso, .lg-tab td.fisso { position: sticky; left: 0; z-index: 1; background: var(--surface); }
+  .lg-tab th.fisso { z-index: 3; }
+  .lg-nome { font-weight: 700; }
+  .lg-sub { color: var(--muted); font-size: var(--fs-micro); }
+  .lg-tag { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: var(--fs-micro); font-weight: 700; border: 1px solid var(--line-strong); white-space: nowrap; }
+  .lg-tag--alto { border-color: var(--success); color: var(--success); }
+  .lg-tag--medio { border-color: var(--amber); color: var(--amber); }
+  .lg-tag--wa { border-color: #1f8f4e; color: #7fcb98; display: block; margin-bottom: 4px; white-space: nowrap; }
+  .lg-tag--hot_call { border-color: var(--success); color: var(--success); }
+  .lg-tag--warm_call { border-color: var(--amber); color: var(--amber); }
+  .lg-tag--stop { border-color: var(--verdict); color: var(--verdict); }
+  .lg-sel { min-height: 40px; width: 9.5rem; }
+  .lg-date { min-height: 40px; width: 9.5rem; }
+  .lg-btn--rosso { border-color: var(--verdict); color: var(--verdict); min-height: 36px; }
+  .lg-wa { display: inline-flex; align-items: center; min-height: 36px; padding: 0 var(--space-3); border-radius: var(--r-btn); background: #1f8f4e; color: #fff; font-weight: 700; font-size: var(--fs-micro); text-decoration: none; white-space: nowrap; }
+  .lg-wa:hover { background: #26a65a; }
+  .lg-nota { width: 14rem; min-height: 36px; padding: 6px 8px; border: 1px solid var(--line); border-radius: var(--r-1); background: var(--bg); color: var(--text); font: inherit; font-size: var(--fs-small); }
+  .lg-vuoto { padding: var(--space-8); text-align: center; color: var(--muted); }
+
+  @media (min-width: 720px) { .lg-stat { grid-template-columns: repeat(4, minmax(0, 1fr)); } .leads { padding-inline: var(--space-6); } }
+</style>

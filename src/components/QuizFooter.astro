@@ -1,0 +1,31 @@
+---
+// Footer del quiz e del risultato (spec 7.10): link legali, disclaimer, richiesta di cancellazione.
+import { LANDING } from '../data/quiz/copy.mjs';
+import { AZIENDA } from '../data/site.mjs';
+const legale = [AZIENDA.ragioneSociale, AZIENDA.partitaIva && `P.IVA ${AZIENDA.partitaIva}`].filter(Boolean);
+---
+
+<footer class="qfoot">
+  <div class="qwrap">
+    <div class="qfoot__links">
+      <a href="/privacy/">Privacy Policy</a>
+      <span>Cookie Policy: da completare</span>
+      <span>Termini: da completare</span>
+    </div>
+    <p>{LANDING.footer.disclaimer}</p>
+    <p>{legale.length ? legale.join(' · ') : 'Ragione sociale e partita IVA: da completare'}</p>
+    <details>
+      <summary class="qlink">{LANDING.footer.erasure}</summary>
+      <form class="qr-erase" data-erasure novalidate>
+        <label for="erasure-email">La tua email</label>
+        <input id="erasure-email" type="email" autocomplete="email" maxlength="120" />
+        <button type="submit" class="qz-btn qz-btn--ghost">Invia la richiesta</button>
+        <p data-erasure-msg role="status"></p>
+      </form>
+    </details>
+  </div>
+</footer>
+
+<script>
+  import '../scripts/erasure.js';
+</script>
