@@ -11,7 +11,7 @@
 //   RESEND_API_KEY, MAIL_FROM, MAIL_DANY, MAIL_REPLY_TO   email (facoltative)
 //   TURNSTILE_SECRET                     se impostata, il gate richiede la verifica Cloudflare Turnstile
 //   N8N_WEBHOOK_URL, N8N_HMAC_SECRET     inoltro a n8n (facoltativo)
-import { validateLead, clean } from '../../src/lib/server/lead.mjs';
+import { validateLead, clean, primoNome } from '../../src/lib/server/lead.mjs';
 import { computeResult } from '../../src/data/quiz/scoring.mjs';
 import { STEPS } from '../../src/data/quiz/steps.mjs';
 import { PROFILES, EMAILS } from '../../src/data/quiz/copy.mjs';
@@ -81,9 +81,10 @@ export const onRequestPost = async ({ request, env, waitUntil }) => {
       const ipHash = ip ? await sha256Hex(`${ip}|${env.TOKEN_SECRET || env.SUPABASE_SERVICE_KEY}`) : null;
       const now = new Date().toISOString();
       const consents = Object.fromEntries(Object.entries(lead.consents).map(([k, c]) => [k, { ...c, at: now, ipHash }]));
+      // first_name contiene nome e cognome (la colonna conserva il nome storico).
       await sb(env, 'POST', 'quiz_leads', {
         session_id: lead.sessionId, token_id: tokenId, quiz_version: lead.quizVersion, duration_sec: lead.durationSec,
-        first_name: lead.firstName, email: lead.email, whatsapp: lead.whatsapp, instagram: lead.instagram, consents,
+        first_name: lead.fullName, email: lead.email, whatsapp: lead.whatsapp, instagram: lead.instagram, consents,
         answers: lead.answers, result, route: result.route, temperature: result.temperature, score: result.scores.total,
         profile: result.profile, medical_level: result.medicalLevel,
         attribution: lead.attribution, referrer: lead.referrer, user_agent: clean(request.headers.get('user-agent'), 250),
@@ -98,7 +99,7 @@ export const onRequestPost = async ({ request, env, waitUntil }) => {
           try {
             if (mailReady(env)) {
               const tpl = result.route === 'medical_first' ? EMAILS.M1 : EMAILS.E1;
-              const testo = tpl.body.replace('{nome}', lead.firstName).replace('{profilo}', profilo).replace('{link}', link);
+              const testo = tpl.body.replace('{nome}', primoNome(lead.fullName)).replace('{profilo}', profilo).replace('{link}', link);
               await sendMail(env, { to: [lead.email], subject: tpl.subject, text: testo, html: frame([testo.replace(link, '').trim()], { link, linkLabel: 'Apri il tuo profilo' }), replyTo: danyList(env)[0] });
               if (danyList(env).length) {
                 const n = leadNotification(lead, result, righe, SITO);
@@ -108,7 +109,7 @@ export const onRequestPost = async ({ request, env, waitUntil }) => {
           } catch (e) {
             console.error(e);
           }
-          await postWebhook(env, { sessionId: lead.sessionId, lead: { firstName: lead.firstName, email: lead.email, whatsapp: lead.whatsapp, instagram: lead.instagram }, consents, result, answers: lead.answers, attribution: lead.attribution });
+          await postWebhook(env, { sessionId: lead.sessionId, lead: { fullName: lead.fullName, email: lead.email, whatsapp: lead.whatsapp, instagram: lead.instagram }, consents, result, answers: lead.answers, attribution: lead.attribution });
         })(),
       );
       return json({ ok: true, token });

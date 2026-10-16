@@ -30,8 +30,9 @@ export function validateLead(body) {
   if (!UUID.test(sessionId)) errors.push('sessionId');
 
   const c = body?.contact ?? {};
-  const firstName = clean(c.firstName, 40);
-  if (firstName.length < 2) errors.push('firstName');
+  // Nome e cognome in un solo campo: almeno due parole.
+  const fullName = clean(c.fullName, 80);
+  if (fullName.length < 3 || !/^\S+\s+\S+/.test(fullName)) errors.push('fullName');
   const email = clean(c.email, 120).toLowerCase();
   if (!EMAIL.test(email)) errors.push('email');
   const whatsapp = normalizeWhatsapp(c.whatsapp);
@@ -58,7 +59,7 @@ export function validateLead(body) {
   return {
     ok: true,
     value: {
-      sessionId, firstName, email, whatsapp, instagram,
+      sessionId, fullName, email, whatsapp, instagram,
       consents: {
         privacy: { given: true, version: CONSENT_VERSION },
         healthData: { given: true, version: CONSENT_VERSION },
@@ -73,3 +74,6 @@ export function validateLead(body) {
     },
   };
 }
+
+/** Primo nome da "Nome Cognome", per saluti e messaggi. */
+export const primoNome = (nomeCompleto) => String(nomeCompleto ?? '').trim().split(/\s+/)[0] ?? '';

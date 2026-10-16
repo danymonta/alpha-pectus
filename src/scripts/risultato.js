@@ -29,7 +29,8 @@ if (root) {
       if (!res.ok || !data.ok) return fail();
     } catch { return fail(); }
 
-    const { name, answers: a, result: r } = data;
+    const { answers: a, result: r } = data;
+    const name = String(data.name ?? '').trim().split(/\s+/)[0]; // solo il nome: la pagina si rivolge a lui per nome
     const prudent = r.profile === 'prudent';
     const stop = r.medicalLevel === 'stop';
     const caution = r.medicalLevel === 'caution';

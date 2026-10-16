@@ -128,13 +128,13 @@ if (radice) {
   const linkWa = (l) => {
     const n = String(l.whatsapp || '').replace(/\D/g, '');
     if (n.length < 8) return '';
-    const txt = `Ciao ${l.first_name}, sono Dany. Ho visto il tuo quiz sul petto e ti scrivo per capire se posso aiutarti. Ti va di sentirci?`;
+    const txt = `Ciao ${String(l.first_name).trim().split(/\s+/)[0]}, sono Dany. Ho visto il tuo quiz sul petto e ti scrivo per capire se posso aiutarti. Ti va di sentirci?`;
     return `https://wa.me/${n}?text=${encodeURIComponent(txt)}`;
   };
 
   const COLONNE_XLSX = [
     ['Data', 18, (l) => data(l.created_at)],
-    ['Nome', 16, (l) => l.first_name],
+    ['Nome e cognome', 24, (l) => l.first_name],
     ['Email', 28, (l) => l.email],
     ['WhatsApp', 16, (l) => l.whatsapp],
     ['Instagram', 18, (l) => l.instagram || ''],
