@@ -8,6 +8,54 @@
   ],
   "redirects": [
     {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "v",
+          "value": "postura"
+        }
+      ],
+      "destination": "/v/postura/",
+      "statusCode": 307
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "v",
+          "value": "storia"
+        }
+      ],
+      "destination": "/v/storia/",
+      "statusCode": 307
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "v",
+          "value": "tardi"
+        }
+      ],
+      "destination": "/v/tardi/",
+      "statusCode": 307
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "v",
+          "value": "spalle"
+        }
+      ],
+      "destination": "/v/spalle/",
+      "statusCode": 307
+    },
+    {
       "source": "/ig",
       "destination": "/?utm_source=instagram&utm_medium=bio&utm_campaign=pectus&utm_content=bio",
       "statusCode": 302
@@ -67,50 +115,6 @@
     {
       "source": "/pa/api/event",
       "destination": "https://plausible.io/api/event"
-    },
-    {
-      "source": "/",
-      "has": [
-        {
-          "type": "query",
-          "key": "v",
-          "value": "postura"
-        }
-      ],
-      "destination": "/v/postura/"
-    },
-    {
-      "source": "/",
-      "has": [
-        {
-          "type": "query",
-          "key": "v",
-          "value": "storia"
-        }
-      ],
-      "destination": "/v/storia/"
-    },
-    {
-      "source": "/",
-      "has": [
-        {
-          "type": "query",
-          "key": "v",
-          "value": "tardi"
-        }
-      ],
-      "destination": "/v/tardi/"
-    },
-    {
-      "source": "/",
-      "has": [
-        {
-          "type": "query",
-          "key": "v",
-          "value": "spalle"
-        }
-      ],
-      "destination": "/v/spalle/"
     }
   ],
   "headers": [

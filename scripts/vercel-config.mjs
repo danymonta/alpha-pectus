@@ -42,19 +42,20 @@ export function costruisci() {
   const headers = intestazioni(leggi('public/_headers'));
   // Indirizzi *.vercel.app (anteprime e alias): mai indicizzati. Il dominio vero resta indicizzabile.
   headers.push({ source: '/(.*)', has: [{ type: 'host', value: '.*\\.vercel\\.app' }], headers: [{ key: 'X-Robots-Tag', value: 'noindex' }] });
-  const rewrites = [
-    // Eventi Plausible dal nostro dominio (come netlify.toml e functions/pa/api/event.js).
-    { source: '/pa/api/event', destination: 'https://plausible.io/api/event' },
-    // /?v=<variante> serve la pagina statica /v/<variante>/ con URL invariato (come functions/index.js).
-    ...SLUG_VARIANTI.filter((v) => v !== DEFAULT).map((v) => ({ source: '/', has: [{ type: 'query', key: 'v', value: v }], destination: `/v/${v}/` })),
-  ];
+  // Eventi Plausible dal nostro dominio (come netlify.toml e functions/pa/api/event.js).
+  const rewrites = [{ source: '/pa/api/event', destination: 'https://plausible.io/api/event' }];
+  // /?v=<variante> porta alla pagina statica /v/<variante>/. Su Cloudflare era una rewrite con URL invariato; su Vercel una rewrite
+  // di "/" non scatta perché la pagina esiste come file, quindi è un reindirizzamento temporaneo (le inserzioni usano già /v/<variante>/).
+  const varianti = SLUG_VARIANTI.filter((v) => v !== DEFAULT).map((v) => ({
+    source: '/', has: [{ type: 'query', key: 'v', value: v }], destination: `/v/${v}/`, statusCode: 307,
+  }));
   return {
     $schema: 'https://openapi.vercel.sh/vercel.json',
     framework: 'astro',
     buildCommand: 'npm run build && npm run check',
     outputDirectory: 'dist',
     regions: ['dub1'], // Dublino: vicino al database Supabase (Irlanda) e in UE
-    redirects: reindirizzamenti(leggi('public/_redirects')),
+    redirects: [...varianti, ...reindirizzamenti(leggi('public/_redirects'))],
     rewrites,
     headers,
   };
