@@ -13,7 +13,7 @@
 
 export const LANDING = {
   // Tag in alto a sinistra con la foto profilo (src/assets/dany-quiz/dany-profilo).
-  tag: { text: 'Gratis · 3 minuti · Dany Monta, Percorso Alpha', alt: 'Dany Monta' },
+  tag: { text: 'Gratis · 3 minuti · Dany Monta, fitness coach online', alt: 'Dany Monta' },
   eyebrow: 'QUIZ PETTO SCAVATO',
   titleA: 'Il tuo petto scavato si può migliorare. Scopri da dove iniziare.',
   titleB: 'Pectus excavatum: smetti di nasconderlo, inizia a costruirlo.',
