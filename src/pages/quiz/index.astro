@@ -162,38 +162,6 @@ const turnstile = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
       </section>
 
       <section class="ql-sec">
-        <div class="qwrap qwrap--wide ql-tv">
-          <div class="ql-tv__testo">
-            <h2 class="ql-h2">{L.media.title}</h2>
-            <p class="ql-p">{L.media.text}</p>
-          </div>
-          {
-            fotoTv ? (
-              <figure class="ql-foto ql-tv__fig">
-                <Image src={fotoTv} alt={L.media.alt} widths={[640, 960, 1280]} sizes="(min-width: 900px) 50vw, 92vw" format="webp" quality={82} loading="lazy" class="ql-tv__img" />
-              </figure>
-            ) : (
-              <div class="qph ql-tv__ph"><span>{L.media.placeholder}</span></div>
-            )
-          }
-        </div>
-      </section>
-
-      <section class="ql-sec">
-        <div class="qwrap">
-          <h2 class="ql-h2">{L.receive.title}</h2>
-          <div class="ql-cards">{L.receive.cards.map((c) => <article class="ql-card"><h3>{c.title}</h3><p>{c.text}</p></article>)}</div>
-        </div>
-      </section>
-
-      <section class="ql-sec ql-sec--tint">
-        <div class="qwrap">
-          <h2 class="ql-h2">{L.clarity.title}</h2>
-          <p class="ql-p">{L.clarity.text}</p>
-        </div>
-      </section>
-
-      <section class="ql-sec">
         <div class="qwrap qwrap--wide">
           <h2 class="ql-h2">{L.proof.title}</h2>
           {
@@ -255,6 +223,38 @@ const turnstile = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
       </section>
 
       <section class="ql-sec ql-sec--tint">
+        <div class="qwrap qwrap--wide ql-tv">
+          <div class="ql-tv__testo">
+            <h2 class="ql-h2">{L.media.title}</h2>
+            <p class="ql-p">{L.media.text}</p>
+          </div>
+          {
+            fotoTv ? (
+              <figure class="ql-foto ql-tv__fig">
+                <Image src={fotoTv} alt={L.media.alt} widths={[640, 960, 1280]} sizes="(min-width: 900px) 50vw, 92vw" format="webp" quality={82} loading="lazy" class="ql-tv__img" />
+              </figure>
+            ) : (
+              <div class="qph ql-tv__ph"><span>{L.media.placeholder}</span></div>
+            )
+          }
+        </div>
+      </section>
+
+      <section class="ql-sec">
+        <div class="qwrap">
+          <h2 class="ql-h2">{L.receive.title}</h2>
+          <div class="ql-cards">{L.receive.cards.map((c) => <article class="ql-card"><h3>{c.title}</h3><p>{c.text}</p></article>)}</div>
+        </div>
+      </section>
+
+      <section class="ql-sec ql-sec--tint">
+        <div class="qwrap">
+          <h2 class="ql-h2">{L.clarity.title}</h2>
+          <p class="ql-p">{L.clarity.text}</p>
+        </div>
+      </section>
+
+      <section class="ql-sec">
         <div class="qwrap qwrap--wide ql-two">
           <div class="ql-box">
             <h3>{L.forWho.title}</h3>
@@ -267,7 +267,7 @@ const turnstile = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
         </div>
       </section>
 
-      <section class="ql-sec">
+      <section class="ql-sec ql-sec--tint">
         <div class="qwrap">
           <h2 class="ql-h2">Domande frequenti</h2>
           <div class="ql-faq">
