@@ -4,7 +4,7 @@ Foto di Dany per la pagina /quiz/. Salvale qui con questi nomi esatti (estension
   dany-prima    la foto "prima" della sezione "Ci sono passato anche io."
   dany-dopo     la foto "dopo" della stessa sezione
   dany-allievi  la foto con i tuoi allievi, accanto al testo "Ci sono passato anche io."
-  dany-tv       l'immagine della puntata di Story Time su Canale Italia (sezione "Ne ho parlato anche in tv.")
+  dany-tv       l'immagine della puntata di Story Time (sezione "Ne ho parlato anche in radio.")
 
 Se manca un file, al suo posto compare il segnaposto "Da completare". Se non vuoi che una foto venga indicizzata
 dai motori di ricerca, aggiungi il prefisso "noindex-" al nome (per esempio noindex-dany-prima.jpg).

@@ -1,4 +1,4 @@
-Schede dei casi cliente per la pagina /quiz/ e per il risultato del quiz.
+Foto prima e dopo dei casi cliente (solo le foto: il testo sotto è la didascalia scritta in src/data/quiz/casi.mjs) per la pagina /quiz/ e per il risultato del quiz.
 
 Come aggiungerle:
 1. Salva qui le immagini delle schede (una per caso), con questi nomi esatti. L'estensione può essere .png, .jpg, .jpeg o .webp:

@@ -53,12 +53,12 @@ export const LANDING = {
     altBefore: 'Dany prima del percorso, a torso nudo.',
     altAfter: 'Dany dopo il percorso, a torso nudo.',
   },
-  // Riprova sociale: apparizione televisiva. Il testo riporta quello che mostra l'immagine (Story Time, Canale Italia).
+  // Riprova sociale: apparizione a Story Time. Il testo dice Radio Italia come indicato da Dany; nell'immagine della puntata il logo è Canale Italia.
   media: {
-    title: 'Ne ho parlato anche in tv.',
-    text: 'Ho raccontato la mia storia a Story Time, su Canale Italia.',
-    alt: 'Daniele Montagnolo, fitness coach online, ospite di Story Time su Canale Italia.',
-    placeholder: 'Da completare: immagine della puntata di Story Time su Canale Italia.',
+    title: 'Ne ho parlato anche in radio.',
+    text: 'Ho raccontato la mia storia a Story Time, su Radio Italia.',
+    alt: 'Daniele Montagnolo, fitness coach online, ospite della trasmissione Story Time.',
+    placeholder: 'Da completare: immagine della puntata di Story Time.',
   },
   receive: {
     title: 'Cosa ricevi dal quiz',

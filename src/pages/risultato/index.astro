@@ -4,7 +4,7 @@
 import Base from '../../layouts/Base.astro';
 import QuizFooter from '../../components/QuizFooter.astro';
 import { Image } from 'astro:assets';
-import { casiPronti } from '../../data/quiz/casi.mjs';
+import { casiPronti, titoloCaso, altCaso } from '../../data/quiz/casi.mjs';
 import '../../styles/quiz.css';
 import { WHATSAPP_NUMERO, CALENDARIO_URL } from '../../data/site.mjs';
 // Casi cliente (stessi della pagina /quiz/): lo script del risultato li sposta nel blocco "Persone che partivano da qui".
@@ -26,11 +26,17 @@ const casi = casiPronti(import.meta.glob('../../assets/casi-quiz/*.{png,jpg,jpeg
         <div class="ql-casi">
           {casi.map((c) => (
             <figure class="ql-casi__fig">
-              <Image src={c.immagine} alt={c.alt} widths={[640, 960]} sizes="(min-width: 640px) 46vw, 92vw" format="webp" quality={82} loading="lazy" class="ql-casi__img" />
+              <Image src={c.immagine} alt={altCaso(c)} widths={[480, 720]} sizes="(min-width: 640px) 46vw, 92vw" format="webp" quality={84} loading="lazy" class="ql-casi__img" />
+              <figcaption class="ql-casi__cap">
+                <strong>{titoloCaso(c)}</strong>
+                <span><b>Punto di partenza:</b> {c.partenza}.</span>
+                <span><b>Risultato:</b> {c.risultato}.</span>
+                <span>{c.allenamenti}.</span>
+              </figcaption>
             </figure>
           ))}
         </div>
-        <p class="qr-disc">Casi individuali: i risultati variano da persona a persona. Foto pubblicate con il consenso scritto degli interessati.</p>
+        <p class="qr-disc">Casi individuali: i risultati variano da persona a persona.</p>
       </div>
     )
   }
