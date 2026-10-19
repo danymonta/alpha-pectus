@@ -23,8 +23,8 @@ const fotoPrima = foto('dany-prima');
 const fotoDopo = foto('dany-dopo');
 const casi = casiPronti(import.meta.glob('../../assets/casi-quiz/*.{png,jpg,jpeg,webp}', { eager: true }));
 // Icone di "Per chi è" e "Per chi non è": SVG, non emoji (le vieta la regola di copy del sito).
-const SPUNTA = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
-const CROCE = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+const SPUNTA = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M4 12.5l5.5 5.5L20 6.5"/></svg>';
+const CROCE = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M5 5l14 14M19 5L5 19"/></svg>';
 const turnstile = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
 ---
 
@@ -198,11 +198,11 @@ const turnstile = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
         <div class="qwrap qwrap--wide ql-two">
           <div class="ql-box">
             <h3>{L.forWho.title}</h3>
-            <ul>{L.forWho.yes.map((t) => <li><span>{t}</span><span class="ql-ico ql-ico--si" aria-hidden="true" set:html={SPUNTA} /></li>)}</ul>
+            <ul>{L.forWho.yes.map((t) => <li><span class="ql-ico ql-ico--si" aria-hidden="true" set:html={SPUNTA} /><span>{t}</span></li>)}</ul>
           </div>
           <div class="ql-box ql-box--no">
             <h3>{L.forWho.noTitle}</h3>
-            <ul>{L.forWho.no.map((t) => <li><span>{t}</span><span class="ql-ico ql-ico--no" aria-hidden="true" set:html={CROCE} /></li>)}</ul>
+            <ul>{L.forWho.no.map((t) => <li><span class="ql-ico ql-ico--no" aria-hidden="true" set:html={CROCE} /><span>{t}</span></li>)}</ul>
           </div>
         </div>
       </section>
@@ -219,6 +219,10 @@ const turnstile = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
           </div>
         </div>
       </section>
+    </div>
+
+    <div class="ql-sticky" data-sticky inert>
+      <button type="button" class="qz-btn" data-start>{L.cta}</button>
     </div>
 
     <section class="qz" data-stage hidden>

@@ -20,6 +20,7 @@ if (root) {
   const KEY = 'pa-quiz-v2';
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const N = STEPS.length;
+  let aggiornaSticky = () => {}; // barra fissa con il pulsante: definita sotto
 
   // ---------- Stato ----------
   const nuovo = () => ({ v: QUIZ_VERSION, sid: crypto.randomUUID(), startedAt: new Date().toISOString(), answers: {}, gate: {}, attribution: {}, started: false });
@@ -88,6 +89,7 @@ if (root) {
     stage.replaceChildren(...nodes);
     stageOuter.hidden = false;
     landing.hidden = true;
+    aggiornaSticky();
     const t = stage.querySelector('[data-focus]');
     if (t) { t.setAttribute('tabindex', '-1'); t.focus({ preventScroll: true }); }
     window.scrollTo({ top: root.offsetTop, behavior: reduced ? 'auto' : 'smooth' });
@@ -321,7 +323,7 @@ if (root) {
 
   // ---------- Router ----------
   function render(view) {
-    if (view === 'landing') { stageOuter.hidden = true; landing.hidden = false; return; }
+    if (view === 'landing') { stageOuter.hidden = true; landing.hidden = false; aggiornaSticky(); return; }
     if (view === 'dati') return renderGate();
     return renderStep(view);
   }
@@ -336,6 +338,23 @@ if (root) {
     const v = guard(stepFromUrl());
     render(v);
   });
+
+  // Barra fissa con il pulsante: compare quando si scorre oltre il pulsante in alto, sparisce in fondo (dove c'è già il pulsante finale)
+  // e durante il quiz.
+  const sticky = root.querySelector('[data-sticky]');
+  if (sticky && 'IntersectionObserver' in window) {
+    const alto = landing.querySelector('.ql-hero [data-start]');
+    const fondo = [...landing.querySelectorAll('[data-start]')].pop();
+    let oltre = false;
+    let fondoVisibile = false;
+    aggiornaSticky = () => {
+      const on = oltre && !fondoVisibile && !landing.hidden;
+      sticky.classList.toggle('is-on', on);
+      sticky.inert = !on;
+    };
+    if (alto) new IntersectionObserver(([e]) => { oltre = !e.isIntersecting && e.boundingClientRect.top < 0; aggiornaSticky(); }).observe(alto);
+    if (fondo && fondo !== alto) new IntersectionObserver(([e]) => { fondoVisibile = e.isIntersecting; aggiornaSticky(); }).observe(fondo);
+  }
 
   // Abbandono: uscita dalla pagina o 90 secondi di inattività. Solo l'indice dell'ultimo passo.
   let abandoned = false;

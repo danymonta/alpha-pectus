@@ -31,14 +31,15 @@
 .ql-card h3 { font-family: var(--font-display); font-stretch: 82%; font-weight: 760; font-size: var(--fs-h3); line-height: var(--lh-h3); margin-bottom: var(--space-2); }
 .ql-card p { color: var(--muted); line-height: 1.5; }
 .ql-two { display: grid; gap: var(--space-5); }
-.ql-box { padding: var(--space-5); border: 1px solid var(--line); border-radius: var(--r-2); background: var(--surface); }
-.ql-box h3 { font-family: var(--font-display); font-stretch: 82%; font-weight: 760; font-size: var(--fs-h3); margin-bottom: var(--space-3); }
-.ql-box ul { display: grid; gap: var(--space-3); padding: 0; list-style: none; line-height: 1.45; }
-.ql-box li { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); padding: var(--space-3) 0; border-bottom: 1px solid var(--line); }
-.ql-box li:last-child { border-bottom: 0; }
-.ql-ico { flex: none; display: grid; place-items: center; width: 28px; height: 28px; margin-top: 1px; border-radius: 50%; color: #fff; }
-.ql-ico--si { background: var(--success); }
-.ql-ico--no { background: var(--verdict); }
+.ql-box { display: grid; align-content: start; gap: var(--space-4); }
+.ql-box h3 { font-family: var(--font-display); font-stretch: 82%; font-weight: 760; font-size: var(--fs-h3); line-height: var(--lh-h3); }
+.ql-box ul { display: grid; gap: var(--space-3); padding: 0; list-style: none; line-height: 1.4; }
+/* Righe a pillola con l'icona a sinistra: spunta verde per chi è, X rossa per chi non è */
+.ql-box li { display: flex; align-items: center; gap: var(--space-4); min-height: 60px; padding: var(--space-3) var(--space-5); background: var(--surface); border: 1px solid var(--line); border-radius: 30px; }
+.ql-box--no li { background: var(--bg); border-color: var(--line-strong); border-width: 2px; }
+.ql-ico { flex: none; display: grid; place-items: center; width: 24px; height: 24px; }
+.ql-ico--si { color: var(--success); }
+.ql-ico--no { color: var(--verdict); }
 .ql-faq { display: grid; gap: var(--space-2); }
 .ql-faq details { border: 1px solid var(--line); border-radius: var(--r-2); background: var(--surface); }
 .ql-faq summary { cursor: pointer; list-style: none; padding: var(--space-4); min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); font-weight: 700; line-height: 1.35; }
@@ -176,3 +177,10 @@
 .ql-chi { display: grid; gap: var(--space-5); align-items: start; }
 .ql-chi__img { aspect-ratio: 4 / 5; }
 @media (min-width: 900px) { .ql-chi { grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: var(--space-7); } }
+
+/* Barra fissa con il pulsante, dopo il pulsante in alto */
+.ql-sticky { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; display: grid; justify-items: center; padding: var(--space-3) var(--gutter) calc(var(--space-3) + env(safe-area-inset-bottom)); background: rgb(255 252 247 / .96); border-top: 1px solid var(--line); box-shadow: 0 -8px 24px -16px rgb(23 20 18 / .35); transform: translateY(110%); transition: transform var(--dur-2) var(--ease); }
+.ql-sticky.is-on { transform: none; }
+.ql-sticky .qz-btn { width: min(100%, 28rem); }
+[data-landing] { padding-bottom: calc(var(--btn-h) + var(--space-6)); }
+@media (min-width: 900px) { [data-landing] { padding-bottom: 0; } }
