@@ -18,6 +18,7 @@ const foto = (nome: string) =>
   (Object.entries(fotoDany).find(([p]) => (p.split('/').pop() ?? '').replace(/\.[a-z]+$/i, '').replace(/^noindex-/, '') === nome)?.[1] as { default: ImageMetadata } | undefined)?.default;
 const fotoHero = foto('dany-hero');
 const fotoTv = foto('dany-tv');
+const fotoProfilo = foto('dany-profilo');
 const fotoPalestra = foto('dany-palestra');
 const fotoScheda = foto('dany-scheda');
 const fotoAllievi = foto('dany-allievi');
@@ -51,6 +52,10 @@ const turnstile = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
       <section class="ql-hero">
         <div class="qwrap qwrap--wide ql-hero__grid">
           <div>
+            <p class="ql-tag">
+              {fotoProfilo && <Image src={fotoProfilo} alt={L.tag.alt} width={72} height={72} format="webp" quality={85} loading="eager" class="ql-tag__img" />}
+              <span>{L.tag.text}</span>
+            </p>
             <p class="ql-eyebrow">{L.eyebrow}</p>
             <h1 class="ql-h1" data-title>{L.titleA}</h1>
             <p class="ql-sub">{L.subtitle}</p>
