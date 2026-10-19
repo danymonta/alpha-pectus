@@ -42,12 +42,21 @@ export const LANDING = {
     title: 'Ci sono passato anche io.',
     paragraphs: [
       'Ho il pectus excavatum. Per anni mi sono nascosto e non mi sentivo sicuro del mio corpo. Poi ho scelto di migliorarlo con allenamento a corpo libero, disciplina e un metodo, senza interventi.',
-      'Oggi guido uomini che partono da dove sono partito io. Non ti dico in anticipo cosa è possibile per te: lo valuto sul tuo caso, con i tuoi dati.',
+      'Oggi guido uomini che partono da dove sono partito io.',
+      'Con mio fratello abbiamo costruito il metodo che uso con ognuno di loro: allenamento a corpo libero, a casa, tre sessioni a settimana da circa 40 minuti, con un’alimentazione flessibile e il feedback video sulla tua esecuzione.',
+      'Non ti dico in anticipo cosa è possibile per te: lo valuto sul tuo caso, con i tuoi dati.',
     ],
     before: 'Prima: mi nascondevo e non mi sentivo sicuro del mio corpo.',
     after: 'Dopo: lo stesso petto, con un lavoro mirato su muscolo e postura.',
     altBefore: 'Dany prima del percorso, a torso nudo.',
     altAfter: 'Dany dopo il percorso, a torso nudo.',
+  },
+  // Riprova sociale: apparizione televisiva. Il testo riporta quello che mostra l'immagine (Story Time, Canale Italia).
+  media: {
+    title: 'Ne ho parlato anche in tv.',
+    text: 'Ho raccontato la mia storia a Story Time, su Canale Italia.',
+    alt: 'Daniele Montagnolo, fitness coach online, ospite di Story Time su Canale Italia.',
+    placeholder: 'Da completare: immagine della puntata di Story Time su Canale Italia.',
   },
   receive: {
     title: 'Cosa ricevi dal quiz',
