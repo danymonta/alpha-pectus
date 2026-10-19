@@ -187,3 +187,7 @@
 .ql-sticky .qz-btn { width: min(100%, 28rem); }
 [data-landing] { padding-bottom: calc(var(--btn-h) + var(--space-6)); }
 @media (min-width: 900px) { [data-landing] { padding-bottom: 0; } }
+
+/* Palestra e scheda generica: due foto affiancate e il racconto sotto */
+.ql-palestra { margin-top: var(--space-5); }
+.ql-palestra__testo { margin-top: var(--space-4); }
