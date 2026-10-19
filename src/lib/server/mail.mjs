@@ -25,15 +25,22 @@ export function frame(paragraphs, { link, linkLabel } = {}) {
   return `<!doctype html><html lang="it"><body style="margin:0;padding:24px 12px;background:#F4EFE7;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center"><table role="presentation" width="100%" style="max-width:520px;background:#FFFCF7;border:1px solid #DCD3C6;border-radius:10px;"><tr><td style="padding:28px;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.6;color:#171412;"><p style="margin:0 0 20px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#780000;font-weight:bold;">Percorso Alpha Pectus</p>${body}${button}</td></tr></table></td></tr></table></body></html>`;
 }
 
-/** Avviso a Dany per ogni nuovo lead. */
+const TIPO = { hot: 'CALDO', warm: 'TIEPIDO', cold: 'FREDDO' };
+
+/** Avviso a Dany per ogni nuovo lead: oggetto con temperatura e punteggio, pulsanti per scrivergli e per aprire la lista. */
 export function leadNotification(lead, result, answerLines, siteUrl) {
-  const head = `[Quiz ${result.route}] ${lead.fullName}, punteggio ${result.scores.total}`;
+  const head = `[Quiz ${TIPO[result.temperature] ?? 'NUOVO'}] ${lead.fullName}, ${result.scores.total}/100`;
+  const numero = String(lead.whatsapp).replace(/\D/g, '');
+  const wa = `https://wa.me/${numero}?text=${encodeURIComponent(`Ciao ${String(lead.fullName).trim().split(/\s+/)[0]}, sono Dany. Ho visto il tuo quiz sul petto e ti scrivo per capire se posso aiutarti. Ti va di sentirci?`)}`;
+  const lista = `${siteUrl}/quiz-leads/`;
   const rows = [
     ['Nome e cognome', lead.fullName], ['Email', lead.email], ['WhatsApp', lead.whatsapp], ['Instagram', lead.instagram ?? ''],
     ['Route', result.route], ['Temperatura', result.temperature], ['Punteggio', String(result.scores.total)],
     ['Profilo', result.profile], ['Livello medico', result.medicalLevel], ['Tempi (settimane)', result.range ? result.range.join('-') : 'n.d.'],
     ...answerLines,
   ];
-  const html = `<p><b>Nuovo quiz completato.</b> Tutti i lead: <a href="${esc(siteUrl)}/quiz-leads/">${esc(siteUrl)}/quiz-leads/</a></p><table cellpadding="6">${rows.map(([k, v]) => `<tr><td><b>${esc(k)}</b></td><td>${esc(v)}</td></tr>`).join('')}</table>`;
-  return { subject: head, html, text: rows.map(([k, v]) => `${k}: ${v}`).join('\n') };
+  const bottone = (href, testo, scuro) => `<a href="${esc(href)}" style="display:inline-block;margin:0 8px 8px 0;padding:12px 18px;border-radius:6px;font-weight:bold;text-decoration:none;font-family:Arial,sans-serif;${scuro ? 'background:#780000;color:#fff;' : 'background:#1f8f4e;color:#fff;'}">${esc(testo)}</a>`;
+  const html = `<p><b>Nuovo quiz completato.</b></p><p>${bottone(wa, 'Scrivigli su WhatsApp', false)}${bottone(lista, 'Apri la lista dei lead', true)}</p><table cellpadding="6">${rows.map(([k, v]) => `<tr><td><b>${esc(k)}</b></td><td>${esc(v)}</td></tr>`).join('')}</table>`;
+  const text = `Scrivigli su WhatsApp: ${wa}\nLista dei lead: ${lista}\n\n${rows.map(([k, v]) => `${k}: ${v}`).join('\n')}`;
+  return { subject: head, html, text };
 }

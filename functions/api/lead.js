@@ -19,6 +19,7 @@ import { sb, configured } from '../../src/lib/server/supabase.mjs';
 import { signToken } from '../../src/lib/server/token.mjs';
 import { randomId, sha256Hex, hmac, toHex } from '../../src/lib/server/crypto.mjs';
 import { sendMail, danyList, frame, leadNotification, mailReady } from '../../src/lib/server/mail.mjs';
+import { messaggioTelegram, sendTelegram } from '../../src/lib/server/telegram.mjs';
 
 const SITO = 'https://pectus.percorsoalpha.com';
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
@@ -96,19 +97,28 @@ export const onRequestPost = async ({ request, env, waitUntil }) => {
       const righe = STEPS.map((s) => [s.question, [].concat(lead.answers[s.id]).map((val) => s.options.find((o) => o.value === val)?.label).join(', ')]);
       waitUntil?.(
         (async () => {
-          try {
-            if (mailReady(env)) {
+          // Ogni avviso è indipendente: se uno fallisce, gli altri partono comunque.
+          const prova = async (nome, fn) => {
+            try {
+              await fn();
+            } catch (e) {
+              console.error(`avviso ${nome}:`, e);
+            }
+          };
+          await Promise.all([
+            prova('telegram', () => sendTelegram(env, messaggioTelegram(lead, result, SITO))),
+            prova('mail a Dany', async () => {
+              if (!mailReady(env) || !danyList(env).length) return;
+              const n = leadNotification(lead, result, righe, SITO);
+              await sendMail(env, { to: danyList(env), subject: n.subject, html: n.html, text: n.text, replyTo: lead.email });
+            }),
+            prova('mail al lead', async () => {
+              if (!mailReady(env)) return;
               const tpl = result.route === 'medical_first' ? EMAILS.M1 : EMAILS.E1;
               const testo = tpl.body.replace('{nome}', primoNome(lead.fullName)).replace('{profilo}', profilo).replace('{link}', link);
               await sendMail(env, { to: [lead.email], subject: tpl.subject, text: testo, html: frame([testo.replace(link, '').trim()], { link, linkLabel: 'Apri il tuo profilo' }), replyTo: danyList(env)[0] });
-              if (danyList(env).length) {
-                const n = leadNotification(lead, result, righe, SITO);
-                await sendMail(env, { to: danyList(env), subject: n.subject, html: n.html, text: n.text, replyTo: lead.email });
-              }
-            }
-          } catch (e) {
-            console.error(e);
-          }
+            }),
+          ]);
           await postWebhook(env, { sessionId: lead.sessionId, lead: { fullName: lead.fullName, email: lead.email, whatsapp: lead.whatsapp, instagram: lead.instagram }, consents, result, answers: lead.answers, attribution: lead.attribution });
         })(),
       );

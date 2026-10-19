@@ -16,7 +16,7 @@ Costruito sulla specifica `quiz-funnel-pectus-spec.md`, dentro il sito esistente
    - `hot_call` e `warm_call`: prenotare la call (se `CALENDARIO_URL` è impostato) oppure scrivere a Dany su WhatsApp con il messaggio già pronto (`wa.me`, funziona con un WhatsApp normale);
    - `nurture`: guida (segnaposto finché non c'è il PDF);
    - `medical_first`: promemoria e indicazione di sentire un medico, nessuna vendita.
-4. Il lead riceve l'email con il link al profilo (E1, oppure M1 se la route è `medical_first`), e a te arriva un avviso, se Resend è configurato.
+4. Il lead riceve l'email con il link al profilo (E1, oppure M1 se la route è `medical_first`), e a te arriva un avviso: una mail con i pulsanti "Scrivigli su WhatsApp" e "Apri la lista dei lead" (se Resend è configurato) e, se hai collegato il bot, un messaggio su Telegram. Ogni avviso parte in modo indipendente dagli altri.
 
 La logica è in file di configurazione e funzioni pure, con test (`npm test`, include le fixture F1-F5 della specifica):
 
@@ -102,6 +102,7 @@ Il sito è pronto per entrambi: `vercel.json` (generato da `public/_headers`, `p
 | `RESEND_API_KEY`, `MAIL_FROM`, `MAIL_DANY` | già usate dalla candidatura | email al lead e avviso a te |
 | `SHEETS_URL`, `SHEETS_TOKEN` | già usate dalla candidatura | foglio Google dei lead |
 | `TURNSTILE_SECRET`, `PUBLIC_TURNSTILE_SITE_KEY` | da Cloudflare Turnstile | facoltative |
+| `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | dal bot creato con @BotFather | facoltative: avviso istantaneo su Telegram a ogni lead (solo nome, temperatura e punteggio, con pulsante che apre la lista). Il token è un **segreto** |
 | `N8N_WEBHOOK_URL`, `N8N_HMAC_SECRET` | facoltative | |
 
 Su Vercel il dominio si collega in *Settings, Domains*; il DNS resta su Netsons (un CNAME `pectus`). Per tornare a Cloudflare basta rimettere il vecchio CNAME. Le anteprime di Vercel (`*.vercel.app` e i rami diversi da `main`) sono `noindex`.
