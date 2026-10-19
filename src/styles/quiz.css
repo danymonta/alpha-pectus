@@ -171,3 +171,8 @@
 .ql-tv__ph { aspect-ratio: 16 / 9; min-height: 0; }
 .ql-tv .ql-h2 { margin-bottom: var(--space-3); }
 @media (min-width: 900px) { .ql-tv { grid-template-columns: .8fr 1.2fr; gap: var(--space-8); } }
+
+/* Chi c'è dietro al test: testo e foto con gli allievi */
+.ql-chi { display: grid; gap: var(--space-5); align-items: start; }
+.ql-chi__img { aspect-ratio: 4 / 5; }
+@media (min-width: 900px) { .ql-chi { grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: var(--space-7); } }

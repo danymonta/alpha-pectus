@@ -48,6 +48,8 @@ export const LANDING = {
     ],
     before: 'Prima: mi nascondevo e non mi sentivo sicuro del mio corpo.',
     after: 'Dopo: lo stesso petto, con un lavoro mirato su muscolo e postura.',
+    team: 'Con i miei allievi.',
+    altTeam: 'Dany, con la maglia Percorso Alpha, accovacciato all\'aperto durante un allenamento con alcuni allievi.',
     altBefore: 'Dany prima del percorso, a torso nudo.',
     altAfter: 'Dany dopo il percorso, a torso nudo.',
   },
