@@ -21,7 +21,6 @@ export const LANDING = {
   cta: 'Inizia il quiz',
   // Numero vero: nel sito STATS.clientiPectus è "tra 30 e 40" (settembre 2026). Aggiornare qui quando cambia.
   proofLine: 'Più di 30 persone con il petto scavato aiutate nell’ultimo anno.',
-  micro: 'Gratuito. Non è una diagnosi e non è una promessa vuota.',
   recognize: {
     title: 'Lo riconosci?',
     items: [
