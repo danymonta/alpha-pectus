@@ -92,8 +92,8 @@ export const LANDING = {
   // Screenshot di messaggi ricevuti (cartella src/assets/messaggi-quiz/). Il testo alternativo serve a chi usa lo screen reader.
   messaggi: {
     title: 'Cosa mi scrivono.',
-    note: 'Messaggi di persone che hanno acconsentito a mostrarli, senza cognomi né numeri.',
     alt: {
+      'messaggio-costole': 'Messaggio di un allievo: si nota meno il petto scavato perché il petto è cresciuto e la sporgenza delle costole è meno evidente.',
       'messaggio-canottiera': 'Messaggio di un allievo: nascondeva il petto scavato con una canottiera sotto la maglietta e, da quando si allena, non l’ha più messa.',
     },
     altGenerico: 'Messaggio di una persona che segue il percorso.',
