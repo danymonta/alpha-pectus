@@ -19,6 +19,8 @@ export const LANDING = {
   titleB: 'Pectus excavatum: smetti di nasconderlo, inizia a costruirlo.',
   subtitle: '17 domande, 3 minuti. Ricevi il tuo profilo, una stima dei tempi realistici e il piano di allenamento a corpo libero adatto al tuo petto.',
   cta: 'Inizia il quiz',
+  // Numero vero: nel sito STATS.clientiPectus è "tra 30 e 40" (settembre 2026). Aggiornare qui quando cambia.
+  proofLine: 'Più di 30 persone con il petto scavato aiutate nell’ultimo anno.',
   micro: 'Gratuito. Non è una diagnosi e non è una promessa vuota.',
   recognize: {
     title: 'Lo riconosci?',
