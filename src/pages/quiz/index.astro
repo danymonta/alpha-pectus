@@ -53,7 +53,7 @@ const turnstile = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
         <div class="qwrap qwrap--wide ql-hero__grid">
           <div>
             <p class="ql-tag">
-              {fotoProfilo && <Image src={fotoProfilo} alt={L.tag.alt} width={72} height={72} format="webp" quality={85} loading="eager" class="ql-tag__img" />}
+              {fotoProfilo && <Image src={fotoProfilo} alt={L.tag.alt} width={52} height={52} format="webp" quality={85} loading="eager" class="ql-tag__img" />}
               <span>{L.tag.text}</span>
             </p>
             <p class="ql-eyebrow">{L.eyebrow}</p>
@@ -67,7 +67,7 @@ const turnstile = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
           </div>
           {
             fotoHero ? (
-              <Image src={fotoHero} alt="Dany, a torso nudo." widths={[480, 720, 960]} sizes="(min-width: 900px) 40vw, 92vw" format="webp" quality={82} loading="eager" class="ql-hero__img" />
+              <Image src={fotoHero} alt="Dany prima e dopo il percorso, a torso nudo." widths={[480, 720, 886]} sizes="(min-width: 900px) 40vw, 92vw" format="webp" quality={82} loading="eager" class="ql-hero__img" />
             ) : (
               <div class="qph qph--photo" role="img" aria-label="Segnaposto per la foto di Dany">
                 <span>Da completare: foto reale di Dany a torso nudo, luce naturale, nessun filtro, con autorizzazione d'uso.</span>
