@@ -18,6 +18,8 @@ const foto = (nome: string) =>
   (Object.entries(fotoDany).find(([p]) => (p.split('/').pop() ?? '').replace(/\.[a-z]+$/i, '').replace(/^noindex-/, '') === nome)?.[1] as { default: ImageMetadata } | undefined)?.default;
 const fotoHero = foto('dany-hero');
 const fotoTv = foto('dany-tv');
+const fotoPalestra = foto('dany-palestra');
+const fotoScheda = foto('dany-scheda');
 const fotoAllievi = foto('dany-allievi');
 const fotoPrima = foto('dany-prima');
 const fotoDopo = foto('dany-dopo');
@@ -81,6 +83,29 @@ const turnstile = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
         <div class="qwrap">
           <h2 class="ql-h2">{L.mechanism.title}</h2>
           {L.mechanism.paragraphs.map((t) => <p class="ql-p">{t}</p>)}
+          <div class="ql-storia ql-palestra">
+            <figure class="ql-foto">
+              {
+                fotoPalestra ? (
+                  <Image src={fotoPalestra} alt={L.mechanism.gym.altPhoto} widths={[480, 720, 960]} sizes="(min-width: 900px) 360px, 46vw" format="webp" quality={82} loading="lazy" class="ql-foto__img" />
+                ) : (
+                  <div class="qph qph--ba"><span>Da completare: foto di Dany in palestra</span></div>
+                )
+              }
+              <figcaption>{L.mechanism.gym.photo}</figcaption>
+            </figure>
+            <figure class="ql-foto">
+              {
+                fotoScheda ? (
+                  <Image src={fotoScheda} alt={L.mechanism.gym.altCard} widths={[480, 720, 960]} sizes="(min-width: 900px) 360px, 46vw" format="webp" quality={84} loading="lazy" class="ql-foto__img" />
+                ) : (
+                  <div class="qph qph--ba"><span>Da completare: foto della scheda del personal trainer</span></div>
+                )
+              }
+              <figcaption>{L.mechanism.gym.card}</figcaption>
+            </figure>
+          </div>
+          <p class="ql-p ql-palestra__testo">{L.mechanism.gym.text}</p>
         </div>
       </section>
 
