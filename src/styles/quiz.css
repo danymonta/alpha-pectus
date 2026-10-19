@@ -216,3 +216,6 @@
 .ql-msg__img { display: block; width: 100%; height: auto; border-radius: var(--r-2); border: 1px solid var(--line); }
 @media (min-width: 760px) { .ql-msg__slide { flex-basis: 560px; } }
 @media (prefers-reduced-motion: reduce) { .ql-msg__track { scroll-behavior: auto; } }
+
+/* Niente parole spezzate nei testi brevi (sottotitolo, elenchi, schede, didascalie, risposte): si leggono meglio intere. */
+.ql-hero p, .ql-list li, .ql-box li, .ql-cards p, .ql-casi__cap, .ql-foto figcaption, .qz-faq p, .ql-faq p, details p, .ql-micro { hyphens: manual; -webkit-hyphens: manual; }
