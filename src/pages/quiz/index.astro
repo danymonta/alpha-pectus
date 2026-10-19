@@ -18,6 +18,7 @@ const foto = (nome: string) =>
   (Object.entries(fotoDany).find(([p]) => (p.split('/').pop() ?? '').replace(/\.[a-z]+$/i, '').replace(/^noindex-/, '') === nome)?.[1] as { default: ImageMetadata } | undefined)?.default;
 const fotoHero = foto('dany-hero');
 const fotoTv = foto('dany-tv');
+const fotoAllievi = foto('dany-allievi');
 const fotoPrima = foto('dany-prima');
 const fotoDopo = foto('dany-dopo');
 const casi = casiPronti(import.meta.glob('../../assets/casi-quiz/*.{png,jpg,jpeg,webp}', { eager: true }));
@@ -85,8 +86,22 @@ const turnstile = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
 
       <section class="ql-sec ql-sec--tint">
         <div class="qwrap">
-          <h2 class="ql-h2">{L.story.title}</h2>
-          {L.story.paragraphs.map((t) => <p class="ql-p">{t}</p>)}
+          <div class="ql-chi">
+            <div class="ql-chi__testo">
+              <h2 class="ql-h2">{L.story.title}</h2>
+              {L.story.paragraphs.map((t) => <p class="ql-p">{t}</p>)}
+            </div>
+            <figure class="ql-foto ql-chi__foto">
+              {
+                fotoAllievi ? (
+                  <Image src={fotoAllievi} alt={L.story.altTeam} widths={[480, 720, 960]} sizes="(min-width: 900px) 420px, 92vw" format="webp" quality={82} loading="lazy" class="ql-foto__img ql-chi__img" />
+                ) : (
+                  <div class="qph qph--photo"><span>Da completare: foto di Dany con i suoi allievi</span></div>
+                )
+              }
+              <figcaption>{L.story.team}</figcaption>
+            </figure>
+          </div>
           <div class="ql-storia">
             <figure class="ql-foto">
               {
