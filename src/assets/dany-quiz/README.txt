@@ -6,7 +6,7 @@ Foto di Dany per la pagina /quiz/. Salvale qui con questi nomi esatti (estension
   dany-allievi  la foto con i tuoi allievi, accanto al testo "Ci sono passato anche io."
   dany-palestra la foto in palestra da adolescente (sezione "Perché il lavoro generico spesso non basta")
   dany-scheda   la foto della scheda generica del personal trainer (stessa sezione)
-  dany-tv       l'immagine della puntata di Story Time (sezione "Ne ho parlato anche in radio.")
+  dany-tv       l'immagine della puntata di Story Time su Canale Italia (sezione "Ne ho parlato anche in tv.")
 
 Se manca un file, al suo posto compare il segnaposto "Da completare". Se non vuoi che una foto venga indicizzata
 dai motori di ricerca, aggiungi il prefisso "noindex-" al nome (per esempio noindex-dany-prima.jpg).
