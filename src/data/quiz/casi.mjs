@@ -3,23 +3,25 @@
 // src/assets/casi-quiz/<file>.<png|jpg|jpeg|webp>: vedi README.txt in quella cartella.
 // Regola (specifica 7.7 e 17.11): un caso esce solo se il file esiste E consensoFirmato è true. Nessun nome o foto senza
 // consenso scritto, nessuna testimonianza modificata. Solo il nome di battesimo.
+// Il 2026-10-19 Dany ha confermato in chat di avere il consenso scritto di tutti e quattro e che erano maggiorenni al momento delle foto.
+// Le schede escono appena i file sono in src/assets/casi-quiz/.
 // "alt" riporta il testo della scheda, per chi non vede l'immagine.
 
 export const CASI = [
   {
-    id: 'luca-12-mesi', file: 'luca-12-mesi', consensoFirmato: false,
+    id: 'luca-12-mesi', file: 'luca-12-mesi', consensoFirmato: true,
     alt: 'Luca, 12 mesi nel Percorso Alpha, foto prima e dopo. Punto di partenza: poca massa muscolare, pectus excavatum, grasso addominale. Risultato: addome visibile, postura migliorata, più sicurezza. 3 allenamenti a settimana da 40 minuti.',
   },
   {
-    id: 'marco-6-mesi', file: 'marco-6-mesi', consensoFirmato: false,
+    id: 'marco-6-mesi', file: 'marco-6-mesi', consensoFirmato: true,
     alt: 'Marco, 6 mesi nel Percorso Alpha, foto prima e dopo. Punto di partenza: poca massa muscolare, pectus excavatum, grasso addominale. Risultato: addome visibile, postura migliorata, più sicurezza. 3 allenamenti a settimana da 40 minuti.',
   },
   {
-    id: 'carlo-6-mesi', file: 'carlo-6-mesi', consensoFirmato: false,
+    id: 'carlo-6-mesi', file: 'carlo-6-mesi', consensoFirmato: true,
     alt: 'Carlo, 6 mesi nel Percorso Alpha, foto prima e dopo. Punto di partenza: poca massa muscolare, pectus excavatum, grasso addominale. Risultato: addome visibile, postura migliorata, più sicurezza. 3 allenamenti da 40 minuti a settimana.',
   },
   {
-    id: 'marco-12-mesi', file: 'marco-12-mesi', consensoFirmato: false,
+    id: 'marco-12-mesi', file: 'marco-12-mesi', consensoFirmato: true,
     alt: 'Marco, 12 mesi nel Percorso Alpha, foto prima e dopo. Punto di partenza: poca massa muscolare, pectus excavatum. Risultato: addome visibile, postura migliorata, più sicurezza. 3 allenamenti a settimana da 40 minuti.',
   },
 ];
