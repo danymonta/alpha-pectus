@@ -155,9 +155,12 @@
 /* Casi cliente: schede già impaginate, una per riga su telefono, in griglia da tablet */
 .ql-casi { display: grid; gap: var(--space-4); }
 .ql-casi__fig { margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: var(--r-2); background: var(--surface); }
-.ql-casi__img { display: block; width: 100%; height: auto; }
+.ql-casi__img { display: block; width: 100%; aspect-ratio: 5 / 4; height: auto; object-fit: cover; }
+.ql-casi__cap { display: grid; gap: var(--space-1); padding: var(--space-4); font-size: var(--fs-small); line-height: 1.45; color: var(--muted); }
+.ql-casi__cap strong { color: var(--text); font-size: 1.0625rem; margin-bottom: var(--space-1); }
+.ql-casi__cap b { color: var(--text); font-weight: 650; }
 @media (min-width: 640px) { .ql-casi { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (min-width: 1100px) { .ql-casi { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1000px) { .ql-casi { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
 /* Foto di Dany: hero e prima e dopo */
 .ql-hero__img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--r-2); }

@@ -6,7 +6,7 @@
 import Base from '../../layouts/Base.astro';
 import QuizFooter from '../../components/QuizFooter.astro';
 import { Image } from 'astro:assets';
-import { casiPronti } from '../../data/quiz/casi.mjs';
+import { casiPronti, titoloCaso, altCaso } from '../../data/quiz/casi.mjs';
 import '../../styles/quiz.css';
 import { LANDING } from '../../data/quiz/copy.mjs';
 
@@ -168,11 +168,17 @@ const turnstile = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
                 <div class="ql-casi" data-casi>
                   {casi.map((c) => (
                     <figure class="ql-casi__fig">
-                      <Image src={c.immagine} alt={c.alt} widths={[640, 960, 1280]} sizes="(min-width: 900px) 33vw, 92vw" format="webp" quality={82} loading="lazy" class="ql-casi__img" />
+                      <Image src={c.immagine} alt={altCaso(c)} widths={[480, 720, 960]} sizes="(min-width: 900px) 33vw, 92vw" format="webp" quality={84} loading="lazy" class="ql-casi__img" />
+                      <figcaption class="ql-casi__cap">
+                        <strong>{titoloCaso(c)}</strong>
+                        <span><b>Punto di partenza:</b> {c.partenza}.</span>
+                        <span><b>Risultato:</b> {c.risultato}.</span>
+                        <span>{c.allenamenti}.</span>
+                      </figcaption>
                     </figure>
                   ))}
                 </div>
-                <p class="ql-micro" style="margin-top:var(--space-4)">Casi individuali: i risultati variano da persona a persona. Foto pubblicate con il consenso scritto degli interessati.</p>
+                <p class="ql-micro" style="margin-top:var(--space-4)">Casi individuali: i risultati variano da persona a persona.</p>
               </>
             ) : (
               <>
