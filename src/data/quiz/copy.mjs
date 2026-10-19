@@ -97,7 +97,7 @@ export const LANDING = {
     no: [
       'Cerchi una soluzione rapida o un miracolo.',
       'Hai sintomi fisici importanti e non hai ancora visto un medico.',
-      'Pensi che un allenamento possa cambiare la struttura ossea.',
+      'Ti aspetti di cambiare la forma dell’osso: io lavoro su muscoli, postura e simmetria.',
     ],
   },
   faq: [
