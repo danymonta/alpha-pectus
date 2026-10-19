@@ -108,7 +108,7 @@ export const LANDING = {
     { q: 'Quanto tempo serve per vedere dei cambiamenti?', a: 'Dipende da punto di partenza, costanza e struttura fisica. Il quiz ti restituisce un intervallo. Il percorso minimo che propongo è di 6 mesi.' },
     { q: "Qual è l'investimento per il percorso?", a: 'Il percorso viene spiegato nella call di valutazione, dopo aver visto il tuo caso. Prima il quiz, poi un confronto personale. Non c\'è nessun obbligo.' },
     { q: 'Che fine fanno i miei dati?', a: 'Le risposte sulla salute servono solo a creare il tuo profilo e a prepararti la valutazione. Non vengono condivise con piattaforme pubblicitarie. Puoi chiedere la cancellazione in qualsiasi momento.' },
-    { q: 'Sono troppo giovane o troppo grande?', a: 'Il percorso è per adulti: dai 18 anni, senza limite massimo, purché non ci siano controindicazioni mediche.' },
+    { q: 'Sono troppo giovane o troppo grande?', a: 'Il percorso è per adulti: dai 18 anni, senza limite massimo, purché non ci siano controindicazioni mediche. Ho allievi dai 18 ai 50 anni: a qualsiasi età si può migliorare l’aspetto del petto scavato e il proprio fisico.' },
   ],
   footer: {
     disclaimer: 'Questo quiz ha scopo informativo ed educativo. Non costituisce diagnosi, consulto medico o promessa di risultato. In caso di sintomi o dubbi, rivolgiti a un medico.',
