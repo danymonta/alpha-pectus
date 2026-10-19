@@ -233,14 +233,21 @@ const turnstile = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
           }
           {
             messaggi.length > 0 && (
-              <div class="ql-msg">
-                <h3 class="ql-h3">{L.messaggi.title}</h3>
-                <div class="ql-msg__list">
+              <div class="ql-msg" data-slider>
+                <div class="ql-msg__head">
+                  <h3 class="ql-h3">{L.messaggi.title}</h3>
+                  <div class="ql-msg__nav">
+                    <button type="button" class="ql-msg__btn" data-slider-prev aria-label="Messaggio precedente"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                    <button type="button" class="ql-msg__btn" data-slider-next aria-label="Messaggio successivo"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                  </div>
+                </div>
+                <div class="ql-msg__track" data-slider-track tabindex="0" role="region" aria-label={L.messaggi.title}>
                   {messaggi.map((m) => (
-                    <Image src={m.immagine} alt={m.alt} widths={[480, 720, 1060]} sizes="(min-width: 760px) 680px, 92vw" format="webp" quality={86} loading="lazy" class="ql-msg__img" />
+                    <figure class="ql-msg__slide">
+                      <Image src={m.immagine} alt={m.alt} widths={[480, 720, 1060]} sizes="(min-width: 760px) 560px, 86vw" format="webp" quality={86} loading="lazy" class="ql-msg__img" />
+                    </figure>
                   ))}
                 </div>
-                <p class="ql-micro">{L.messaggi.note}</p>
               </div>
             )
           }
@@ -287,4 +294,5 @@ const turnstile = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
 
 <script>
   import '../../scripts/quiz.js';
+  import '../../scripts/slider.js';
 </script>
