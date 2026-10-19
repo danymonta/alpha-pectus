@@ -34,9 +34,11 @@
 .ql-box { padding: var(--space-5); border: 1px solid var(--line); border-radius: var(--r-2); background: var(--surface); }
 .ql-box h3 { font-family: var(--font-display); font-stretch: 82%; font-weight: 760; font-size: var(--fs-h3); margin-bottom: var(--space-3); }
 .ql-box ul { display: grid; gap: var(--space-3); padding: 0; list-style: none; line-height: 1.45; }
-.ql-box li { padding-left: var(--space-5); position: relative; }
-.ql-box li::before { content: ''; position: absolute; left: 0; top: .6em; width: 10px; height: 2px; background: var(--brand); }
-.ql-box--no li::before { background: var(--steel); }
+.ql-box li { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); padding: var(--space-3) 0; border-bottom: 1px solid var(--line); }
+.ql-box li:last-child { border-bottom: 0; }
+.ql-ico { flex: none; display: grid; place-items: center; width: 28px; height: 28px; margin-top: 1px; border-radius: 50%; color: #fff; }
+.ql-ico--si { background: var(--success); }
+.ql-ico--no { background: var(--verdict); }
 .ql-faq { display: grid; gap: var(--space-2); }
 .ql-faq details { border: 1px solid var(--line); border-radius: var(--r-2); background: var(--surface); }
 .ql-faq summary { cursor: pointer; list-style: none; padding: var(--space-4); min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); font-weight: 700; line-height: 1.35; }
