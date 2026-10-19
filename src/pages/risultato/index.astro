@@ -3,8 +3,12 @@
 // Contenuto personalizzato da src/scripts/risultato.js, che chiede i dati a /api/result. Noindex.
 import Base from '../../layouts/Base.astro';
 import QuizFooter from '../../components/QuizFooter.astro';
+import { Image } from 'astro:assets';
+import { casiPronti } from '../../data/quiz/casi.mjs';
 import '../../styles/quiz.css';
 import { WHATSAPP_NUMERO, CALENDARIO_URL } from '../../data/site.mjs';
+// Casi cliente (stessi della pagina /quiz/): lo script del risultato li sposta nel blocco "Persone che partivano da qui".
+const casi = casiPronti(import.meta.glob('../../assets/casi-quiz/*.{png,jpg,jpeg,webp}', { eager: true }));
 ---
 
 <Base title="Il tuo profilo | Percorso Alpha" description="Il tuo profilo Petto Scavato." path="/risultato/" noindex schema={false} bodyClass="qpage mode-paper">
@@ -16,6 +20,20 @@ import { WHATSAPP_NUMERO, CALENDARIO_URL } from '../../data/site.mjs';
   <main id="main" class="qr" data-result data-wa={WHATSAPP_NUMERO} data-cal={CALENDARIO_URL}>
     <div class="qwrap" data-out><p class="ql-micro" role="status">Carico il tuo profilo…</p></div>
   </main>
+  {
+    casi.length > 0 && (
+      <div hidden data-casi-modello>
+        <div class="ql-casi">
+          {casi.map((c) => (
+            <figure class="ql-casi__fig">
+              <Image src={c.immagine} alt={c.alt} widths={[640, 960]} sizes="(min-width: 640px) 46vw, 92vw" format="webp" quality={82} loading="lazy" class="ql-casi__img" />
+            </figure>
+          ))}
+        </div>
+        <p class="qr-disc">Casi individuali: i risultati variano da persona a persona. Foto pubblicate con il consenso scritto degli interessati.</p>
+      </div>
+    )
+  }
   <QuizFooter />
 </Base>
 

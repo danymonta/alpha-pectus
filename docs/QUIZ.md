@@ -28,12 +28,20 @@ La logica è in file di configurazione e funzioni pure, con test (`npm test`, in
 | `src/data/quiz/copy.mjs` | Tutto il copy (landing, profili, risultato, email) |
 | `src/data/site.mjs` | `WHATSAPP_NUMERO`, `CALENDARIO_URL` |
 
+## Foto e casi cliente
+
+Si inseriscono copiando i file in due cartelle, senza toccare il codice (istruzioni in `README.txt` dentro ciascuna):
+
+- `src/assets/dany-quiz/`: `dany-hero`, `dany-prima`, `dany-dopo` (foto in alto e sezione "Ci sono passato anche io.").
+- `src/assets/casi-quiz/`: le schede dei clienti `luca-12-mesi`, `marco-6-mesi`, `carlo-6-mesi`, `marco-12-mesi`. In `src/data/quiz/casi.mjs` metti `consensoFirmato: true` solo per chi ha firmato: senza consenso il caso non esce.
+
+Le immagini diventano WebP in più misure da sole. Il prefisso `noindex-` nel nome del file le esclude dai motori di ricerca.
+
 ## Da completare prima del lancio
 
 I segnaposto si vedono in pagina come "Da completare". Il controllo di lancio li ferma: `LANCIO=1 npm run check`.
 
-- Foto reale di Dany, foto prima e dopo, 3-5 casi cliente con consenso scritto (landing e risultato).
-- Due righe di Dany sulla sua storia.
+- Foto di Dany (hero, prima e dopo) e i casi cliente con consenso scritto: vedi la sezione "Foto e casi cliente".
 - Il tuo numero WhatsApp: `WHATSAPP_NUMERO` in `src/data/site.mjs` (formato internazionale, solo cifre, es. `393331234567`).
 - Link del calendario di prenotazione: `CALENDARIO_URL` (Cal.com o simile). Senza, il passo successivo è WhatsApp.
 - Guida PDF "I primi 3 passi per il tuo petto" (route `nurture`) e guida "Come parlare con il medico" (da far rivedere a un medico).

@@ -78,7 +78,9 @@ if (root) {
     if (!stop) blocks.push(card(HOW.title, h('ul', { class: 'qr-mirror' }, HOW.items.map((t) => h('li', {}, t)))));
 
     // 10. Prova sociale: segnaposto finché non ci sono casi con consenso
-    blocks.push(card(RESULT_UI.proofTitle, h('div', { class: 'qph', style: 'min-height:8rem' }, h('span', {}, LANDING.proof.placeholder))));
+    // Casi veri se ci sono (file e consenso firmato), altrimenti il segnaposto.
+    const modello = document.querySelector('[data-casi-modello]');
+    blocks.push(card(RESULT_UI.proofTitle, ...(modello ? [...modello.children].map((n) => n.cloneNode(true)) : [h('div', { class: 'qph', style: 'min-height:8rem' }, h('span', {}, LANDING.proof.placeholder))])));
 
     // 11. Riquadro medico
     const trigger = (levelName) => [...list(a.symptoms), a.medical].filter((v) => STEPS.some((s) => s.options.some((o) => o.value === v && o.effect.medical === levelName)));

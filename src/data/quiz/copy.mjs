@@ -39,12 +39,15 @@ export const LANDING = {
     ],
   },
   story: {
-    title: 'Dany ha il tuo stesso petto.',
+    title: 'Ci sono passato anche io.',
     paragraphs: [
-      'Dany Monta ha il pectus excavatum. Lo ha vissuto per anni e ha scelto di migliorarlo con allenamento a corpo libero, disciplina e un metodo, senza interventi. Oggi guida uomini che partono da dove è partito lui.',
-      'Dany non ti dice in anticipo cosa è possibile per te. Lo valuta sul tuo caso, con i tuoi dati.',
+      'Ho il pectus excavatum. Per anni mi sono nascosto e non mi sentivo sicuro del mio corpo. Poi ho scelto di migliorarlo con allenamento a corpo libero, disciplina e un metodo, senza interventi.',
+      'Oggi guido uomini che partono da dove sono partito io. Non ti dico in anticipo cosa è possibile per te: lo valuto sul tuo caso, con i tuoi dati.',
     ],
-    placeholder: 'Da completare: due righe reali di Dany sulla sua storia (età di inizio, momento più difficile, cosa è cambiato) e le foto prima e dopo autorizzate.',
+    before: 'Prima: mi nascondevo e non mi sentivo sicuro del mio corpo.',
+    after: 'Dopo: lo stesso petto, con un lavoro mirato su muscolo e postura.',
+    altBefore: 'Dany prima del percorso, a torso nudo.',
+    altAfter: 'Dany dopo il percorso, a torso nudo.',
   },
   receive: {
     title: 'Cosa ricevi dal quiz',
@@ -57,7 +60,7 @@ export const LANDING = {
   },
   clarity: {
     title: 'Chiarezza prima di tutto.',
-    text: "Non modifichiamo l'osso né la cassa toracica. Non sostituiamo un medico. Lavoriamo su ciò che si può costruire: muscolo, postura, simmetria visiva. I tempi cambiano da persona a persona e il risultato dipende dalla costanza.",
+    text: "Non modifico l'osso né la cassa toracica. Non sostituisco un medico. Lavoro su ciò che si può costruire: muscolo, postura, simmetria visiva. I tempi cambiano da persona a persona e il risultato dipende dalla costanza.",
   },
   proof: {
     title: 'Persone che partivano da qui.',
@@ -83,7 +86,7 @@ export const LANDING = {
     { q: "L'allenamento elimina il pectus excavatum?", a: "No. L'allenamento non modifica la struttura ossea. Può migliorare l'aspetto del petto costruendo muscolo e migliorando la postura. Quanto, dipende dal tuo caso." },
     { q: 'Devo andare in palestra?', a: 'No. Il percorso è a corpo libero e si svolge a casa, con circa 3 sessioni a settimana da circa 40 minuti.' },
     { q: 'Ho sintomi o sono stato operato. Posso fare il quiz?', a: "Puoi farlo. Se segnali sintomi importanti o un intervento recente, il risultato ti indicherà di sentire prima un medico. La tua sicurezza viene prima dell'estetica." },
-    { q: 'Quanto tempo serve per vedere dei cambiamenti?', a: 'Dipende da punto di partenza, costanza e struttura fisica. Il quiz ti restituisce un intervallo. Il percorso minimo che proponiamo è di 6 mesi.' },
+    { q: 'Quanto tempo serve per vedere dei cambiamenti?', a: 'Dipende da punto di partenza, costanza e struttura fisica. Il quiz ti restituisce un intervallo. Il percorso minimo che propongo è di 6 mesi.' },
     { q: "Qual è l'investimento per il percorso?", a: 'Il percorso viene spiegato nella call di valutazione, dopo aver visto il tuo caso. Prima il quiz, poi un confronto personale. Non c\'è nessun obbligo.' },
     { q: 'Che fine fanno i miei dati?', a: 'Le risposte sulla salute servono solo a creare il tuo profilo e a prepararti la valutazione. Non vengono condivise con piattaforme pubblicitarie. Puoi chiedere la cancellazione in qualsiasi momento.' },
     { q: 'Sono troppo giovane o troppo grande?', a: 'Il percorso è per adulti: dai 18 anni, senza limite massimo, purché non ci siano controindicazioni mediche.' },
@@ -100,7 +103,7 @@ export const QUIZ_UI = {
   // Scritto per la guida: la specifica non dà il testo della schermata di uscita sotto i 18 anni.
   exit: {
     title: 'Questo quiz è per adulti.',
-    text: 'Il percorso è pensato per chi ha almeno 18 anni. Se hai meno di 18 anni, parlane con un genitore e con il tuo medico. Non abbiamo salvato nessuna risposta.',
+    text: 'Il percorso è pensato per chi ha almeno 18 anni. Se hai meno di 18 anni, parlane con un genitore e con il tuo medico. Non ho salvato nessuna risposta.',
     back: 'Torna indietro',
   },
 };
@@ -144,7 +147,7 @@ export const MIRROR = {
   triggerSentence: 'Hai deciso di agire adesso perché: {x}.',
   // Forma discorsiva dei trigger: scritta qui, la specifica non la dà.
   trigger: {
-    tg_story: 'hai visto la storia di Dany e ti sei riconosciuto',
+    tg_story: 'hai visto la mia storia e ti sei riconosciuto',
     tg_event: "hai un evento vicino, come l'estate, una vacanza o una cerimonia",
     tg_relation: 'c\'è una relazione nuova o una persona importante',
     tg_photo: 'ti sei visto in una foto o in un video',
@@ -174,7 +177,7 @@ export const PRIORITIES = {
   hidden: ['Costruire una base di muscolo su petto e dorso con progressione misurabile.', 'Allenarti a casa, senza spogliatoi né giudizio.', 'Misurare i cambiamenti ogni mese per vederli con i tuoi dati.'],
   plateau: ['Riprogrammare gli esercizi per la zona centrale e alta del petto.', 'Rafforzare dorso e spalle per aprire la postura.', "Perfezionare l'esecuzione con feedback video settimanale."],
   posture: ['Riequilibrare spalle e dorso.', 'Lavoro unilaterale per bilanciare i due lati.', 'Costruire massa sul petto su una base più simmetrica.'],
-  prudent: ['Ottenere una valutazione medica.', 'Avere indicazioni scritte su cosa puoi fare.', 'Tornare da noi con il via libera.'],
+  prudent: ['Ottenere una valutazione medica.', 'Avere indicazioni scritte su cosa puoi fare.', 'Tornare da me con il via libera.'],
 };
 
 // Blocco 7: il tuo ostacolo (11.7).
@@ -190,23 +193,23 @@ export const BLOCKERS = {
 
 // Blocchi 8 e 9 (11.8, 11.9).
 export const NOT_PROMISED = {
-  title: 'Cosa non ti promettiamo',
-  text: "Non modifichiamo l'osso né la cassa toracica. Non sostituiamo un medico. Non garantiamo un risultato identico a quello di altri. Lavoriamo su muscolo, postura e simmetria, con costanza e controllo.",
+  title: 'Cosa non ti prometto',
+  text: "Non modifico l'osso né la cassa toracica. Non sostituisco un medico. Non garantisco un risultato identico a quello di altri. Lavoro su muscolo, postura e simmetria, con costanza e controllo.",
 };
 export const HOW = {
   title: 'Il Percorso Alpha, in tre pilastri.',
   items: [
     'Allenamento personalizzato a corpo libero, su app, con video di ogni esercizio, aggiornato ogni settimana.',
     'Alimentazione flessibile, costruita sulle tue abitudini, senza diete rigide.',
-    'Supporto e responsabilità: feedback video sulla tua esecuzione, gruppo diretto con Dany e il coach, check-in periodici per rivedere i progressi.',
+    'Supporto e responsabilità: feedback video sulla tua esecuzione, gruppo diretto con me e il coach, check-in periodici per rivedere i progressi.',
   ],
 };
 
 // Blocco 11: riquadro medico (11.10).
 export const MEDICAL = {
   cautionTitle: 'Prima di iniziare',
-  caution: 'Prima di iniziare: hai indicato {x}. Ti consigliamo di parlarne con il tuo medico e di condividere con lui il programma. Nella call di valutazione verificheremo insieme se e come procedere.',
-  stop: 'Hai indicato {x}. Prima di qualsiasi programma di allenamento ti consigliamo una valutazione medica. Non sostituiamo il parere di un medico. Quando hai il suo via libera, scrivici: riprendiamo da qui.',
+  caution: 'Prima di iniziare: hai indicato {x}. Ti consiglio di parlarne con il tuo medico e di condividere con lui il programma. Nella call di valutazione verificheremo insieme se e come procedere.',
+  stop: 'Hai indicato {x}. Prima di qualsiasi programma di allenamento ti consiglio una valutazione medica. Non sostituisco il parere di un medico. Quando hai il suo via libera, scrivimi: riprendiamo da qui.',
   // Etichette per comporre {x}: parafrasi in minuscolo dei sintomi e della storia.
   labels: {
     sy_breath: 'fiato corto negli sforzi', sy_fatigue: 'una stanchezza che arriva presto', sy_palp: 'palpitazioni', sy_pain: 'dolore al petto', sy_faint: 'vertigini o svenimenti',
@@ -216,12 +219,12 @@ export const MEDICAL = {
 
 // Blocco 12: CTA per route (11.11). WhatsApp: versione scritta per chi non ha ancora un calendario collegato.
 export const CTA = {
-  hot_call: { button: 'Prenota la tua call di valutazione', support: '30 minuti. Dany guarda il tuo caso e ti dice con chiarezza se e come puoi proseguire.' },
-  warm_call: { button: 'Prenota la tua call di valutazione', support: '30 minuti. Dany guarda il tuo caso e ti dice con chiarezza se e come puoi proseguire.', secondary: 'Preferisco ricevere il riepilogo via email' },
-  nurture: { button: 'Ricevi la guida', support: 'Da completare: guida PDF "I primi 3 passi per il tuo petto".', secondary: 'Preferisco parlarne con Dany' },
-  medical_first: { button: 'Ricevi il promemoria', support: 'Ti inviamo una guida per parlare con il medico e un messaggio tra 30 giorni.' },
-  whatsappButton: 'Scrivi a Dany su WhatsApp',
-  whatsappSupport: 'Il messaggio è già pronto: premi il bottone e invialo. Ti risponde Dany.',
+  hot_call: { button: 'Prenota la tua call di valutazione', support: '30 minuti. Guardo il tuo caso e ti dico con chiarezza se e come puoi proseguire.' },
+  warm_call: { button: 'Prenota la tua call di valutazione', support: '30 minuti. Guardo il tuo caso e ti dico con chiarezza se e come puoi proseguire.', secondary: 'Preferisco ricevere il riepilogo via email' },
+  nurture: { button: 'Ricevi la guida', support: 'Da completare: guida PDF "I primi 3 passi per il tuo petto".', secondary: 'Preferisco parlarne a voce' },
+  medical_first: { button: 'Ricevi il promemoria', support: 'Ti mando una guida per parlare con il medico e ti scrivo tra 30 giorni.' },
+  whatsappButton: 'Scrivimi su WhatsApp',
+  whatsappSupport: 'Il messaggio è già pronto: premi il bottone e invialo. Ti rispondo io.',
   summaryDone: 'Il riepilogo arriva sulla tua email.',
 };
 

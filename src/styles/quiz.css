@@ -150,3 +150,17 @@
 .qz-cc__nome { flex: 1; }
 .qz-cc__dial { color: var(--muted); font-variant-numeric: tabular-nums; }
 .qz-phone input { flex: 1; min-width: 0; }
+
+/* Casi cliente: schede già impaginate, una per riga su telefono, in griglia da tablet */
+.ql-casi { display: grid; gap: var(--space-4); }
+.ql-casi__fig { margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: var(--r-2); background: var(--surface); }
+.ql-casi__img { display: block; width: 100%; height: auto; }
+@media (min-width: 640px) { .ql-casi { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1100px) { .ql-casi { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Foto di Dany: hero e prima e dopo */
+.ql-hero__img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--r-2); }
+.ql-storia { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); margin-top: var(--space-5); max-width: 46rem; }
+.ql-foto { margin: 0; display: grid; gap: var(--space-2); align-content: start; }
+.ql-foto__img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; border-radius: var(--r-2); }
+.ql-foto figcaption { font-size: var(--fs-small); color: var(--muted); line-height: 1.4; }
