@@ -26,7 +26,7 @@ const fotoPrima = foto('dany-prima');
 const fotoDopo = foto('dany-dopo');
 const messaggi = Object.entries(import.meta.glob('../../assets/messaggi-quiz/*.{png,jpg,jpeg,webp}', { eager: true })).map(([percorso, m]) => ({
   immagine: m.default,
-  alt: L.messaggi.alt[percorso.split('/').pop().replace(/\.[^.]+$/, '').replace(/^noindex-/, '')] ?? L.messaggi.altGenerico,
+  alt: L.messaggi.alt[percorso.split('/').pop().replace(/\.[^.]+$/, '').replace(/^noindex-/, '').replace(/^\d+-/, '')] ?? L.messaggi.altGenerico,
 }));
 const casi = casiPronti(import.meta.glob('../../assets/casi-quiz/*.{png,jpg,jpeg,webp}', { eager: true }));
 // Icone di "Per chi è" e "Per chi non è": SVG, non emoji (le vieta la regola di copy del sito).
