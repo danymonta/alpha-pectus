@@ -94,6 +94,8 @@ export const LANDING = {
     title: 'Cosa mi scrivono.',
     alt: {
       'messaggio-costole': 'Messaggio di un allievo: si nota meno il petto scavato perché il petto è cresciuto e la sporgenza delle costole è meno evidente.',
+      'messaggio-bicipiti': 'Messaggio di un allievo: bicipiti più grossi, pettorali più alti e sodi, addome più compatto e meno grasso, maniglie dell’amore più piccole.',
+      'messaggio-definizione': 'Messaggio di un’allieva: vede più definiti petto e dorso e, quando si allena e riguarda i video, compaiono muscoli di cui non sapeva l’esistenza.',
       'messaggio-canottiera': 'Messaggio di un allievo: nascondeva il petto scavato con una canottiera sotto la maglietta e, da quando si allena, non l’ha più messa.',
     },
     altGenerico: 'Messaggio di una persona che segue il percorso.',
