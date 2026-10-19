@@ -90,6 +90,15 @@ export const LANDING = {
     placeholder: 'Da completare: da 3 a 5 casi reali con foto prima e dopo, mesi di percorso e una frase dell’interessato, solo con consenso scritto.',
     cases: 3,
   },
+  // Screenshot di messaggi ricevuti (cartella src/assets/messaggi-quiz/). Il testo alternativo serve a chi usa lo screen reader.
+  messaggi: {
+    title: 'Cosa mi scrivono.',
+    note: 'Messaggi di persone che hanno acconsentito a mostrarli, senza cognomi né numeri.',
+    alt: {
+      'messaggio-canottiera': 'Messaggio di un allievo: nascondeva il petto scavato con una canottiera sotto la maglietta e, da quando si allena, non l’ha più messa.',
+    },
+    altGenerico: 'Messaggio di una persona che segue il percorso.',
+  },
   forWho: {
     title: 'Per chi è',
     yes: [

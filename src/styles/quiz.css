@@ -199,3 +199,10 @@
 
 /* Numero di persone aiutate, sotto il pulsante in alto */
 .ql-prova { font-size: var(--fs-small); font-weight: 650; color: var(--text); }
+
+/* Screenshot di messaggi ricevuti */
+.ql-msg { margin-top: var(--space-7, 3rem); display: grid; gap: var(--space-3); justify-items: start; }
+.ql-h3 { font-family: var(--font-display); font-stretch: 82%; font-weight: 760; font-size: 1.5rem; line-height: 1.15; letter-spacing: -0.02em; }
+.ql-msg .ql-h3 { margin: 0; justify-self: start; }
+.ql-msg__list { display: grid; gap: var(--space-3); width: 100%; max-width: 680px; }
+.ql-msg__img { display: block; width: 100%; height: auto; border-radius: var(--r-2); border: 1px solid var(--line); }

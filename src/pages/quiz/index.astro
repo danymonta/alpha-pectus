@@ -24,6 +24,10 @@ const fotoScheda = foto('dany-scheda');
 const fotoAllievi = foto('dany-allievi');
 const fotoPrima = foto('dany-prima');
 const fotoDopo = foto('dany-dopo');
+const messaggi = Object.entries(import.meta.glob('../../assets/messaggi-quiz/*.{png,jpg,jpeg,webp}', { eager: true })).map(([percorso, m]) => ({
+  immagine: m.default,
+  alt: L.messaggi.alt[percorso.split('/').pop().replace(/\.[^.]+$/, '').replace(/^noindex-/, '')] ?? L.messaggi.altGenerico,
+}));
 const casi = casiPronti(import.meta.glob('../../assets/casi-quiz/*.{png,jpg,jpeg,webp}', { eager: true }));
 // Icone di "Per chi è" e "Per chi non è": SVG, non emoji (le vieta la regola di copy del sito).
 const SPUNTA = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M4 12.5l5.5 5.5L20 6.5"/></svg>';
@@ -226,6 +230,19 @@ const turnstile = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
                 </div>
                 <p class="ql-micro" style="margin-top:var(--space-4)">{L.proof.placeholder}</p>
               </>
+            )
+          }
+          {
+            messaggi.length > 0 && (
+              <div class="ql-msg">
+                <h3 class="ql-h3">{L.messaggi.title}</h3>
+                <div class="ql-msg__list">
+                  {messaggi.map((m) => (
+                    <Image src={m.immagine} alt={m.alt} widths={[480, 720, 1060]} sizes="(min-width: 760px) 680px, 92vw" format="webp" quality={86} loading="lazy" class="ql-msg__img" />
+                  ))}
+                </div>
+                <p class="ql-micro">{L.messaggi.note}</p>
+              </div>
             )
           }
         </div>
