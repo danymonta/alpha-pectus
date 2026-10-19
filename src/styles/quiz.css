@@ -163,7 +163,7 @@
 @media (min-width: 1000px) { .ql-casi { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
 /* Foto di Dany: hero e prima e dopo */
-.ql-hero__img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--r-2); }
+.ql-hero__img { display: block; width: 100%; height: auto; border-radius: var(--r-2); box-shadow: var(--shadow-card); }
 .ql-storia { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); margin-top: var(--space-5); max-width: 46rem; }
 .ql-foto { margin: 0; display: grid; gap: var(--space-2); align-content: start; }
 .ql-foto__img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; border-radius: var(--r-2); }
@@ -193,9 +193,9 @@
 .ql-palestra__testo { margin-top: var(--space-4); }
 
 /* Tag in alto a sinistra: foto profilo, gratis, tempo, nome */
-.ql-tag { display: inline-flex; align-items: center; gap: var(--space-3); max-width: 100%; margin-bottom: var(--space-4); padding: 6px var(--space-4) 6px 6px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; font-size: var(--fs-small); font-weight: 650; line-height: 1.3; box-shadow: var(--shadow-card); }
-.ql-tag:not(:has(img)) { padding-left: var(--space-4); }
-.ql-tag__img { flex: none; width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
+.ql-tag { display: inline-flex; align-items: center; gap: var(--space-2); max-width: 100%; margin-bottom: var(--space-3); padding: 3px var(--space-3) 3px 3px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; font-size: var(--fs-micro); font-weight: 650; line-height: 1.25; box-shadow: var(--shadow-card); }
+.ql-tag:not(:has(img)) { padding-left: var(--space-3); }
+.ql-tag__img { flex: none; width: 26px; height: 26px; border-radius: 50%; object-fit: cover; }
 
 /* Numero di persone aiutate, sotto il pulsante in alto */
 .ql-prova { font-size: var(--fs-small); font-weight: 650; color: var(--text); }
