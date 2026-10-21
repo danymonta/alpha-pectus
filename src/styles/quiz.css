@@ -28,6 +28,7 @@
 .ql-closing { margin-top: var(--space-5); font-weight: 700; font-size: var(--fs-lead); line-height: 1.35; }
 .ql-cards { display: grid; gap: var(--space-4); }
 .ql-card { padding: var(--space-5); background: var(--surface); border: 1px solid var(--line); border-top: 3px solid var(--brand); border-radius: var(--r-2); }
+.ql-card__n { display: grid; place-items: center; width: 2rem; height: 2rem; margin-bottom: var(--space-3); border-radius: 50%; background: var(--brand); color: #fff; font-weight: 750; font-size: 1rem; line-height: 1; }
 .ql-card h3 { font-family: var(--font-display); font-stretch: 82%; font-weight: 760; font-size: var(--fs-h3); line-height: var(--lh-h3); margin-bottom: var(--space-2); }
 .ql-card p { color: var(--muted); line-height: 1.5; }
 .ql-two { display: grid; gap: var(--space-5); }
