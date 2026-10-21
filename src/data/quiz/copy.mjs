@@ -292,8 +292,7 @@ export const FOLLOWUPS = {
       'Te lo lascio qui, così lo ritrovi quando hai due minuti: dentro ci sono la stima dei tempi e da cosa conviene partire nel tuo caso.',
     ],
     button: 'Rivedi il tuo profilo',
-    after: ['Se hai un dubbio, rispondi a questa mail o scrivimi su WhatsApp. Leggo tutto io.', 'Dany'],
-    secondary: 'Scrivimi su WhatsApp',
+    after: ['Se hai un dubbio, rispondi a questa mail. Leggo tutto io.', 'Dany'],
   },
   r2: {
     subject: '{nome}, ti mostro quello che ho fatto io',
@@ -303,8 +302,7 @@ export const FOLLOWUPS = {
     ],
     imageAlt: 'Il video: Ho nascosto il pectus excavatum con degli esercizi da casa',
     button: 'Guarda il video',
-    after: ['Guardalo con calma. Se dopo vuoi capire cosa ha senso nel tuo caso, scrivimi su WhatsApp e ti rispondo io.', 'Dany'],
-    secondary: 'Scrivimi su WhatsApp',
+    after: ['Guardalo con calma. Se dopo vuoi capire cosa ha senso nel tuo caso, rispondi a questa mail e ti scrivo io.', 'Dany'],
   },
   r3: {
     subject: '{nome}, un’ultima cosa',
@@ -315,7 +313,6 @@ export const FOLLOWUPS = {
     ],
     button: 'Scrivimi su WhatsApp',
     after: ['Se non è il momento, va bene lo stesso.', 'Dany'],
-    secondary: 'Rivedi il tuo profilo',
   },
   footer: 'Ricevi questa mail perché hai completato il quiz sul petto scavato e hai acconsentito a essere contattato da Dany Monta, Percorso Alpha.',
   unsubscribe: 'Annulla l’iscrizione',
