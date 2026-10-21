@@ -124,6 +124,8 @@ if (radice) {
   const lbl = (step, v) => step.options.find((o) => o.value === v)?.label ?? v;
   const risposta = (l, step) => [].concat(l.answers?.[step.id] ?? []).map((v) => lbl(step, v)).join(', ');
   const attr = (l, k) => l.attribution?.[k] ?? '';
+  const RICHIAMI = { r1: 'giorno 1', r2: 'giorno 3 (video)', r3: 'giorno 7' };
+  const richiami = (l) => Object.keys(RICHIAMI).filter((k) => l.followups?.[k]).map((k) => RICHIAMI[k]).join(', ');
 
   // Numero già in formato internazionale (+39...): solo cifre per wa.me.
   const linkWa = (l) => {
@@ -158,6 +160,8 @@ if (radice) {
     ['UTM content', 18, (l) => attr(l, 'utm_content')],
     ['Ref', 12, (l) => attr(l, 'ref')],
     ['Durata quiz (s)', 12, (l) => l.duration_sec ?? ''],
+    ['Email di richiamo inviate', 22, (l) => richiami(l)],
+    ['Iscrizione annullata', 16, (l) => (l.unsubscribed_at ? data(l.unsubscribed_at) : '')],
   ];
 
   const scaricaExcel = (righe) => {
@@ -244,7 +248,7 @@ if (radice) {
         h('section', {}, h('h3', {}, 'Le sue risposte'),
           h('dl', { class: 'lg-dl' }, ...STEPS.map((x) => riga(x.question.replace(/\?$/, ''), risposta(l, x))))),
         h('section', {}, h('h3', {}, 'Origine e consensi'),
-          h('dl', { class: 'lg-dl' }, riga('Origine', origine), riga('Clic', clic), riga('Consenso contatto', l.consents?.contact?.given || l.consents?.whatsapp?.given || l.consents?.marketingEmail?.given ? 'Sì' : 'No'))),
+          h('dl', { class: 'lg-dl' }, riga('Origine', origine), riga('Clic', clic), riga('Email di richiamo', l.unsubscribed_at ? 'Iscrizione annullata' : richiami(l) || (l.consents?.marketingEmail?.given ? 'Non ancora inviate' : 'Nessun consenso')), riga('Consenso contatto', l.consents?.contact?.given || l.consents?.whatsapp?.given || l.consents?.marketingEmail?.given ? 'Sì' : 'No'))),
         elimina);
       const velo = h('div', { class: 'lg-vel' });
       const tasto = (e) => { if (e.key === 'Escape') chiudiPannello(); };
