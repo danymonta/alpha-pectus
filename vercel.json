@@ -263,5 +263,16 @@
         }
       ]
     }
-  ]
+  ],
+  "crons": [
+    {
+      "path": "/api/richiami",
+      "schedule": "0 8 * * *"
+    }
+  ],
+  "functions": {
+    "api/richiami.js": {
+      "maxDuration": 60
+    }
+  }
 }

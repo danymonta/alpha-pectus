@@ -281,3 +281,50 @@ export const EMAILS = {
   E1: { subject: 'Il tuo profilo Petto Scavato', body: '{nome}, il tuo profilo è {profilo}. Trovi il riepilogo e la stima dei tempi qui: {link}. Se vuoi parlarne con me, prenota la call di valutazione. Dany' },
   M1: { subject: 'Prima la tua sicurezza', body: '{nome}, dalle tue risposte emerge che prima conviene una valutazione medica. Trovi il riepilogo qui: {link}. Quando hai il via libera, rispondi a questa mail e riprendiamo. Dany' },
 };
+
+// Email di richiamo (dopo 1, 3 e 7 giorni) a chi ha dato il consenso e non ha scritto su WhatsApp. Prima persona, nessuna promessa.
+// Segnaposto: {nome}, {profilo}. I tempi e le regole di invio stanno in src/lib/server/richiami.mjs.
+export const FOLLOWUPS = {
+  r1: {
+    subject: '{nome}, il tuo profilo ti aspetta',
+    paragraphs: [
+      'Ciao {nome}, ieri hai fatto il quiz e il tuo profilo è “{profilo}”.',
+      'Te lo lascio qui, così lo ritrovi quando hai due minuti: dentro ci sono la stima dei tempi e da cosa conviene partire nel tuo caso.',
+    ],
+    button: 'Rivedi il tuo profilo',
+    after: ['Se hai un dubbio, rispondi a questa mail o scrivimi su WhatsApp. Leggo tutto io.', 'Dany'],
+    secondary: 'Scrivimi su WhatsApp',
+  },
+  r2: {
+    subject: '{nome}, ti mostro quello che ho fatto io',
+    paragraphs: [
+      'Ciao {nome}, per anni ho nascosto il mio petto: la maglietta addosso al mare, le scuse in palestra, una scheda uguale a quella di tutti che non teneva conto di niente.',
+      'Ho preparato questo video per te. Ti mostro quello che ho fatto io, a casa e a corpo libero, per migliorare l’aspetto del mio petto.',
+    ],
+    imageAlt: 'Il video: Ho nascosto il pectus excavatum con degli esercizi da casa',
+    button: 'Guarda il video',
+    after: ['Guardalo con calma. Se dopo vuoi capire cosa ha senso nel tuo caso, scrivimi su WhatsApp e ti rispondo io.', 'Dany'],
+    secondary: 'Scrivimi su WhatsApp',
+  },
+  r3: {
+    subject: '{nome}, un’ultima cosa',
+    paragraphs: [
+      'Ciao {nome}, ti scrivo un’ultima volta su questo, poi smetto di ricordartelo.',
+      'Hai fatto il quiz perché il tuo petto ti occupa la testa più di quanto vorresti. Lo so, ci sono passato anche io. Non devi decidere niente oggi.',
+      'Se vuoi capire se il mio percorso ha senso per te, scrivimi su WhatsApp due righe sul tuo punto di partenza. Ti rispondo io di persona, senza impegno.',
+    ],
+    button: 'Scrivimi su WhatsApp',
+    after: ['Se non è il momento, va bene lo stesso.', 'Dany'],
+    secondary: 'Rivedi il tuo profilo',
+  },
+  footer: 'Ricevi questa mail perché hai completato il quiz sul petto scavato e hai acconsentito a essere contattato da Dany Monta, Percorso Alpha.',
+  unsubscribe: 'Annulla l’iscrizione',
+  unsubscribePage: {
+    title: 'Annullare l’iscrizione?',
+    text: 'Se confermi, non ti scrivo più queste email di richiamo.',
+    button: 'Conferma',
+    doneTitle: 'Fatto',
+    doneText: 'Non riceverai più queste email. Se cambi idea, puoi scrivermi quando vuoi.',
+    errorText: 'Il link non è valido o è scaduto.',
+  },
+};

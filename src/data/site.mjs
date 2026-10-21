@@ -114,5 +114,7 @@ export const BRAND = {
 // Vuoto = il bottone finale del quiz porta alla candidatura invece che a WhatsApp.
 export const WHATSAPP_NUMERO = '393779928819';
 export const QUIZ_URL = '/quiz/';
+// Video guida mandato nella seconda email di richiamo (dopo 3 giorni). La copertina è public/email/guida-video.jpg.
+export const VIDEO_GUIDA_URL = 'https://youtu.be/PS91l7OcuYE';
 // Link di prenotazione della call di valutazione (Cal.com o simile). Vuoto = il risultato propone WhatsApp al posto del calendario.
 export const CALENDARIO_URL = '';

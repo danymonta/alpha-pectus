@@ -60,6 +60,16 @@ Stack: la specifica propone Vite e React; qui è Astro e JavaScript puro, come i
 
 Non ancora fatto (Fase 2 della specifica): sequenze email E2-E5, M2 e promemoria call, Conversions API di Meta, dashboard di funnel, webhook del calendario. La cancellazione dei dati si chiede per email (come scritto in `/privacy/`) e si esegue dal pulsante Elimina del portale.
 
+## Email di richiamo
+
+A chi ha fatto il quiz, ha spuntato il consenso al contatto e **non ti ha scritto**, partono 3 email in prima persona: dopo 1 giorno (il profilo), dopo 3 giorni (il video guida con la copertina) e dopo 7 giorni (ultimo invito su WhatsApp). Ogni email ha il link per annullare l'iscrizione (`/api/disiscrivi`), che chiede conferma prima di salvare.
+
+- **Si fermano da sole** se: non c'è il consenso, la persona annulla l'iscrizione, la route è "medico prima", cambi lo stato del lead da "nuovo" (lo hai contattato), oppure ha cliccato WhatsApp o Prenota.
+- **Un solo giro al giorno**, alle 08:00 UTC (10:00 in Italia d'estate), con Vercel Cron: `/api/richiami`, definito in `vercel.json`. Un passo in ritardo di oltre 3 giorni non parte più, così i lead vecchi non ricevono raffiche.
+- **Testi**: `FOLLOWUPS` in `src/data/quiz/copy.mjs`. Regole e tempi: `src/lib/server/richiami.mjs`. Video: `VIDEO_GUIDA_URL` in `src/data/site.mjs`; copertina: `public/email/guida-video.jpg`.
+- **Anteprima**: `node scripts/anteprima-richiami.mjs <cartella>` scrive le tre email come pagine HTML.
+- **Prima di accenderle**: applica `supabase/migrations/20261021000000_richiami.sql` (SQL Editor di Supabase), aggiungi `CRON_SECRET` su Vercel, elimina i lead di prova dal portale e poi imposta `RICHIAMI_ATTIVI=si`. Nel portale, nel pannello di ogni lead, vedi quali richiami sono partiti.
+
 ## Sicurezza di `/quiz-leads/`
 
 Il controllo non è nella pagina (che è una cornice vuota) ma nel database:
@@ -102,6 +112,8 @@ Il sito è pronto per entrambi: `vercel.json` (generato da `public/_headers`, `p
 | `RESEND_API_KEY`, `MAIL_FROM`, `MAIL_DANY` | già usate dalla candidatura | email al lead e avviso a te |
 | `SHEETS_URL`, `SHEETS_TOKEN` | già usate dalla candidatura | foglio Google dei lead |
 | `TURNSTILE_SECRET`, `PUBLIC_TURNSTILE_SITE_KEY` | da Cloudflare Turnstile | facoltative |
+| `CRON_SECRET` | stringa casuale lunga | **segreto**: Vercel lo manda al giro giornaliero delle email di richiamo (vedi sotto). Va creato con questo nome |
+| `RICHIAMI_ATTIVI` | `si` | accende le email di richiamo. Con qualsiasi altro valore (o se manca) non parte niente |
 | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | dal bot creato con @BotFather | facoltative: avviso istantaneo su Telegram a ogni lead (solo nome, temperatura e punteggio, con pulsante che apre la lista). Il token è un **segreto** |
 | `N8N_WEBHOOK_URL`, `N8N_HMAC_SECRET` | facoltative | |
 

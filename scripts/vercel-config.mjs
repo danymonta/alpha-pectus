@@ -58,6 +58,9 @@ export function costruisci() {
     redirects: [...varianti, ...reindirizzamenti(leggi('public/_redirects'))],
     rewrites,
     headers,
+    // Email di richiamo: una volta al giorno alle 08:00 UTC (10:00 in Italia d'estate, 09:00 d'inverno). Il piano gratuito ammette un solo giro al giorno.
+    crons: [{ path: '/api/richiami', schedule: '0 8 * * *' }],
+    functions: { 'api/richiami.js': { maxDuration: 60 } },
   };
 }
 
