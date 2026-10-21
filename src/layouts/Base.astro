@@ -3,7 +3,7 @@
 // La landing (/ e /v/<slug>/) usa i valori di default. 404 e privacy passano title, description, path, noindex, schema.
 import '../styles/tokens.css';
 import '../styles/global.css';
-import archivoUrl from '../assets/fonts/archivo-latin-inst.woff2?url';
+import montserratUrl from '../assets/fonts/montserrat-latin-wght-normal.woff2?url';
 import Analytics from '../components/Analytics.astro';
 import { SITE_URL, SITE_NAME, SEO } from '../data/site.mjs';
 import { grafoJsonLd, jsonLdString } from '../lib/schema';
@@ -79,7 +79,7 @@ const ldJson = schema ? jsonLdString(grafoJsonLd()) : null;
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
-    <link rel="preload" href={archivoUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={montserratUrl} as="font" type="font/woff2" crossorigin />
     {ldJson && <script type="application/ld+json" set:html={ldJson} />}
     <slot name="head" />
   </head>
