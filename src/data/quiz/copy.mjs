@@ -67,7 +67,7 @@ export const LANDING = {
   // Riprova sociale: apparizione a Story Time su Canale Italia (come mostra l'immagine della puntata).
   media: {
     title: 'Ne ho parlato anche in tv.',
-    text: 'Ho raccontato la mia storia a Story Time, su Canale Italia.',
+    text: 'Ho raccontato la mia storia a Story Time, su Canale Italia, e ho parlato del mio metodo di allenamento a corpo libero per migliorare l’aspetto del pectus excavatum.',
     alt: 'Daniele Montagnolo, fitness coach online, ospite di Story Time su Canale Italia.',
     placeholder: 'Da completare: immagine della puntata di Story Time su Canale Italia.',
   },

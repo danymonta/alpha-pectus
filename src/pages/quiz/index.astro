@@ -243,7 +243,7 @@ const turnstile = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
       <section class="ql-sec">
         <div class="qwrap">
           <h2 class="ql-h2">{L.receive.title}</h2>
-          <div class="ql-cards">{L.receive.cards.map((c) => <article class="ql-card"><h3>{c.title}</h3><p>{c.text}</p></article>)}</div>
+          <div class="ql-cards">{L.receive.cards.map((c, i) => <article class="ql-card"><span class="ql-card__n" aria-hidden="true">{i + 1}</span><h3>{c.title}</h3><p>{c.text}</p></article>)}</div>
         </div>
       </section>
 
