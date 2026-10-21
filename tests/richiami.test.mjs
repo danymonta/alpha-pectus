@@ -49,8 +49,13 @@ test('richiami: le tre email rispettano le regole del copy e hanno i link giusti
   }
   const r2 = emailRichiamo('r2', lead(), t);
   assert.ok(r2.html.includes('href="https://youtu.be/PS91l7OcuYE"') && r2.html.includes('/email/guida-video.jpg'), 'video e copertina');
-  assert.ok(emailRichiamo('r1', lead(), t).html.includes('/risultato/?t=TOK'));
-  assert.ok(emailRichiamo('r3', lead(), t).html.includes('https://wa.me/393779928819?text='));
+  // Una sola azione per email: profilo, video, WhatsApp.
+  const r1 = emailRichiamo('r1', lead(), t);
+  const r3 = emailRichiamo('r3', lead(), t);
+  assert.ok(r1.html.includes('/risultato/?t=TOK') && !r1.html.includes('wa.me') && !r1.html.includes('youtu'));
+  assert.ok(!r2.html.includes('wa.me') && !r2.html.includes('/risultato/'));
+  assert.ok(r3.html.includes('https://wa.me/393779928819?text=') && !r3.html.includes('/risultato/') && !r3.html.includes('youtu'));
+  for (const m of [r1, r2, r3]) assert.equal((m.html.match(/display:inline-block/g) ?? []).length, 1, 'un solo pulsante');
 });
 
 const chiamaCron = (env, intestazione, query = '') => cron({ request: new Request(`https://x/api/richiami${query}`, { headers: intestazione ? { authorization: intestazione } : {} }), env });

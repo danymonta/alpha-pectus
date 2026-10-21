@@ -42,18 +42,16 @@ export function emailRichiamo(passoId, lead, { tokenRisultato, tokenDisiscrizion
   const wa = linkWhatsApp(nome, profilo);
   const disiscrivi = `${SITO}/api/disiscrivi?t=${tokenDisiscrizione}`;
   const bottone = passoId === 'r1' ? risultato : passoId === 'r2' ? VIDEO_GUIDA_URL : wa;
-  const secondario = passoId === 'r3' ? risultato : wa;
   const paragrafi = c.paragraphs.map(riempi);
   const dopo = c.after.map(riempi);
   const html = frame(paragrafi, {
     link: bottone,
     linkLabel: c.button,
     image: passoId === 'r2' ? { src: `${SITO}/email/guida-video.jpg`, href: VIDEO_GUIDA_URL, alt: c.imageAlt } : undefined,
-    secondary: { href: secondario, label: c.secondary },
     after: dopo,
     footer: { text: FOLLOWUPS.footer, href: disiscrivi, label: FOLLOWUPS.unsubscribe },
   });
-  const text = [...paragrafi, `${c.button}: ${bottone}`, `${c.secondary}: ${secondario}`, ...dopo, '', FOLLOWUPS.footer, `${FOLLOWUPS.unsubscribe}: ${disiscrivi}`].join('\n\n');
+  const text = [...paragrafi, `${c.button}: ${bottone}`, ...dopo, '', FOLLOWUPS.footer, `${FOLLOWUPS.unsubscribe}: ${disiscrivi}`].join('\n\n');
   return {
     subject: riempi(c.subject), html, text,
     headers: { 'List-Unsubscribe': `<${disiscrivi}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' },
