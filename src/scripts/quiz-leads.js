@@ -116,6 +116,7 @@ if (radice) {
 
   // ---------- Dati ----------
   const STATI = ['nuovo', 'contattato', 'call prenotata', 'call fatta', 'cliente', 'perso', 'medico prima'];
+  const TEMP = { hot_call: 'Caldo', warm_call: 'Tiepido', nurture: 'Freddo', medical_first: 'Medico prima' };
   const ROUTES = { hot_call: 'Caldo (call)', warm_call: 'Tiepido (call)', nurture: 'Nurture', medical_first: 'Medico prima' };
   const PROFILI = { hidden: 'Il Nascosto', plateau: 'Allenato senza risultati', posture: 'Postura e Simmetria', prudent: 'Il Prudente' };
   const MEDICO = { none: 'Nessuno', caution: 'Cautela', stop: 'Stop' };
@@ -168,10 +169,21 @@ if (radice) {
   };
 
   // ---------- Tabella ----------
+  const ICONA_WA = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2c-1.5 0-3-.4-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.700 6.700 0 0 1-3.300-2.900c-.2-.4.2-.4.700-1.300.1-.2 0-.3 0-.5l-.8-1.800c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.300-.2.300-.9.900-.9 2.200s.9 2.600 1.100 2.800c.1.200 1.800 2.800 4.400 3.900 1.600.7 2.300.8 3.100.6.500-.1 1.500-.6 1.700-1.200.2-.6.2-1.100.2-1.200-.1-.1-.3-.2-.5-.3Z"/></svg>';
+  const giorno = (d) => d.toLocaleDateString('sv-SE', { timeZone: 'Europe/Rome' });
+  const quando = (iso) => {
+    if (!iso) return '';
+    const d = new Date(iso);
+    const ora = d.toLocaleTimeString('it-IT', { timeZone: 'Europe/Rome', hour: '2-digit', minute: '2-digit' });
+    const oggi = new Date();
+    if (giorno(d) === giorno(oggi)) return `Oggi ${ora}`;
+    if (giorno(d) === giorno(new Date(oggi.getTime() - 86400000))) return `Ieri ${ora}`;
+    return d.toLocaleDateString('it-IT', { timeZone: 'Europe/Rome', day: 'numeric', month: 'short' });
+  };
+
   const mostraTabella = async (s) => {
     let tutti = [];
-    const f = { cerca: '', route: '', stato: '', daContattare: false };
-    const corpo = h('div');
+    const f = { cerca: '', filtro: 'tutti' };
     vista.replaceChildren(h('p', { class: 'lg-vuoto' }, 'Carico i lead…'));
     try {
       tutti = (await rest('quiz_leads?select=*&order=created_at.desc&limit=5000')) || [];
@@ -179,82 +191,123 @@ if (radice) {
       return mostraLogin('Sessione scaduta. Entra di nuovo.');
     }
 
-    const filtrati = () => tutti.filter((l) => {
-      if (f.route && l.route !== f.route) return false;
-      if (f.stato && l.status !== f.stato) return false;
-      if (f.daContattare && l.status !== 'nuovo') return false;
-      if (f.cerca && !`${l.first_name} ${l.email} ${l.whatsapp} ${l.instagram ?? ''}`.toLowerCase().includes(f.cerca.toLowerCase())) return false;
-      return true;
-    });
+    const FILTRI = [
+      ['tutti', 'Tutti', () => true],
+      ['nuovi', 'Da contattare', (l) => l.status === 'nuovo'],
+      ['caldi', 'Caldi', (l) => l.route === 'hot_call'],
+      ['tiepidi', 'Tiepidi', (l) => l.route === 'warm_call'],
+    ];
+    const passaFiltro = (l) => FILTRI.find((x) => x[0] === f.filtro)[2](l);
+    const filtrati = () => tutti.filter((l) => passaFiltro(l) && (!f.cerca || `${l.first_name} ${l.email} ${l.whatsapp} ${l.instagram ?? ''}`.toLowerCase().includes(f.cerca.toLowerCase())));
     const salvaCampo = async (l, campi) => {
       await rest(`quiz_leads?id=eq.${l.id}`, { method: 'PATCH', body: JSON.stringify(campi), headers: { Prefer: 'return=minimal' } });
       Object.assign(l, campi);
     };
 
-    const disegna = () => {
-      const righe = filtrati();
-      const stat = h('div', { class: 'lg-stat' },
-        ...[['Lead totali', tutti.length], ['Caldi', tutti.filter((l) => l.route === 'hot_call').length], ['Da contattare', tutti.filter((l) => l.status === 'nuovo').length], ['Hanno cliccato', tutti.filter((l) => l.clicked_book || l.clicked_whatsapp).length]]
-          .map(([k, v]) => h('div', {}, h('b', {}, String(v)), h('span', {}, k))));
+    // ----- Pannello di dettaglio -----
+    let chiudiPannello = () => {};
+    const apri = (l, sorgente) => {
+      chiudiPannello();
+      const wa = linkWa(l);
+      const stato = h('select', { class: 'lg-in', 'aria-label': 'Stato' }, STATI.map((x) => h('option', { value: x, selected: l.status === x }, x)));
+      const prossimo = h('input', { class: 'lg-in', type: 'date', value: l.next_contact_at || '', 'aria-label': 'Prossimo contatto' });
+      const salvato = h('div', { class: 'lg-salvato', role: 'status' });
+      const segna = async (campi, annulla) => {
+        try { await salvaCampo(l, campi); salvato.textContent = 'Salvato'; setTimeout(() => { salvato.textContent = ''; }, 1800); aggiorna(); } catch { salvato.textContent = ''; annulla?.(); alert('Non sono riuscito a salvare. Riprova.'); }
+      };
+      stato.addEventListener('change', () => segna({ status: stato.value }, () => { stato.value = l.status; }));
+      prossimo.addEventListener('change', () => segna({ next_contact_at: prossimo.value || null }));
+      const nota = h('textarea', { class: 'lg-nota', 'aria-label': 'Note', placeholder: 'Scrivi qui cosa vi siete detti…' });
+      nota.value = l.notes || '';
+      nota.addEventListener('change', () => segna({ notes: nota.value.trim() || null }));
 
-      const intest = ['Data', 'Contatto', 'Route', 'Punteggio', 'Profilo', 'Medico', 'Stato', 'Prossimo contatto', 'Note', 'Click', 'Consensi', ...STEPS.map((x) => x.question.replace(/\?$/, '')), 'Origine', ''];
-      const tab = h('table', { class: 'lg-tab' },
-        h('thead', {}, h('tr', {}, intest.map((t, i) => h('th', { class: i === 1 ? 'fisso' : '' }, t)))),
+      const riga = (k, v) => (v === '' || v == null ? null : h('div', {}, h('dt', {}, k), h('dd', {}, v)));
+      const clic = [l.clicked_book ? `Ha cliccato Prenota (${data(l.book_at)})` : '', l.clicked_whatsapp ? `Ha cliccato WhatsApp (${data(l.whatsapp_at)})` : ''].filter(Boolean).join(' · ');
+      const origine = [attr(l, 'utm_source'), attr(l, 'utm_campaign'), attr(l, 'utm_content'), attr(l, 'ref')].filter(Boolean).join(' / ');
+      const chiudi = h('button', { class: 'lg-x', type: 'button', 'aria-label': 'Chiudi' }, '×');
+      const elimina = h('button', { class: 'lg-del', type: 'button', onclick: async () => {
+        if (!confirm(`Eliminare definitivamente ${l.first_name} (${l.email})? Non si può annullare.`)) return;
+        try { await rest(`quiz_leads?id=eq.${l.id}`, { method: 'DELETE', headers: { Prefer: 'return=minimal' } }); tutti = tutti.filter((x) => x.id !== l.id); chiudiPannello(); aggiorna(); } catch { alert('Non è stato possibile eliminare il lead.'); }
+      } }, 'Elimina questo lead');
+
+      const pannello = h('aside', { class: 'lg-pan', role: 'dialog', 'aria-modal': 'true', 'aria-label': `Dettaglio di ${l.first_name}` },
+        h('div', { class: 'lg-pan__top' },
+          h('div', {}, h('h2', {}, l.first_name), h('p', {}, `Ricevuto ${data(l.created_at)}`)), chiudi),
+        h('section', {},
+          wa ? h('a', { class: 'lg-btn lg-btn--wa', href: wa, target: '_blank', rel: 'noopener' }, h('span', { html: ICONA_WA, style: 'display:inline-grid;width:18px;height:18px' }), 'Scrivigli su WhatsApp') : null,
+          h('dl', { class: 'lg-dl' }, riga('WhatsApp', l.whatsapp), riga('Email', l.email), riga('Instagram', l.instagram))),
+        h('section', {}, h('h3', {}, 'Come stai seguendo il lead'),
+          h('div', { class: 'lg-campi' }, h('label', {}, 'Stato', stato), h('label', {}, 'Prossimo contatto', prossimo)),
+          nota, salvato),
+        h('section', {}, h('h3', {}, 'Risultato del quiz'),
+          h('dl', { class: 'lg-dl' }, riga('Esito', TEMP[l.route] || l.route), riga('Punteggio', l.score != null ? `${l.score}/100` : ''), riga('Profilo', PROFILI[l.profile] || l.profile), riga('Livello medico', MEDICO[l.medical_level] || ''), riga('Tempi stimati', l.result?.range ? `${l.result.range.join('-')} settimane` : ''), riga('Durata del quiz', l.duration_sec != null ? `${l.duration_sec} secondi` : ''))),
+        h('section', {}, h('h3', {}, 'Le sue risposte'),
+          h('dl', { class: 'lg-dl' }, ...STEPS.map((x) => riga(x.question.replace(/\?$/, ''), risposta(l, x))))),
+        h('section', {}, h('h3', {}, 'Origine e consensi'),
+          h('dl', { class: 'lg-dl' }, riga('Origine', origine), riga('Clic', clic), riga('Consenso contatto', l.consents?.contact?.given || l.consents?.whatsapp?.given || l.consents?.marketingEmail?.given ? 'Sì' : 'No'))),
+        elimina);
+      const velo = h('div', { class: 'lg-vel' });
+      const tasto = (e) => { if (e.key === 'Escape') chiudiPannello(); };
+      chiudiPannello = () => {
+        velo.remove(); pannello.remove(); document.removeEventListener('keydown', tasto); document.body.style.overflow = '';
+        chiudiPannello = () => {};
+        sorgente?.focus?.();
+      };
+      velo.addEventListener('click', () => chiudiPannello());
+      chiudi.addEventListener('click', () => chiudiPannello());
+      document.addEventListener('keydown', tasto);
+      document.body.style.overflow = 'hidden';
+      document.body.append(velo, pannello);
+      chiudi.focus();
+    };
+
+    // ----- Lista -----
+    const lista = h('div');
+    const pills = FILTRI.map(([id, nome]) => h('button', { class: 'lg-pill', type: 'button', onclick: () => { f.filtro = id; aggiorna(); } }, nome, h('b', {}, '')));
+    const disegnaLista = () => {
+      const righe = filtrati();
+      excel.textContent = `Excel (${righe.length})`;
+      excel.disabled = !righe.length;
+      if (!righe.length) {
+        lista.replaceChildren(h('p', { class: 'lg-vuoto' }, tutti.length ? 'Nessun lead con questi filtri.' : 'Ancora nessun lead. Appena qualcuno completa il quiz, lo vedi qui.'));
+        return;
+      }
+      lista.replaceChildren(h('table', { class: 'lg-tab' },
+        h('thead', {}, h('tr', {}, h('th', {}, 'Lead'), h('th', { class: 'no-mob' }, 'Esito'), h('th', { class: 'no-mob' }, 'Profilo'), h('th', { class: 'no-mob' }, 'Ricevuto'), h('th', { class: 'no-mob' }, 'Stato'), h('th', { class: 'dx' }, ''))),
         h('tbody', {}, righe.map((l) => {
           const wa = linkWa(l);
-          const stato = h('select', { class: 'lg-in lg-sel', 'aria-label': 'Stato' }, STATI.map((x) => h('option', { value: x, selected: l.status === x }, x)));
-          stato.addEventListener('change', () => salvaCampo(l, { status: stato.value }).catch(() => { stato.value = l.status; }));
-          const prossimo = h('input', { class: 'lg-in lg-date', type: 'date', value: l.next_contact_at || '', 'aria-label': 'Prossimo contatto' });
-          prossimo.addEventListener('change', () => salvaCampo(l, { next_contact_at: prossimo.value || null }).catch(() => {}));
-          const nota = h('textarea', { class: 'lg-nota', rows: '1', 'aria-label': 'Note' });
-          nota.value = l.notes || '';
-          nota.addEventListener('change', () => salvaCampo(l, { notes: nota.value.trim() || null }).catch(() => {}));
-          const elimina = h('button', { class: 'lg-btn lg-btn--rosso', type: 'button', onclick: async () => {
-            if (!confirm(`Eliminare definitivamente ${l.first_name} (${l.email})? Non si può annullare.`)) return;
-            try { await rest(`quiz_leads?id=eq.${l.id}`, { method: 'DELETE', headers: { Prefer: 'return=minimal' } }); tutti = tutti.filter((x) => x.id !== l.id); disegna(); } catch { alert('Non è stato possibile eliminare il lead.'); }
-          } }, 'Elimina');
-          return h('tr', {},
-            h('td', { class: 'n' }, data(l.created_at)),
-            h('td', { class: 'fisso n' },
-              h('div', { class: 'lg-nome' }, l.first_name),
-              h('div', { class: 'lg-sub' }, l.whatsapp), h('div', { class: 'lg-sub' }, l.email), l.instagram ? h('div', { class: 'lg-sub' }, l.instagram) : null,
-              wa ? h('div', {}, h('a', { class: 'lg-wa', href: wa, target: '_blank', rel: 'noopener' }, 'Scrivi su WhatsApp')) : null),
-            h('td', {}, h('span', { class: `lg-tag lg-tag--${l.route}` }, ROUTES[l.route] || l.route)),
-            h('td', {}, l.score != null ? `${l.score}/100` : ''),
-            h('td', {}, PROFILI[l.profile] || l.profile),
-            h('td', {}, h('span', { class: `lg-tag${l.medical_level === 'stop' ? ' lg-tag--stop' : ''}` }, MEDICO[l.medical_level] || '')),
-            h('td', {}, stato), h('td', {}, prossimo), h('td', {}, nota),
-            h('td', {}, l.clicked_book || l.clicked_whatsapp ? h('div', {}, l.clicked_book ? h('div', { class: 'lg-tag lg-tag--wa' }, `Prenota ${data(l.book_at)}`) : null, l.clicked_whatsapp ? h('div', { class: 'lg-tag lg-tag--wa' }, `WhatsApp ${data(l.whatsapp_at)}`) : null) : '-'),
-            h('td', { class: 'w' }, `Email marketing: ${l.consents?.marketingEmail?.given ? 'sì' : 'no'}. WhatsApp: ${l.consents?.whatsapp?.given ? 'sì' : 'no'}.`),
-            ...STEPS.map((x) => h('td', { class: x.type === 'multi' ? 'w' : '' }, risposta(l, x))),
-            h('td', { class: 'w' }, [attr(l, 'utm_source'), attr(l, 'utm_campaign'), attr(l, 'utm_content'), attr(l, 'ref')].filter(Boolean).join(' / ')),
-            h('td', {}, elimina));
-        })));
-
-      const filtri = h('div', { class: 'lg-filtri' },
-        h('input', { class: 'lg-in', type: 'search', placeholder: 'Cerca nome, email, telefono o Instagram', value: f.cerca, 'aria-label': 'Cerca', oninput: (e) => { f.cerca = e.target.value; ridisegna(); } }),
-        h('select', { class: 'lg-in', 'aria-label': 'Route', onchange: (e) => { f.route = e.target.value; ridisegna(); } }, h('option', { value: '' }, 'Ogni route'), ...Object.entries(ROUTES).map(([k, v]) => h('option', { value: k, selected: f.route === k }, v))),
-        h('select', { class: 'lg-in', 'aria-label': 'Stato', onchange: (e) => { f.stato = e.target.value; ridisegna(); } }, h('option', { value: '' }, 'Ogni stato'), ...STATI.map((k) => h('option', { value: k, selected: f.stato === k }, k))),
-        h('label', { class: 'lg-chk' }, h('input', { type: 'checkbox', checked: f.daContattare, onchange: (e) => { f.daContattare = e.target.checked; ridisegna(); } }), 'Solo nuovi'));
-
-      corpo.replaceChildren(stat, filtri, righe.length ? h('div', { class: 'lg-scroll' }, tab) : h('p', { class: 'lg-vuoto' }, tutti.length ? 'Nessun lead con questi filtri.' : 'Ancora nessun lead. Appena qualcuno completa il quiz, lo vedi qui.'));
-      excel.textContent = `Scarica Excel (${righe.length})`;
-      excel.disabled = !righe.length;
+          const stato = h('select', { class: 'lg-sel', 'aria-label': `Stato di ${l.first_name}` }, STATI.map((x) => h('option', { value: x, selected: l.status === x }, x)));
+          stato.addEventListener('click', (e) => e.stopPropagation());
+          stato.addEventListener('change', async () => {
+            try { await salvaCampo(l, { status: stato.value }); aggiorna(); } catch { stato.value = l.status; }
+          });
+          const esito = () => h('span', { class: `lg-tag lg-tag--${l.route}` }, `${TEMP[l.route] || l.route}${l.score != null ? ` · ${l.score}` : ''}`);
+          const tr = h('tr', { tabindex: '0', 'aria-label': `Apri ${l.first_name}` },
+            h('td', {}, h('div', { class: 'lg-nome' }, h('i', { class: l.status === 'nuovo' ? '' : 'letto', 'aria-hidden': 'true' }), l.first_name), h('div', { class: 'lg-sub' }, l.email), h('div', { class: 'lg-sub solo-mob' }, esito(), ` ${quando(l.created_at)}`)),
+            h('td', { class: 'no-mob' }, esito()),
+            h('td', { class: 'no-mob lg-muted' }, PROFILI[l.profile] || l.profile),
+            h('td', { class: 'no-mob lg-muted' }, quando(l.created_at)),
+            h('td', { class: 'no-mob' }, stato),
+            h('td', { class: 'dx' }, wa ? h('a', { class: 'lg-ic', href: wa, target: '_blank', rel: 'noopener', 'aria-label': `Scrivi a ${l.first_name} su WhatsApp`, title: 'Scrivi su WhatsApp', html: ICONA_WA, onclick: (e) => e.stopPropagation() }) : ''));
+          tr.addEventListener('click', () => apri(l, tr));
+          tr.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target === tr) apri(l, tr); });
+          return tr;
+        }))));
     };
-    const ridisegna = () => {
-      const attivo = document.activeElement;
-      const cerca = attivo?.getAttribute?.('aria-label') === 'Cerca';
-      const pos = cerca ? attivo.selectionStart : 0;
-      disegna();
-      if (cerca) { const n = corpo.querySelector('[aria-label="Cerca"]'); n.focus(); n.setSelectionRange(pos, pos); }
+    const aggiorna = () => {
+      FILTRI.forEach(([id, , fn], i) => { pills[i].setAttribute('aria-pressed', String(f.filtro === id)); pills[i].lastChild.textContent = String(tutti.filter(fn).length); });
+      disegnaLista();
     };
 
-    const excel = h('button', { class: 'lg-btn lg-btn--pieno', type: 'button', onclick: () => scaricaExcel(filtrati()) }, 'Scarica Excel');
+    const excel = h('button', { class: 'lg-btn lg-btn--pieno', type: 'button', onclick: () => scaricaExcel(filtrati()) }, 'Excel');
+    const cerca = h('input', { class: 'lg-in lg-cerca', type: 'search', placeholder: 'Cerca un lead', 'aria-label': 'Cerca', oninput: (e) => { f.cerca = e.target.value; disegnaLista(); } });
     vista.replaceChildren(
-      h('div', { class: 'lg-top' }, h('h1', {}, 'Lead del quiz'), h('div', { class: 'lg-top__dx' }, h('span', {}, s.email), excel, h('button', { class: 'lg-btn', type: 'button', onclick: () => mostraTabella(s) }, 'Aggiorna'), h('button', { class: 'lg-btn', type: 'button', onclick: esci }, 'Esci'))),
-      corpo,
+      h('div', { class: 'lg-head' }, h('h1', {}, 'Lead del quiz'),
+        h('div', { class: 'lg-head__dx' }, cerca, excel, h('button', { class: 'lg-btn lg-btn--testo', type: 'button', onclick: () => mostraTabella(s) }, 'Aggiorna'), h('button', { class: 'lg-btn lg-btn--testo', type: 'button', onclick: esci, title: s.email }, 'Esci'))),
+      h('div', { class: 'lg-pills' }, pills),
+      lista,
     );
-    disegna();
+    aggiorna();
   };
 
   // ---------- Avvio ----------
