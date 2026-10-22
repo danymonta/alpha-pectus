@@ -76,7 +76,7 @@ test('lead: se Resend rifiuta l’invio, il lead è comunque salvato e l’error
   const body = {
     sessionId: crypto.randomUUID(), startedAt: new Date(Date.now() - 60000).toISOString(),
     contact: { fullName: 'Luca Rossi', email: 'luca@example.com', whatsapp: '+393331234567' },
-    consents: { privacy: true, healthData: true }, answers: FIXTURES.F1.answers,
+    consents: { privacy: true, healthData: true, marketingEmail: true, whatsapp: true }, answers: FIXTURES.F1.answers,
   };
   const errori = console.error;
   console.error = () => {};

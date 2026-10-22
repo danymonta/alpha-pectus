@@ -144,11 +144,11 @@ export const QUIZ_UI = {
 export const GATE = {
   title: 'Il tuo profilo è pronto.',
   fields: { fullName: 'Nome e cognome', email: 'Email', whatsapp: 'WhatsApp', prefix: 'Prefisso internazionale', instagram: 'Instagram (facoltativo)' },
-  // Due sole caselle. Obbligatoria: consenso esplicito sui dati sulla salute (art. 9 GDPR), con presa visione dell'informativa.
-  // Facoltativa: contatto su email e WhatsApp, anche commerciale. La specifica ne prevedeva quattro.
+  // Due sole caselle, entrambe obbligatorie per vedere il profilo. Dati sulla salute: consenso esplicito (art. 9 GDPR), con presa visione
+  // dell'informativa. Contatto su email e WhatsApp, anche commerciale. La specifica ne prevedeva quattro e le voleva facoltative.
   consents: [
     { key: 'healthData', required: true, text: "Acconsento al trattamento delle mie risposte relative alla salute del petto, necessarie per creare il mio profilo e la stima. So che non sono una diagnosi e ho letto l'Informativa Privacy." },
-    { key: 'contact', required: false, text: 'Acconsento a essere contattato da Percorso Alpha via email e WhatsApp, anche per comunicazioni commerciali.' },
+    { key: 'contact', required: true, text: 'Acconsento a essere contattato da Percorso Alpha via email e WhatsApp, anche per comunicazioni commerciali.' },
   ],
   button: 'Mostra il mio profilo',
   trust: 'Niente spam. Le tue risposte sulla salute non vengono condivise con piattaforme pubblicitarie.',
@@ -159,6 +159,7 @@ export const GATE = {
     emailTypo: 'Controlla l’indirizzo: intendevi {suggestion}?',
     whatsapp: 'Scrivi un numero WhatsApp valido.',
     healthData: 'Serve il tuo consenso per creare il tuo profilo.',
+    contact: 'Serve il tuo consenso a essere contattato per mostrarti il profilo.',
     network: 'Non siamo riusciti a inviare i dati. Le tue risposte sono al sicuro su questo dispositivo: riprova tra un momento.',
   },
 };

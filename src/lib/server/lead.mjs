@@ -43,6 +43,7 @@ export function validateLead(body) {
   const k = body?.consents ?? {};
   if (k.privacy !== true) errors.push('privacy');
   if (k.healthData !== true) errors.push('healthData');
+  if (k.marketingEmail !== true || k.whatsapp !== true) errors.push('contact'); // consenso al contatto: obbligatorio per vedere il profilo
 
   const v = validateAnswers(body?.answers);
   if (!v.ok) errors.push(...v.missing.map((m) => `answers.${m}`));
