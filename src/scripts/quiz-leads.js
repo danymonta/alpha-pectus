@@ -88,8 +88,12 @@ if (radice) {
     vista.replaceChildren(h('p', { class: 'lg-vuoto' }, 'Carico i lead…'));
     try {
       tutti = (await rest('quiz_leads?select=*&order=created_at.desc&limit=5000')) || [];
-    } catch {
-      return mostraLogin('Sessione scaduta. Entra di nuovo.');
+    } catch (e) {
+      if (String(e?.message) === 'sessione') return mostraLogin('Sessione scaduta. Entra di nuovo.');
+      return vista.replaceChildren(h('div', { class: 'lg-box' }, h('h1', {}, 'Non riesco a leggere i lead'),
+        h('p', {}, 'Sei entrato, ma il database non risponde. Riprova tra un attimo.'),
+        h('button', { class: 'lg-btn lg-btn--pieno', type: 'button', onclick: () => mostraTabella(s) }, 'Riprova'),
+        h('button', { class: 'lg-link', type: 'button', onclick: esci }, 'Esci')));
     }
 
     const FILTRI = [
