@@ -14,7 +14,8 @@
 import { validateLead, clean, primoNome } from '../../src/lib/server/lead.mjs';
 import { computeResult } from '../../src/data/quiz/scoring.mjs';
 import { STEPS } from '../../src/data/quiz/steps.mjs';
-import { PROFILES, EMAILS } from '../../src/data/quiz/copy.mjs';
+import { PROFILES } from '../../src/data/quiz/copy.mjs';
+import { emailEsito } from '../../src/lib/server/mail-esito.mjs';
 import { sb, configured } from '../../src/lib/server/supabase.mjs';
 import { signToken } from '../../src/lib/server/token.mjs';
 import { randomId, sha256Hex, hmac, toHex } from '../../src/lib/server/crypto.mjs';
@@ -114,9 +115,8 @@ export const onRequestPost = async ({ request, env, waitUntil }) => {
             }),
             prova('mail al lead', async () => {
               if (!mailReady(env)) return;
-              const tpl = result.route === 'medical_first' ? EMAILS.M1 : EMAILS.E1;
-              const testo = tpl.body.replace('{nome}', primoNome(lead.fullName)).replace('{profilo}', profilo).replace('{link}', link);
-              await sendMail(env, { to: [lead.email], subject: tpl.subject, text: testo, html: frame([testo.replace(link, '').trim()], { link, linkLabel: 'Apri il tuo profilo' }), replyTo: danyList(env)[0] });
+              const m = emailEsito(result.route, lead.fullName, result.profile, link);
+              await sendMail(env, { to: [lead.email], subject: m.subject, html: m.html, text: m.text, replyTo: danyList(env)[0] });
             }),
           ]);
           await postWebhook(env, { sessionId: lead.sessionId, lead: { fullName: lead.fullName, email: lead.email, whatsapp: lead.whatsapp, instagram: lead.instagram }, consents, result, answers: lead.answers, attribution: lead.attribution });
