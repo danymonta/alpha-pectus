@@ -60,6 +60,15 @@ Stack: la specifica propone Vite e React; qui è Astro e JavaScript puro, come i
 
 Non ancora fatto (Fase 2 della specifica): sequenze email E2-E5, M2 e promemoria call, Conversions API di Meta, dashboard di funnel, webhook del calendario. La cancellazione dei dati si chiede per email (come scritto in `/privacy/`) e si esegue dal pulsante Elimina del portale.
 
+## Candidature (`/candidatura/` e `/percorso-pectus-leads/`)
+
+Il modulo di candidatura a 4 passi (pulsante "Candidati al percorso" della home) non scrive più sul foglio Google: salva in Supabase, tabella `candidature` (migrazione `supabase/migrations/20261023000000_candidature.sql`). Le leggi su **`/percorso-pectus-leads/`**, con lo stesso accesso e lo stesso design di `/quiz-leads/`: tabella con fit, obiettivo, stato modificabile, WhatsApp, pannello con le risposte e le note, Excel. Le due pagine si collegano con il link "Candidature" / "Lead del quiz" e condividono l'accesso.
+
+- Alla candidatura partono la conferma a chi si candida e l'avviso a te (con i pulsanti WhatsApp e lista). L'esito di ogni invio resta nella riga: se Resend rifiuta, nel portale compare "Email non inviata" con il motivo.
+- Le email si aspettano prima di rispondere (massimo 7 secondi): partono subito.
+- Per far arrivare il link di accesso anche da questa pagina, in Supabase, Authentication, URL Configuration, aggiungi tra i Redirect URLs `https://pectus.percorsoalpha.com/percorso-pectus-leads/**`. Se non lo fai, il link ti porta su `/quiz-leads/`, e da lì sei già dentro anche per le candidature.
+- `docs/foglio-lead-apps-script.gs` e le variabili `SHEETS_URL` e `SHEETS_TOKEN` non servono più.
+
 ## Email di richiamo
 
 A chi ha fatto il quiz, ha spuntato il consenso al contatto e **non ti ha scritto**, partono 3 email in prima persona: dopo 1 giorno (il profilo), dopo 3 giorni (il video guida con la copertina) e dopo 7 giorni (ultimo invito su WhatsApp). Ogni email ha il link per annullare l'iscrizione (`/api/disiscrivi`), che chiede conferma prima di salvare.
@@ -109,8 +118,7 @@ Il sito è pronto per entrambi: `vercel.json` (generato da `public/_headers`, `p
 | `TOKEN_SECRET` | stringa casuale lunga | **segreto**, firma i link dei risultati |
 | `PUBLIC_SUPABASE_URL` | lo stesso URL | serve in build |
 | `PUBLIC_SUPABASE_ANON_KEY` | chiave `anon` | serve in build, pubblica per natura |
-| `RESEND_API_KEY`, `MAIL_FROM`, `MAIL_DANY` | già usate dalla candidatura | email al lead e avviso a te |
-| `SHEETS_URL`, `SHEETS_TOKEN` | già usate dalla candidatura | foglio Google dei lead |
+| `RESEND_API_KEY`, `MAIL_FROM`, `MAIL_DANY` | chiave Resend, mittente (es. `Dany Monta <dany@percorsoalpha.com>`), il tuo indirizzo | email al lead, avviso a te, conferma e avviso delle candidature. Senza, i lead si salvano ma non parte nessuna email |
 | `TURNSTILE_SECRET`, `PUBLIC_TURNSTILE_SITE_KEY` | da Cloudflare Turnstile | facoltative |
 | `CRON_SECRET` | stringa casuale lunga | **segreto**: Vercel lo manda al giro giornaliero delle email di richiamo (vedi sotto). Va creato con questo nome |
 | `RICHIAMI_ATTIVI` | `si` | accende le email di richiamo. Con qualsiasi altro valore (o se manca) non parte niente |

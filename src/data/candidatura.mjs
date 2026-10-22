@@ -1,7 +1,7 @@
 // Domande della candidatura. Un solo file per la pagina /candidatura/ e per la Function che riceve il form
 // (functions/api/candidatura.js): nessuna dipendenza qui dentro.
-// Ogni domanda a scelta ha valori brevi (finiscono nel foglio) ed etichette per chi compila.
-// "punti" serve a calcolare il Fit (Alto, Medio, Basso) che trovi nel foglio e nell'oggetto della mail.
+// Ogni domanda a scelta ha valori brevi (si salvano in Supabase, tabella candidature) ed etichette per chi compila.
+// "punti" serve a calcolare il Fit (Alto, Medio, Basso) che trovi nel portale /percorso-pectus-leads/ e nell'oggetto della mail.
 
 export const PASSI = [
   {
@@ -119,14 +119,6 @@ export const CONSENSI = [
   { nome: 'salute', testo: 'Acconsento al trattamento dei dati sulla mia salute che ho indicato (pectus, sintomi), solo per valutare la mia candidatura.' },
 ];
 
-// Colonne del foglio Google, nell'ordine esatto. Le prime e le ultime le compila la Function.
-export const COLONNE = [
-  'Data', 'Stato', 'Fit', 'Nome', 'Email', 'Telefono', 'Instagram', 'Età',
-  'Cosa ti hanno detto i medici', 'Sintomi cuore o polmoni', 'Allenamento', 'Lavoro',
-  'Tempo 3x45 min per 12 mesi', 'Quando vuoi iniziare', 'Investimento', 'Obiettivo',
-  'Variante pagina', 'Sorgente', 'CTA', 'Note',
-];
-
 export const TUTTE = PASSI.flatMap((p) => p.domande);
 
 /** Fit dai punti delle risposte: Alto, Medio, Basso, oppure Non adatto (minorenne) / Prima il medico (sintomi). */
@@ -141,3 +133,16 @@ export function calcolaFit(r) {
   }
   return punti >= 7 ? 'Alto' : punti >= 4 ? 'Medio' : 'Basso';
 }
+
+/** Numero per wa.me dal telefono scritto a mano (solo cifre). Un cellulare italiano senza prefisso (10 cifre, inizia con 3) prende il 39. */
+export function numeroWhatsapp(telefono) {
+  let n = String(telefono ?? '').replace(/[^\d+]/g, '');
+  if (n.startsWith('+')) n = n.slice(1);
+  else if (n.startsWith('00')) n = n.slice(2);
+  else if (/^3\d{9}$/.test(n)) n = `39${n}`;
+  return /^\d{8,15}$/.test(n) ? n : '';
+}
+
+/** Messaggio già pronto per scrivere a chi si è candidato. */
+export const messaggioCandidato = (nome) =>
+  `Ciao ${String(nome ?? '').trim().split(/\s+/)[0]}, sono Dany. Ho letto la tua candidatura al percorso e ti scrivo per capire se possiamo lavorare insieme. Ti va di sentirci?`;

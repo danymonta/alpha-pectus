@@ -1,20 +1,22 @@
-// Riceve il form di /candidatura/ (Cloudflare Pages Function, POST /api/candidatura).
+// Riceve il form di /candidatura/ (Function, POST /api/candidatura).
 // 1. Controlla le risposte e filtra lo spam (campo trappola, invio troppo veloce).
-// 2. Salva una riga nel foglio Google dei lead (tramite lo script Apps Script del foglio).
-// 3. Manda con Resend la mail di conferma a chi si candida e la notifica a Dany.
+// 2. Salva la candidatura in Supabase (tabella candidature): le leggi in /percorso-pectus-leads/.
+// 3. Manda con Resend la mail di conferma a chi si candida e la notifica a Dany; l'esito di ogni invio resta nella riga.
 // 4. Rimanda a /grazie/ (o a /candidatura/?errore=1 se non è stato salvato niente).
 //
-// Variabili d'ambiente (Cloudflare Pages, Impostazioni, Variabili e segreti):
+// Variabili d'ambiente (Vercel, Production e Preview):
+//   SUPABASE_URL, SUPABASE_SERVICE_KEY   le stesse del quiz (obbligatorie)
 //   RESEND_API_KEY   chiave API di Resend (segreto)
-//   MAIL_FROM        mittente verificato su Resend, es. "Dany Monta <dany@mail.percorsoalpha.com>"
+//   MAIL_FROM        mittente verificato su Resend, es. "Dany Monta <dany@percorsoalpha.com>"
 //   MAIL_DANY        dove arrivano le notifiche delle candidature (anche più indirizzi separati da virgola)
 //   MAIL_REPLY_TO    facoltativo: a chi rispondono i candidati (se manca, MAIL_DANY)
-//   SHEETS_URL       URL dell'app web Apps Script collegata al foglio "Lead Pectus - Candidature"
-//   SHEETS_TOKEN     parola segreta condivisa con lo script del foglio (segreto)
-import { TUTTE, CONSENSI, calcolaFit } from '../../src/data/candidatura.mjs';
+import { TUTTE, CONSENSI, calcolaFit, numeroWhatsapp, messaggioCandidato } from '../../src/data/candidatura.mjs';
+import { sb, configured } from '../../src/lib/server/supabase.mjs';
+import { sendMail, mailReady, frame, danyList } from '../../src/lib/server/mail.mjs';
 
 const SITO = 'https://pectus.percorsoalpha.com';
 const INSTAGRAM = 'https://www.instagram.com/_danymonta/';
+const LISTA = `${SITO}/percorso-pectus-leads/`;
 
 const esc = (s) =>
   String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -53,7 +55,6 @@ export const onRequestPost = async ({ request, env, waitUntil }) => {
   if (mancanti.length) return vaiA('/candidatura/?errore=1', request);
 
   const fit = calcolaFit(r);
-  const data = new Date().toLocaleString('it-IT', { timeZone: 'Europe/Rome', dateStyle: 'short', timeStyle: 'short' });
   const meta = {
     variante: get('v', 20) || 'base',
     sorgente: [get('src', 30), get('utm_source', 40), get('utm_medium', 40), get('utm_campaign', 60), get('utm_content', 60)]
@@ -63,79 +64,52 @@ export const onRequestPost = async ({ request, env, waitUntil }) => {
   };
   const testoDi = (d) => (d.tipo === 'scelta' ? d.opzioni.find((o) => o.valore === r[d.nome])?.testo ?? '' : r[d.nome] ?? '');
 
-  // Riga del foglio, nell'ordine delle colonne (src/data/candidatura.mjs, COLONNE).
-  const riga = {
-    Data: data,
-    Stato: 'Nuovo',
-    Fit: fit,
-    ...Object.fromEntries(TUTTE.map((d) => [d.colonna, testoDi(d)])),
-    'Variante pagina': meta.variante,
-    Sorgente: meta.sorgente,
-    CTA: meta.cta,
-    Note: '',
-  };
-
-  const lavori = [];
-
-  if (env.SHEETS_URL) {
-    lavori.push(
-      fetch(env.SHEETS_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ token: env.SHEETS_TOKEN || '', riga }),
-        redirect: 'follow',
-      }).then(async (res) => {
-        const t = await res.text();
-        if (!res.ok || !t.includes('"ok":true')) throw new Error(`foglio: ${res.status} ${t.slice(0, 200)}`);
-        return 'foglio';
-      }),
-    );
-  }
-
-  if (env.RESEND_API_KEY && env.MAIL_FROM) {
-    const invia = (corpo) =>
-      fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify(corpo),
-      }).then(async (res) => {
-        if (!res.ok) throw new Error(`resend: ${res.status} ${(await res.text()).slice(0, 200)}`);
-        return 'mail';
-      });
-
-    if (env.MAIL_DANY) {
-      lavori.push(
-        invia({
-          from: env.MAIL_FROM,
-          to: env.MAIL_DANY.split(',').map((s) => s.trim()).filter(Boolean),
-          reply_to: r.email,
-          subject: `[Fit ${fit}] Candidatura pectus: ${r.nome}, ${r.eta}`,
-          html: mailDany(riga),
-          text: Object.entries(riga).map(([k, v]) => `${k}: ${v}`).join('\n'),
-        }),
-      );
-    }
-    // La conferma al candidato non decide l'esito: se fallisce, la candidatura è comunque salvata.
-    const conferma = invia({
-      from: env.MAIL_FROM,
-      to: [r.email],
-      reply_to: env.MAIL_REPLY_TO || env.MAIL_DANY?.split(',')[0]?.trim() || undefined,
-      subject: `Ho ricevuto la tua candidatura, ${r.nome}`,
-      html: mailCandidato(r),
-      text: testoCandidato(r),
-    }).catch((e) => console.error(e));
-    waitUntil?.(conferma);
-  }
-
-  if (!lavori.length) {
-    console.error('candidatura: nessun canale configurato (SHEETS_URL o RESEND_API_KEY + MAIL_FROM + MAIL_DANY)');
+  if (!configured(env)) {
+    console.error('candidatura: mancano SUPABASE_URL o SUPABASE_SERVICE_KEY');
     return vaiA('/candidatura/?errore=1', request);
   }
 
-  const esiti = await Promise.allSettled(lavori);
-  for (const e of esiti) if (e.status === 'rejected') console.error(e.reason);
-  // Basta che il foglio o la mail a Dany siano arrivati: la candidatura non è persa.
-  if (!esiti.some((e) => e.status === 'fulfilled')) return vaiA('/candidatura/?errore=1', request);
+  // 1. Salvataggio: se fallisce, la persona vede l'errore e può riprovare. Le mail non decidono l'esito.
+  let id;
+  try {
+    const righe = await sb(env, 'POST', 'candidature', {
+      nome: r.nome, email: r.email, telefono: r.telefono, instagram: r.instagram || null, fit, risposte: r,
+      consensi: Object.fromEntries(CONSENSI.map((c) => [c.nome, { given: true, at: new Date().toISOString() }])),
+      variante: meta.variante, sorgente: meta.sorgente || null, cta: meta.cta || null,
+    }, { Prefer: 'return=representation' });
+    id = righe?.[0]?.id;
+  } catch (e) {
+    console.error('candidatura: salvataggio', e);
+    return vaiA('/candidatura/?errore=1', request);
+  }
+
+  // 2. Email: si aspettano (massimo 7 secondi) e l'esito resta nella riga, visibile nel portale.
+  const invii = {};
+  const quando = () => new Date().toISOString();
+  const lavori = [];
+  if (!mailReady(env)) {
+    invii.conferma = invii.dany = { ok: false, errore: 'Resend non configurato (RESEND_API_KEY o MAIL_FROM mancanti)', at: quando() };
+  } else {
+    const prova = async (chi, fn) => {
+      try {
+        await fn();
+        invii[chi] = { ok: true, at: quando() };
+      } catch (e) {
+        console.error(`candidatura: mail ${chi}`, e);
+        invii[chi] = { ok: false, errore: String(e?.message ?? e).slice(0, 200), at: quando() };
+      }
+    };
+    const ctx = { r, fit, testoDi, meta };
+    const m = mailCandidato(r);
+    lavori.push(prova('conferma', () => sendMail(env, { to: [r.email], subject: `Ho ricevuto la tua candidatura, ${r.nome}`, html: m.html, text: m.text, replyTo: env.MAIL_REPLY_TO || danyList(env)[0] })));
+    if (danyList(env).length) {
+      const n = mailDany(ctx);
+      lavori.push(prova('dany', () => sendMail(env, { to: danyList(env), subject: `[Fit ${fit}] Candidatura pectus: ${r.nome}, ${testoDi(TUTTE.find((d) => d.nome === 'eta'))}`, html: n.html, text: n.text, replyTo: r.email })));
+    }
+  }
+  const finito = Promise.allSettled(lavori).then(() => (id ? sb(env, 'PATCH', `candidature?id=eq.${id}`, { invii }, { Prefer: 'return=minimal' }).catch((e) => console.error(e)) : null));
+  await Promise.race([finito, new Promise((res) => setTimeout(res, 7000))]);
+  waitUntil?.(finito);
   return vaiA('/grazie/', request);
 };
 
@@ -144,61 +118,35 @@ export const onRequestGet = ({ request }) => vaiA('/candidatura/', request);
 
 /* ---------------- Mail ---------------- */
 
-const cornice = (corpo) => `<!doctype html><html lang="it"><body style="margin:0;padding:0;background:#170A0A;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#170A0A;padding:32px 16px;">
-<tr><td align="center">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#241212;border-radius:12px;border:1px solid #3D2120;">
-<tr><td style="padding:32px 28px;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.6;color:#F7EEEC;">
-<p style="margin:0 0 24px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#E5554A;font-weight:bold;">Percorso Alpha Pectus</p>
-${corpo}
-</td></tr></table>
-</td></tr></table></body></html>`;
-
+/** Conferma a chi si candida: stesso stile delle altre email (sfondo vaniglia), nessun pulsante, si risponde alla mail. */
 function mailCandidato(r) {
-  const sintomi =
+  const avviso =
     r.sintomi === 'si' || r.sintomi === 'non so'
-      ? `<p style="margin:0 0 16px;padding:12px 16px;border-left:2px solid #9DA8B4;background:#170A0A;">Hai indicato ${
-          r.sintomi === 'si' ? 'dei sintomi' : 'di non sapere se hai sintomi'
-        } a cuore o polmoni. Prima di qualsiasi allenamento, fatti vedere da un chirurgo toracico: è la cosa giusta da fare.</p>`
-      : '';
-  return cornice(`
-<p style="margin:0 0 16px;font-size:22px;font-weight:bold;line-height:1.3;">Ciao ${esc(r.nome)}, ho ricevuto la tua candidatura.</p>
-<p style="margin:0 0 16px;">Grazie per aver risposto con sincerità. Non è scontato, soprattutto su una cosa che molti tengono per sé da anni.</p>
-<p style="margin:0 0 8px;font-weight:bold;">Cosa succede adesso</p>
-<p style="margin:0 0 16px;">Io e il mio team leggiamo la tua candidatura. Se vediamo che possiamo aiutarti, ti ricontattiamo al numero che hai lasciato per fissare una chiamata direttamente con me. Se il percorso non è adatto al tuo caso, te lo diciamo con chiarezza.</p>
-${sintomi}
-<p style="margin:0 0 24px;">Nel frattempo, sul mio Instagram parlo del pectus apertamente: <a href="${INSTAGRAM}" style="color:#E5554A;">@_danymonta</a>.</p>
-<p style="margin:0;font-family:Georgia,serif;font-style:italic;font-size:22px;">Dany</p>
-<p style="margin:4px 0 0;font-size:13px;color:#C4ABA7;">Dany Montagnolo, fondatore di Percorso Alpha · <a href="${SITO}" style="color:#C4ABA7;">pectus.percorsoalpha.com</a></p>`);
-}
-
-function testoCandidato(r) {
-  return [
+      ? `Hai indicato ${r.sintomi === 'si' ? 'dei sintomi' : 'di non sapere se hai sintomi'} a cuore o polmoni. Prima di qualsiasi allenamento, fatti vedere da un chirurgo toracico: è la cosa giusta da fare.`
+      : null;
+  const paragrafi = [
     `Ciao ${r.nome}, ho ricevuto la tua candidatura.`,
-    '',
     'Grazie per aver risposto con sincerità. Non è scontato, soprattutto su una cosa che molti tengono per sé da anni.',
-    '',
-    'Cosa succede adesso: io e il mio team leggiamo la tua candidatura. Se vediamo che possiamo aiutarti, ti ricontattiamo al numero che hai lasciato per fissare una chiamata direttamente con me. Se il percorso non è adatto al tuo caso, te lo diciamo con chiarezza.',
-    r.sintomi === 'si' || r.sintomi === 'non so'
-      ? '\nHai indicato dei sintomi a cuore o polmoni, o di non saperlo. Prima di qualsiasi allenamento, fatti vedere da un chirurgo toracico.'
-      : '',
-    '',
-    `Nel frattempo, sul mio Instagram parlo del pectus apertamente: ${INSTAGRAM}`,
-    '',
+    'Io e il mio team leggiamo la tua candidatura. Se vediamo che possiamo aiutarti, ti ricontattiamo al numero che hai lasciato per fissare una chiamata direttamente con me. Se il percorso non è adatto al tuo caso, te lo diciamo con chiarezza.',
+    ...(avviso ? [avviso] : []),
+    'Se vuoi aggiungere qualcosa, rispondi a questa mail. Leggo tutto io.',
     'Dany',
-  ].join('\n');
+  ];
+  return { html: frame(paragrafi), text: [...paragrafi, '', `Instagram: ${INSTAGRAM}`].join('\n\n') };
 }
 
-function mailDany(riga) {
-  const righe = Object.entries(riga)
-    .filter(([k]) => k !== 'Stato' && k !== 'Note')
-    .map(
-      ([k, v]) =>
-        `<tr><td style="padding:8px 12px 8px 0;vertical-align:top;color:#C4ABA7;font-size:13px;white-space:nowrap;">${esc(k)}</td><td style="padding:8px 0;vertical-align:top;">${esc(v)}</td></tr>`,
-    )
-    .join('');
-  return cornice(`
-<p style="margin:0 0 16px;font-size:20px;font-weight:bold;">Nuova candidatura: ${esc(riga.Nome)} (Fit ${esc(riga.Fit)})</p>
-<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:15px;">${righe}</table>
-<p style="margin:24px 0 0;font-size:13px;color:#C4ABA7;">Rispondi a questa mail per scrivere direttamente a ${esc(riga.Nome)}. La riga è anche nel foglio "Lead Pectus - Candidature".</p>`);
+/** Notifica a Dany: tabella delle risposte con due pulsanti, WhatsApp e lista delle candidature. */
+function mailDany({ r, fit, testoDi, meta }) {
+  const righe = [
+    ['Nome', r.nome], ['Email', r.email], ['Telefono', r.telefono], ['Instagram', r.instagram || ''], ['Fit', fit],
+    ...TUTTE.filter((d) => !['nome', 'email', 'telefono', 'instagram'].includes(d.nome)).map((d) => [d.etichetta.replace(/\?$/, ''), testoDi(d)]),
+    ['Variante pagina', meta.variante], ['Sorgente', meta.sorgente], ['CTA', meta.cta],
+  ].filter(([, v]) => v);
+  const numero = numeroWhatsapp(r.telefono);
+  const wa = numero ? `https://wa.me/${numero}?text=${encodeURIComponent(messaggioCandidato(r.nome))}` : '';
+  const bottone = (href, testo, verde) =>
+    `<a href="${esc(href)}" style="display:inline-block;margin:0 8px 8px 0;padding:12px 18px;border-radius:6px;font-weight:bold;text-decoration:none;font-family:Arial,sans-serif;${verde ? 'background:#1f8f4e;color:#fff;' : 'background:#780000;color:#fff;'}">${esc(testo)}</a>`;
+  const html = `<!doctype html><html lang="it"><head><meta charset="utf-8"></head><body style="font-family:Arial,sans-serif;color:#171412;"><p><b>Nuova candidatura: ${esc(r.nome)} (Fit ${esc(fit)})</b></p><p>${wa ? bottone(wa, 'Scrivigli su WhatsApp', true) : ''}${bottone(LISTA, 'Apri la lista delle candidature', false)}</p><table cellpadding="6">${righe.map(([k, v]) => `<tr><td valign="top"><b>${esc(k)}</b></td><td>${esc(v)}</td></tr>`).join('')}</table><p style="color:#5E564D;font-size:13px;">Rispondi a questa mail per scrivere direttamente a ${esc(r.nome)}.</p></body></html>`;
+  const text = `${wa ? `Scrivigli su WhatsApp: ${wa}\n` : ''}Lista delle candidature: ${LISTA}\n\n${righe.map(([k, v]) => `${k}: ${v}`).join('\n')}`;
+  return { html, text };
 }

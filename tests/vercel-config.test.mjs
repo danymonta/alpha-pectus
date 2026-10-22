@@ -13,6 +13,7 @@ test('vercel.json: forma delle regole', () => {
   assert.ok(c.redirects.length >= 13 && c.redirects.every((r) => r.source.startsWith('/') && r.destination && [301, 302, 307, 308].includes(r.statusCode)));
   assert.ok(c.rewrites.some((r) => r.source === '/pa/api/event'));
   assert.ok(c.redirects.filter((r) => r.source === '/' && r.has?.[0]?.key === 'v').length >= 3, 'un reindirizzamento per variante hero');
+  assert.ok(c.headers.some((h) => h.source === '/percorso-pectus-leads/(.*)' && h.headers.some((x) => x.key === 'Cache-Control' && x.value === 'no-store')));
   assert.ok(c.headers.some((h) => h.source === '/quiz-leads/(.*)' && h.headers.some((x) => x.key === 'Cache-Control' && x.value === 'no-store')));
   assert.ok(c.headers.some((h) => h.source === '/(.*)' && h.headers.some((x) => x.key === 'Strict-Transport-Security')));
   const s = c.redirects.find((r) => r.source.startsWith('/s/'));

@@ -1,0 +1,20 @@
+---
+// Portale privato delle candidature (/percorso-pectus-leads/): le persone che hanno compilato il modulo /candidatura/.
+// Stesso accesso e stessa sicurezza di /quiz-leads/ (link o codice via email, RLS: legge solo il proprietario). Pagina noindex, fuori dalla sitemap.
+import Base from '../../layouts/Base.astro';
+import '../../styles/leads.css';
+
+const url = import.meta.env.PUBLIC_SUPABASE_URL ?? '';
+const chiave = import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? '';
+---
+
+<Base title="Candidature | Percorso Alpha Pectus" description="Area riservata." path="/percorso-pectus-leads/" noindex schema={false} bodyClass="leads-body mode-paper">
+  <main id="main" class="leads" data-leads data-url={url} data-key={chiave}>
+    <noscript><p class="leads__msg">Serve JavaScript per usare quest’area.</p></noscript>
+    <div class="lg-wrap" data-vista></div>
+  </main>
+</Base>
+
+<script>
+  import '../../scripts/candidature-leads.js';
+</script>
