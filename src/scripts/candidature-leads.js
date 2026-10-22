@@ -80,7 +80,12 @@ if (radice) {
     try {
       tutti = (await rest('candidature?select=*&order=created_at.desc&limit=5000')) || [];
     } catch (e) {
-      return mostraLogin(String(e?.message) === 'sessione' ? 'Sessione scaduta. Entra di nuovo.' : 'Non riesco a leggere le candidature. Se non hai ancora creato la tabella in Supabase, esegui la migrazione 20261023000000_candidature.sql.');
+      if (String(e?.message) === 'sessione') return mostraLogin('Sessione scaduta. Entra di nuovo.');
+      // Sei dentro ma la lettura fallisce: quasi sempre la tabella non esiste ancora in Supabase.
+      return vista.replaceChildren(h('div', { class: 'lg-box' }, h('h1', {}, 'Non riesco a leggere le candidature'),
+        h('p', {}, 'Sei entrato, ma la tabella delle candidature non risponde. Se non l’hai ancora creata, apri Supabase, SQL Editor, ed esegui la migrazione 20261023000000_candidature.sql. Poi premi Riprova.'),
+        h('button', { class: 'lg-btn lg-btn--pieno', type: 'button', onclick: () => mostraTabella(s) }, 'Riprova'),
+        h('button', { class: 'lg-link', type: 'button', onclick: esci }, 'Esci')));
     }
 
     const FILTRI = [
