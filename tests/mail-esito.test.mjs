@@ -15,6 +15,9 @@ test('email subito dopo il quiz: testo completo, un solo pulsante, nessuna call 
   assert.equal((m.html.match(/display:inline-block/g) ?? []).length, 1);
   assert.deepEqual(violazioni(`${m.subject}\n${m.text}`), []);
   assert.ok(m.text.includes(LINK));
+  // La parola Instagram è un link che apre la chat con Dany; nella versione testo c'è l'indirizzo.
+  assert.ok(/<a href="https:\/\/ig\.me\/m\/_danymonta"[^>]*>Instagram<\/a>/.test(m.html), 'link sulla parola Instagram');
+  assert.ok(m.text.includes('scrivimi su Instagram (https://ig.me/m/_danymonta)') && !m.text.includes('[') && !m.text.includes('{'));
 });
 
 test('email subito dopo il quiz: con filtro medico esce il testo di prudenza', () => {
