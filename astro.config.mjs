@@ -13,7 +13,7 @@ export default defineConfig({
   build: { format: 'directory', inlineStylesheets: 'always' },
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/v/') && !page.includes('/404') && !page.includes('/candidatura') && !page.includes('/grazie') && !page.includes('/quiz') && !page.includes('/risultato'),
+      filter: (page) => !page.includes('/v/') && !page.includes('/404') && !page.includes('/candidatura') && !page.includes('/grazie') && !page.includes('/quiz') && !page.includes('/risultato') && !page.includes('/percorso-pectus-leads'),
       lastmod: new Date(SITE_UPDATED),
     }),
   ],
