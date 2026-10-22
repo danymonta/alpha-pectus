@@ -278,8 +278,24 @@ export const WHATSAPP_MESSAGE = 'Ciao Dany, sono {nome}. Ho fatto il quiz sul pe
 
 // Email di servizio (12.2): E1 al completamento, M1 se il filtro medico è stop.
 export const EMAILS = {
-  E1: { subject: 'Il tuo profilo Petto Scavato', body: '{nome}, il tuo profilo è {profilo}. Trovi il riepilogo e la stima dei tempi qui: {link}. Se vuoi parlarne con me, prenota la call di valutazione. Dany' },
-  M1: { subject: 'Prima la tua sicurezza', body: '{nome}, dalle tue risposte emerge che prima conviene una valutazione medica. Trovi il riepilogo qui: {link}. Quando hai il via libera, rispondi a questa mail e riprendiamo. Dany' },
+  E1: {
+    subject: 'Il tuo profilo Petto Scavato',
+    paragraphs: [
+      'Ciao {nome}, grazie per aver fatto il quiz. Il tuo profilo è “{profilo}”.',
+      'Qui trovi il riepilogo con la stima dei tempi e da cosa conviene partire. Il link è tuo: puoi riaprirlo quando vuoi.',
+    ],
+    button: 'Apri il tuo profilo',
+    after: ['Se vuoi parlarne con me, rispondi a questa mail. Leggo tutto io.', 'Dany'],
+  },
+  M1: {
+    subject: 'Prima la tua sicurezza',
+    paragraphs: [
+      'Ciao {nome}, dalle tue risposte emerge che prima conviene una valutazione medica.',
+      'Ti lascio il riepilogo: leggilo con calma e portalo al medico se ti è utile.',
+    ],
+    button: 'Apri il riepilogo',
+    after: ['Quando hai il via libera, rispondi a questa mail e riprendiamo.', 'Dany'],
+  },
 };
 
 // Email di richiamo (dopo 1, 3 e 7 giorni) a chi ha dato il consenso e non ha scritto su WhatsApp. Prima persona, nessuna promessa.
