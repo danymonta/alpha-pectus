@@ -270,7 +270,6 @@ if (root) {
       input('fullName', 'text', GATE.fields.fullName, 'name', { maxlength: '80' }),
       input('email', 'email', GATE.fields.email, 'email', { maxlength: '120', inputmode: 'email' }),
       tel.node,
-      input('instagram', 'text', GATE.fields.instagram, 'off', { maxlength: '40', placeholder: '@' }),
       ...consents,
       h('div', { class: 'qz-hp', 'aria-hidden': 'true' }, h('label', {}, 'Lascia vuoto ', trap)),
       tsBox, netErr, btn, h('p', { class: 'qz-trust' }, GATE.trust));
@@ -296,7 +295,7 @@ if (root) {
       btn.disabled = true;
       const payload = {
         schemaVersion: 1, quizVersion: QUIZ_VERSION, sessionId: st.sid, startedAt: st.startedAt,
-        contact: { fullName: name, email, whatsapp: wa, instagram: g.instagram || null },
+        contact: { fullName: name, email, whatsapp: wa },
         consents: { privacy: true, healthData: true, marketingEmail: Boolean(g.c_contact), whatsapp: Boolean(g.c_contact) }, // un solo consenso, obbligatorio, per email e WhatsApp
         answers: st.answers, attribution: st.attribution, sito: trap.value, turnstile: tsToken,
         client: { locale: 'it', tz: Intl.DateTimeFormat().resolvedOptions().timeZone },
@@ -318,7 +317,7 @@ if (root) {
     });
 
     announce(GATE.title);
-    show(header(N, () => history.back()), h('div', { class: 'qz-q' }, h('h2', { class: 'qz-q__h', 'data-focus': true }, GATE.title), form));
+    show(header(N, () => history.back()), h('div', { class: 'qz-q' }, h('h2', { class: 'qz-q__h', 'data-focus': true }, GATE.title), h('p', { class: 'qz-q__help' }, GATE.ask), form));
     loadTurnstile(tsBox, (tok) => (tsToken = tok));
   };
 
