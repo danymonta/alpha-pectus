@@ -2,6 +2,11 @@
 // Senza chiavi non fa niente: il lead è comunque salvato.
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
+/** Nei testi delle email, [parola](https://indirizzo) diventa un link cliccabile sulla parola. */
+const conLink = (testoEscapato) => testoEscapato.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, (_, parola, url) => `<a href="${url}" style="color:#780000;font-weight:bold;">${parola}</a>`);
+/** Stessa frase per la versione solo testo: "parola (indirizzo)". */
+export const testoSemplice = (t) => String(t).replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '$1 ($2)');
+
 export const mailReady = (env) => Boolean(env.RESEND_API_KEY && env.MAIL_FROM);
 export const danyList = (env) => String(env.MAIL_DANY ?? '').split(',').map((s) => s.trim()).filter(Boolean);
 
@@ -22,7 +27,7 @@ export async function sendMail(env, { to, subject, text, html, replyTo, headers 
  * secondary {href, label} (link di testo sotto il pulsante), after (paragrafi dopo il pulsante), footer {text, href, label}.
  */
 export function frame(paragraphs, { link, linkLabel, image, secondary, after = [], footer } = {}) {
-  const par = (p) => `<p style="margin:0 0 16px;">${esc(p)}</p>`;
+  const par = (p) => `<p style="margin:0 0 16px;">${conLink(esc(p))}</p>`;
   const body = paragraphs.map(par).join('');
   const img = image
     ? `<p style="margin:8px 0 20px;"><a href="${esc(image.href)}"><img src="${esc(image.src)}" alt="${esc(image.alt)}" width="464" style="display:block;width:100%;max-width:464px;height:auto;border:0;border-radius:8px;"></a></p>`

@@ -287,7 +287,7 @@ export const EMAILS = {
       'Qui trovi il riepilogo con la stima dei tempi e da cosa conviene partire. Il link è tuo: puoi riaprirlo quando vuoi.',
     ],
     button: 'Apri il tuo profilo',
-    after: ['Se vuoi parlarne con me, rispondi a questa mail. Leggo tutto io.', 'Dany'],
+    after: ['Se vuoi parlarne con me, scrivimi su [Instagram]({instagram}). Leggo tutto io.', 'Dany'],
   },
   M1: {
     subject: 'Prima la tua sicurezza',
@@ -310,7 +310,7 @@ export const FOLLOWUPS = {
       'Te lo lascio qui, così lo ritrovi quando hai due minuti: dentro ci sono la stima dei tempi e da cosa conviene partire nel tuo caso.',
     ],
     button: 'Rivedi il tuo profilo',
-    after: ['Se hai un dubbio, rispondi a questa mail. Leggo tutto io.', 'Dany'],
+    after: ['Se hai un dubbio, scrivimi su [Instagram]({instagram}). Leggo tutto io.', 'Dany'],
   },
   r2: {
     subject: '{nome}, ti mostro quello che ho fatto io',
@@ -320,7 +320,7 @@ export const FOLLOWUPS = {
     ],
     imageAlt: 'Il video: Ho nascosto il pectus excavatum con degli esercizi da casa',
     button: 'Guarda il video',
-    after: ['Guardalo con calma. Se dopo vuoi capire cosa ha senso nel tuo caso, rispondi a questa mail e ti scrivo io.', 'Dany'],
+    after: ['Guardalo con calma. Se dopo vuoi capire cosa ha senso nel tuo caso, scrivimi su [Instagram]({instagram}) e ti rispondo io.', 'Dany'],
   },
   r3: {
     subject: '{nome}, un’ultima cosa',
