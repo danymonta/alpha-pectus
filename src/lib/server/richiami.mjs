@@ -4,28 +4,10 @@ import { FOLLOWUPS, PROFILES, WHATSAPP_MESSAGE } from '../../data/quiz/copy.mjs'
 import { WHATSAPP_NUMERO, VIDEO_GUIDA_URL } from '../../data/site.mjs';
 import { primoNome } from './lead.mjs';
 import { frame } from './mail.mjs';
+import { PASSI, passoDovuto } from '../../data/quiz/richiami-regole.mjs';
 
 export const SITO = 'https://pectus.percorsoalpha.com';
-export const PASSI = [{ id: 'r1', ore: 24 }, { id: 'r2', ore: 72 }, { id: 'r3', ore: 168 }];
-const FINESTRA_ORE = 72; // un passo in ritardo di oltre 3 giorni non parte più: niente raffiche ai lead vecchi
-const PAUSA_ORE = 20; // tra due richiami allo stesso lead passa almeno una notte
-
-/** Il passo da mandare adesso a questo lead, oppure null. Il lead deve avere i campi di quiz_leads. */
-export function passoDovuto(lead, now = Date.now()) {
-  if (lead.unsubscribed_at) return null;
-  if (lead.consents?.marketingEmail?.given !== true) return null; // solo con il consenso al contatto
-  if (lead.route === 'medical_first') return null; // chi deve prima sentire un medico non riceve richiami
-  if (lead.status !== 'nuovo') return null; // se lo hai già contattato tu, la sequenza si ferma
-  if (lead.clicked_whatsapp || lead.clicked_book) return null; // ti ha già scritto o ha prenotato
-  const fatti = lead.followups ?? {};
-  const ore = (now - Date.parse(lead.created_at)) / 3600000;
-  const ultimo = Math.max(0, ...Object.values(fatti).map((x) => Date.parse(x) || 0));
-  // I passi partono in ordine, senza saltarne: il prossimo da fare deve essere maturo e non troppo in ritardo, altrimenti la sequenza è finita.
-  const p = PASSI.find((x) => !fatti[x.id]);
-  if (!p || ore < p.ore || ore > p.ore + FINESTRA_ORE) return null;
-  if (ultimo && now - ultimo < PAUSA_ORE * 3600000) return null;
-  return p;
-}
+export { PASSI, passoDovuto };
 
 export const daInviare = (leads, now = Date.now()) => leads.map((lead) => ({ lead, passo: passoDovuto(lead, now) })).filter((x) => x.passo);
 

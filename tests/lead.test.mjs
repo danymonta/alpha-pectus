@@ -7,7 +7,7 @@ import { FIXTURES } from './fixtures.mjs';
 const base = () => ({
   sessionId: crypto.randomUUID(), startedAt: new Date(Date.now() - 60000).toISOString(),
   contact: { fullName: 'Luca Rossi', email: 'luca@example.com', whatsapp: '+393331234567' },
-  consents: { privacy: true, healthData: true }, answers: FIXTURES.F1.answers,
+  consents: { privacy: true, healthData: true, marketingEmail: true, whatsapp: true }, answers: FIXTURES.F1.answers,
 });
 
 test('gate: nome e cognome obbligatori (almeno due parole)', () => {
@@ -19,12 +19,17 @@ test('gate: nome e cognome obbligatori (almeno due parole)', () => {
   assert.equal(validateLead(base()).value.fullName, 'Luca Rossi');
 });
 
-test('gate: serve il consenso sui dati sulla salute; marketing e WhatsApp sono facoltativi', () => {
-  const b = base(); b.consents = { privacy: true, healthData: false };
-  assert.deepEqual(validateLead(b).errors, ['healthData']);
-  const ok = validateLead({ ...base(), consents: { privacy: true, healthData: true, marketingEmail: true, whatsapp: true } });
+test('gate: servono entrambi i consensi, sulla salute e al contatto', () => {
+  const salute = base(); salute.consents = { privacy: true, healthData: false, marketingEmail: true, whatsapp: true };
+  assert.deepEqual(validateLead(salute).errors, ['healthData']);
+  const senzaContatto = base(); senzaContatto.consents = { privacy: true, healthData: true };
+  assert.deepEqual(validateLead(senzaContatto).errors, ['contact']);
+  const meta = base(); meta.consents = { privacy: true, healthData: true, marketingEmail: true, whatsapp: false };
+  assert.deepEqual(validateLead(meta).errors, ['contact']);
+  const ok = validateLead(base());
+  assert.ok(ok.ok);
   assert.equal(ok.value.consents.marketingEmail.given, true);
-  assert.equal(validateLead(base()).value.consents.whatsapp.given, false);
+  assert.equal(ok.value.consents.whatsapp.given, true);
 });
 
 test('gate: i minorenni non passano', () => {

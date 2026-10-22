@@ -290,13 +290,14 @@ if (root) {
       const wa = normalizeWhatsapp(tel.valore());
       if (!wa) bad.push(fail('whatsapp', GATE.errors.whatsapp));
       if (!g.c_healthData) bad.push(fail('c_healthData', GATE.errors.healthData));
+      if (!g.c_contact) bad.push(fail('c_contact', GATE.errors.contact));
       if (bad.length) return form.querySelector(`[name="${bad[0]}"]`)?.focus();
 
       btn.disabled = true;
       const payload = {
         schemaVersion: 1, quizVersion: QUIZ_VERSION, sessionId: st.sid, startedAt: st.startedAt,
         contact: { fullName: name, email, whatsapp: wa, instagram: g.instagram || null },
-        consents: { privacy: true, healthData: true, marketingEmail: Boolean(g.c_contact), whatsapp: Boolean(g.c_contact) }, // un solo consenso facoltativo per email e WhatsApp
+        consents: { privacy: true, healthData: true, marketingEmail: Boolean(g.c_contact), whatsapp: Boolean(g.c_contact) }, // un solo consenso, obbligatorio, per email e WhatsApp
         answers: st.answers, attribution: st.attribution, sito: trap.value, turnstile: tsToken,
         client: { locale: 'it', tz: Intl.DateTimeFormat().resolvedOptions().timeZone },
       };

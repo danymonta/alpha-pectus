@@ -3,6 +3,7 @@
 import { STEPS } from '../data/quiz/steps.mjs';
 import { creaXlsx } from './xlsx.js';
 import { creaPortale, h } from './leads-auth.js';
+import { PASSI as PASSI_RICHIAMI, motivoStop } from '../data/quiz/richiami-regole.mjs';
 
 const radice = document.querySelector('[data-leads]');
 
@@ -20,6 +21,21 @@ if (radice) {
   const risposta = (l, step) => [].concat(l.answers?.[step.id] ?? []).map((v) => lbl(step, v)).join(', ');
   const attr = (l, k) => l.attribution?.[k] ?? '';
   const primaEmail = (l) => { const e = l.followups?.e1; return !e ? '' : e.ok ? `Inviata a Resend (${data(e.at)})` : `NON inviata: ${e.errore}`; };
+  // Avanzamento delle email: pallino verde se è partita, rosso se Resend l'ha rifiutata, grigio se deve ancora partire o non partirà.
+  const passiEmail = (l) => {
+    const e1 = l.followups?.e1;
+    const stop = motivoStop(l);
+    const nomi = { r1: 'Giorno 1: il profilo', r2: 'Giorno 3: il video guida', r3: 'Giorno 7: invito su WhatsApp' };
+    const righe = [e1
+      ? (e1.ok ? { stato: 'ok', nome: 'Subito dopo il quiz', info: `Inviata ${data(e1.at)}` } : { stato: 'err', nome: 'Subito dopo il quiz', info: `NON inviata: ${e1.errore}` })
+      : { stato: 'no', nome: 'Subito dopo il quiz', info: 'Esito non registrato' }];
+    for (const p of PASSI_RICHIAMI) {
+      const fatta = l.followups?.[p.id];
+      if (fatta) righe.push({ stato: 'ok', nome: nomi[p.id], info: `Inviata ${data(fatta)}` });
+      else righe.push({ stato: 'no', nome: nomi[p.id], info: stop ? `Non parte: ${stop}` : `In programma ${quando(new Date(Date.parse(l.created_at) + p.ore * 3600000).toISOString())}` });
+    }
+    return righe;
+  };
   const RICHIAMI = { r1: 'giorno 1', r2: 'giorno 3 (video)', r3: 'giorno 7' };
   const richiami = (l) => Object.keys(RICHIAMI).filter((k) => l.followups?.[k]).map((k) => RICHIAMI[k]).join(', ');
 
@@ -79,6 +95,7 @@ if (radice) {
     const oggi = new Date();
     if (giorno(d) === giorno(oggi)) return `Oggi ${ora}`;
     if (giorno(d) === giorno(new Date(oggi.getTime() - 86400000))) return `Ieri ${ora}`;
+    if (giorno(d) === giorno(new Date(oggi.getTime() + 86400000))) return `Domani ${ora}`;
     return d.toLocaleDateString('it-IT', { timeZone: 'Europe/Rome', day: 'numeric', month: 'short' });
   };
 
@@ -144,6 +161,9 @@ if (radice) {
         h('section', {}, h('h3', {}, 'Come stai seguendo il lead'),
           h('div', { class: 'lg-campi' }, h('label', {}, 'Stato', stato), h('label', {}, 'Prossimo contatto', prossimo)),
           nota, salvato),
+        h('section', {}, h('h3', {}, 'Email e contatto'),
+          h('p', { class: l.clicked_whatsapp || l.clicked_book ? 'lg-contatto lg-contatto--si' : 'lg-contatto' }, l.clicked_whatsapp || l.clicked_book ? `Ti ha contattato: ha cliccato ${l.clicked_book ? 'Prenota' : 'WhatsApp'} (${data(l.clicked_book ? l.book_at : l.whatsapp_at)}).` : 'Non ti ha ancora contattato: puoi scrivergli tu su WhatsApp.'),
+          h('ul', { class: 'lg-passi' }, passiEmail(l).map((r) => h('li', {}, h('i', { class: `lg-pal lg-pal--${r.stato}`, 'aria-hidden': 'true' }), h('div', {}, h('b', {}, r.nome), h('span', {}, r.info)))))),
         h('section', {}, h('h3', {}, 'Risultato del quiz'),
           h('dl', { class: 'lg-dl' }, riga('Esito', TEMP[l.route] || l.route), riga('Punteggio', l.score != null ? `${l.score}/100` : ''), riga('Profilo', PROFILI[l.profile] || l.profile), riga('Livello medico', MEDICO[l.medical_level] || ''), riga('Tempi stimati', l.result?.range ? `${l.result.range.join('-')} settimane` : ''), riga('Durata del quiz', l.duration_sec != null ? `${l.duration_sec} secondi` : ''))),
         h('section', {}, h('h3', {}, 'Le sue risposte'),
