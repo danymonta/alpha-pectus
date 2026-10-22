@@ -96,7 +96,9 @@ export const onRequestPost = async ({ request, env, waitUntil }) => {
       const link = `${SITO}/risultato/?t=${token}`;
       const profilo = PROFILES[result.profile].name;
       const righe = STEPS.map((s) => [s.question, [].concat(lead.answers[s.id]).map((val) => s.options.find((o) => o.value === val)?.label).join(', ')]);
-      waitUntil?.(
+      // Gli invii si aspettano prima di rispondere (al massimo 7 secondi): così la prima email parte subito e non dipende dal fatto che
+      // la piattaforma tenga in vita la funzione dopo la risposta. Se qualcosa è lento, il resto continua in coda con waitUntil.
+      const invii = (
         (async () => {
           // Ogni avviso è indipendente: se uno fallisce, gli altri partono comunque.
           const prova = async (nome, fn) => {
@@ -114,14 +116,25 @@ export const onRequestPost = async ({ request, env, waitUntil }) => {
               await sendMail(env, { to: danyList(env), subject: n.subject, html: n.html, text: n.text, replyTo: lead.email });
             }),
             prova('mail al lead', async () => {
-              if (!mailReady(env)) return;
-              const m = emailEsito(result.route, lead.fullName, result.profile, link);
-              await sendMail(env, { to: [lead.email], subject: m.subject, html: m.html, text: m.text, replyTo: danyList(env)[0] });
+              // L'esito resta nel lead (followups.e1) e si vede nel portale: se Resend rifiuta l'invio lo sai subito, senza cercare nei log.
+              // Se la colonna followups non esiste ancora (migrazione non applicata) il salvataggio fallisce in silenzio.
+              const segna = (errore) => sb(env, 'PATCH', `quiz_leads?token_id=eq.${tokenId}`, { followups: { e1: errore ? { ok: false, errore, at: new Date().toISOString() } : { ok: true, at: new Date().toISOString() } } }, { Prefer: 'return=minimal' }).catch(() => {});
+              if (!mailReady(env)) return segna('Resend non configurato (RESEND_API_KEY o MAIL_FROM mancanti)');
+              try {
+                const m = emailEsito(result.route, lead.fullName, result.profile, link);
+                await sendMail(env, { to: [lead.email], subject: m.subject, html: m.html, text: m.text, replyTo: danyList(env)[0] });
+              } catch (e) {
+                await segna(String(e?.message ?? e).slice(0, 200));
+                throw e;
+              }
+              await segna(null);
             }),
           ]);
           await postWebhook(env, { sessionId: lead.sessionId, lead: { fullName: lead.fullName, email: lead.email, whatsapp: lead.whatsapp, instagram: lead.instagram }, consents, result, answers: lead.answers, attribution: lead.attribution });
-        })(),
-      );
+        })()
+      ).catch((e) => console.error('invii', e));
+      await Promise.race([invii, new Promise((r) => setTimeout(r, 7000))]);
+      waitUntil?.(invii);
       return json({ ok: true, token });
     }
     return json({ ok: true, token: await signToken(env, tokenId) });
