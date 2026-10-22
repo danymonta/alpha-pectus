@@ -86,7 +86,7 @@ export const onRequestPost = async ({ request, env, waitUntil }) => {
       // first_name contiene nome e cognome (la colonna conserva il nome storico).
       await sb(env, 'POST', 'quiz_leads', {
         session_id: lead.sessionId, token_id: tokenId, quiz_version: lead.quizVersion, duration_sec: lead.durationSec,
-        first_name: lead.fullName, email: lead.email, whatsapp: lead.whatsapp, instagram: lead.instagram, consents,
+        first_name: lead.fullName, email: lead.email, whatsapp: lead.whatsapp, consents,
         answers: lead.answers, result, route: result.route, temperature: result.temperature, score: result.scores.total,
         profile: result.profile, medical_level: result.medicalLevel,
         attribution: lead.attribution, referrer: lead.referrer, user_agent: clean(request.headers.get('user-agent'), 250),
@@ -130,7 +130,7 @@ export const onRequestPost = async ({ request, env, waitUntil }) => {
               await segna(null);
             }),
           ]);
-          await postWebhook(env, { sessionId: lead.sessionId, lead: { fullName: lead.fullName, email: lead.email, whatsapp: lead.whatsapp, instagram: lead.instagram }, consents, result, answers: lead.answers, attribution: lead.attribution });
+          await postWebhook(env, { sessionId: lead.sessionId, lead: { fullName: lead.fullName, email: lead.email, whatsapp: lead.whatsapp }, consents, result, answers: lead.answers, attribution: lead.attribution });
         })()
       ).catch((e) => console.error('invii', e));
       await Promise.race([invii, new Promise((r) => setTimeout(r, 7000))]);

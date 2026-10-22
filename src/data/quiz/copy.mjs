@@ -143,7 +143,8 @@ export const QUIZ_UI = {
 
 export const GATE = {
   title: 'Il tuo profilo è pronto.',
-  fields: { fullName: 'Nome e cognome', email: 'Email', whatsapp: 'WhatsApp', prefix: 'Prefisso internazionale', instagram: 'Instagram (facoltativo)' },
+  ask: 'Dove vuoi che ti invio l’esito?',
+  fields: { fullName: 'Nome e cognome', email: 'Email', whatsapp: 'WhatsApp', prefix: 'Prefisso internazionale' },
   // Due sole caselle, entrambe obbligatorie per vedere il profilo. Dati sulla salute: consenso esplicito (art. 9 GDPR), con presa visione
   // dell'informativa. Contatto su email e WhatsApp, anche commerciale. La specifica ne prevedeva quattro e le voleva facoltative.
   consents: [

@@ -47,7 +47,7 @@ export function leadNotification(lead, result, answerLines, siteUrl) {
   const wa = `https://wa.me/${numero}?text=${encodeURIComponent(`Ciao ${String(lead.fullName).trim().split(/\s+/)[0]}, sono Dany. Ho visto il tuo quiz sul petto e ti scrivo per capire se posso aiutarti. Ti va di sentirci?`)}`;
   const lista = `${siteUrl}/quiz-leads/`;
   const rows = [
-    ['Nome e cognome', lead.fullName], ['Email', lead.email], ['WhatsApp', lead.whatsapp], ['Instagram', lead.instagram ?? ''],
+    ['Nome e cognome', lead.fullName], ['Email', lead.email], ['WhatsApp', lead.whatsapp],
     ['Route', result.route], ['Temperatura', result.temperature], ['Punteggio', String(result.scores.total)],
     ['Profilo', result.profile], ['Livello medico', result.medicalLevel], ['Tempi (settimane)', result.range ? result.range.join('-') : 'n.d.'],
     ...answerLines,

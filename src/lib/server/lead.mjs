@@ -37,8 +37,6 @@ export function validateLead(body) {
   if (!EMAIL.test(email)) errors.push('email');
   const whatsapp = normalizeWhatsapp(c.whatsapp);
   if (!whatsapp) errors.push('whatsapp');
-  let instagram = clean(c.instagram, 60).replace(/^@+/, '');
-  instagram = /^[A-Za-z0-9._]{1,30}$/.test(instagram) ? `@${instagram}` : null;
 
   const k = body?.consents ?? {};
   if (k.privacy !== true) errors.push('privacy');
@@ -60,7 +58,7 @@ export function validateLead(body) {
   return {
     ok: true,
     value: {
-      sessionId, fullName, email, whatsapp, instagram,
+      sessionId, fullName, email, whatsapp,
       consents: {
         privacy: { given: true, version: CONSENT_VERSION },
         healthData: { given: true, version: CONSENT_VERSION },
