@@ -198,7 +198,7 @@ if (radice) {
         return;
       }
       lista.replaceChildren(h('table', { class: 'lg-tab' },
-        h('thead', {}, h('tr', {}, h('th', {}, 'Lead'), h('th', { class: 'no-mob' }, 'Esito'), h('th', { class: 'no-mob' }, 'Profilo'), h('th', { class: 'no-mob' }, 'Ricevuto'), h('th', { class: 'no-mob' }, 'Stato'), h('th', { class: 'dx' }, ''))),
+        h('thead', {}, h('tr', {}, h('th', {}, 'Lead'), h('th', { class: 'no-mob' }, 'Esito'), h('th', { class: 'no-mob' }, 'Età'), h('th', { class: 'no-mob' }, 'Profilo'), h('th', { class: 'no-mob' }, 'Ricevuto'), h('th', { class: 'no-mob' }, 'Stato'), h('th', { class: 'dx' }, ''))),
         h('tbody', {}, righe.map((l) => {
           const wa = linkWa(l);
           const stato = h('select', { class: 'lg-sel', 'aria-label': `Stato di ${l.first_name}` }, STATI.map((x) => h('option', { value: x, selected: l.status === x }, x)));
@@ -210,6 +210,7 @@ if (radice) {
           const tr = h('tr', { tabindex: '0', 'aria-label': `Apri ${l.first_name}` },
             h('td', {}, h('div', { class: 'lg-nome' }, h('i', { class: l.status === 'nuovo' ? '' : 'letto', 'aria-hidden': 'true' }), l.first_name), h('div', { class: 'lg-sub' }, l.email), l.followups?.e1?.ok === false ? h('div', { class: 'lg-sub lg-allarme' }, 'Email non inviata') : null, h('div', { class: 'lg-sub solo-mob' }, esito(), ` ${quando(l.created_at)}`)),
             h('td', { class: 'no-mob' }, esito()),
+            h('td', { class: 'no-mob' }, lbl(STEPS.find((x) => x.id === 'age'), [].concat(l.answers?.age ?? [])[0] ?? '')),
             h('td', { class: 'no-mob lg-muted' }, PROFILI[l.profile] || l.profile),
             h('td', { class: 'no-mob lg-muted' }, quando(l.created_at)),
             h('td', { class: 'no-mob' }, stato),
